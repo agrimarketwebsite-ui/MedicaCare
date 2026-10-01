@@ -20,6 +20,7 @@ describe('auth integration — register/login/refresh/logout', { skip: !H }, () 
   const email = H ? H.uniqueEmail('phase2') : '';
   const password = 'Str0ngPass1';
   let refreshCookie = null;
+  const state = {}; // firstCookie, accessToken — local (hindi sa module namespace)
 
   before(async () => {
     ({ base, server } = await H.bootApp());
@@ -67,9 +68,9 @@ describe('auth integration — register/login/refresh/logout', { skip: !H }, () 
     assert.ok(line.includes('Path=/api/auth/refresh'), 'path scope');
     assert.ok(/samesite=lax/i.test(line), 'SameSite=Lax');
     refreshCookie = H.getCookie(r.setCookies, 'mc_refresh');
-    H._firstCookie = refreshCookie; // pang-reuse-detection test sa ibaba
+    state.firstCookie = refreshCookie; // pang-reuse-detection test sa ibaba
     // Itago ang access token para sa logout test
-    H._accessToken = r.json.data.accessToken;
+    state.accessToken = r.json.data.accessToken;
   });
 
   it('refresh → 200, ROTATED (bagong access + bagong cookie)', async () => {
@@ -80,12 +81,12 @@ describe('auth integration — register/login/refresh/logout', { skip: !H }, () 
     const newCookie = H.getCookie(r.setCookies, 'mc_refresh');
     assert.ok(newCookie && newCookie !== oldCookie, 'na-rotate ang refresh cookie');
     refreshCookie = newCookie;
-    H._accessToken = r.json.data.accessToken;
+    state.accessToken = r.json.data.accessToken;
   });
 
   it('REUSE ng lumang refresh token → 401 at revoked ang buong family', async () => {
     // Gamitin ulit ang ORIGINAL (pre-rotation) na cookie — dapat ma-detect.
-    const r = await H.api(base, 'POST', '/auth/refresh', { cookie: H._firstCookie });
+    const r = await H.api(base, 'POST', '/auth/refresh', { cookie: state.firstCookie });
     assert.equal(r.status, 401);
     // Pati ang pinakabagong cookie ay dapat invalid na (family revoked).
     const r2 = await H.api(base, 'POST', '/auth/refresh', { cookie: refreshCookie });
@@ -96,11 +97,11 @@ describe('auth integration — register/login/refresh/logout', { skip: !H }, () 
     const r = await H.api(base, 'POST', '/auth/login', { body: { email, password } });
     assert.equal(r.status, 200);
     refreshCookie = H.getCookie(r.setCookies, 'mc_refresh');
-    H._accessToken = r.json.data.accessToken;
+    state.accessToken = r.json.data.accessToken;
   });
 
   it('logout (Bearer) → 200; ang refresh cookie ay invalid na', async () => {
-    const r = await H.api(base, 'POST', '/auth/logout', { token: H._accessToken });
+    const r = await H.api(base, 'POST', '/auth/logout', { token: state.accessToken });
     assert.equal(r.status, 200);
     const r2 = await H.api(base, 'POST', '/auth/refresh', { cookie: refreshCookie });
     assert.equal(r2.status, 401);

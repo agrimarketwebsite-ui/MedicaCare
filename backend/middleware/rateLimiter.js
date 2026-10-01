@@ -5,10 +5,14 @@
 // brute-force monitoring (V16.3).
 
 import rateLimit from 'express-rate-limit';
+import ApiError from '../shared/utils/ApiError.js';
 
 const handler = (_req, _res, next, options) => {
   console.warn(`[rate-limit] 429 — ${options.statusCode} sa ${options.windowMs}ms window`);
-  next(options.message);
+  // FIX (Phase 2): dati ay `next(options.message)` — string ang naipapasa sa
+  // errorHandler, kaya nagiging 500 imbis na 429. ApiError para sa tamang
+  // 429 envelope (V16.3: naka-log pa rin sa itaas).
+  next(ApiError.tooManyRequests('Too many requests, please try again later.'));
 };
 
 // General: sapat para sa normal na clinic usage, mapoprotektahan ang uptime.
@@ -30,3 +34,4 @@ export const authLimiter = rateLimit({
 });
 
 export default apiLimiter;
+
