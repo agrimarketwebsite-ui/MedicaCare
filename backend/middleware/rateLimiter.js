@@ -33,5 +33,14 @@ export const authLimiter = rateLimit({
   handler,
 });
 
+// Public write endpoints (spam surface): pinaka-mahigpit.
+export const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler,
+});
+
 export default apiLimiter;
 
