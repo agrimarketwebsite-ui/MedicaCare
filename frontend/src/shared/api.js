@@ -1,3 +1,4 @@
+successfully downloaded text file (SHA: 48a9c2f6061e03b7585b32022d7d34e4e9983b11)
 // frontend/src/shared/api.js
 // Phase 1 — Shared plumbing: fetch wrapper + session/token architecture.
 // (docs/INTEGRATION_ROADMAP.md Phase 1 · docs/FRONTEND_SECURITY_AUDIT.md)
@@ -108,12 +109,14 @@ export async function bootstrapSession() {
   }
 }
 
-function networkFailure() {
-  notify({
-    kind: 'error',
-    title: 'Network error',
-    message: 'Hindi makakonekta sa server. Pakitingnan ang connection at subukang muli.',
-  });
+function networkFailure(quiet) {
+  if (!quiet) {
+    notify({
+      kind: 'error',
+      title: 'Network error',
+      message: 'Hindi makakonekta sa server. Pakitingnan ang connection at subukang muli.',
+    });
+  }
   throw new ApiError(0, 'Network error — hindi makakonekta sa API server', 'NETWORK_ERROR');
 }
 
@@ -122,7 +125,7 @@ function networkFailure() {
  * @returns {Promise<{ res: Response, payload: object|null }>}
  * @throws {ApiError} kapag network error o tuluyang expired ang session.
  */
-async function requestRaw(path, { method = 'GET', body, headers = {}, auth = true, retry = true } = {}) {
+async function requestRaw(path, { method = 'GET', body, headers = {}, auth = true, retry = true, quiet = false } = {}) {
   const doFetch = () => fetch(buildUrl(path), {
     method,
     credentials: 'include', // laging ipadala ang cookies (refresh cookie path)
@@ -138,7 +141,7 @@ async function requestRaw(path, { method = 'GET', body, headers = {}, auth = tru
   try {
     res = await doFetch();
   } catch {
-    networkFailure();
+    networkFailure(quiet);
   }
 
   // 401 → tahimik na refresh → isang retry. Kapag nabigo pa rin → logout.
@@ -150,7 +153,7 @@ async function requestRaw(path, { method = 'GET', body, headers = {}, auth = tru
       try { unauthorizedHandler?.(); } catch { /* logout handler ay best-effort */ }
       throw new ApiError(401, 'Nag-expire ang session — pakilog-in muli', 'SESSION_EXPIRED');
     }
-    return requestRaw(path, { method, body, headers, auth, retry: false });
+    return requestRaw(path, { method, body, headers, auth, retry: false, quiet });
   }
 
   const payload = res.status === 204 ? null : await parseJson(res);
@@ -181,6 +184,20 @@ export async function api(path, opts = {}) {
 }
 
 /**
+ * Tulad ng api() pero TAHIMIK kapag nag-fail (walang toast, nagbabalik ng null).
+ * Para sa best-effort public data hydration — hindi dapat mag-error ang landing
+ * page kapag offline o hindi pa naka-deploy ang API.
+ * @returns {Promise<any|null>} ang `data` ng envelope, o null kapag failure
+ */
+export async function apiOptional(path, opts = {}) {
+  try {
+    return await api(path, { ...opts, quiet: true });
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Kapag kailangan pati ang `meta` (hal. pagination), gamitin ito sa halip na api().
  * @returns {Promise<{ data: any, meta: any }>}
  */
@@ -193,7 +210,8 @@ export async function apiWithMeta(path, opts = {}) {
 
 export { API_BASE_URL };
 export default {
-  api, apiWithMeta, silentRefresh, bootstrapSession,
+  api, apiOptional, apiWithMeta, silentRefresh, bootstrapSession,
   setAccessToken, getAccessToken, clearAccessToken,
   onUnauthorized, setNotify, ApiError, API_BASE_URL,
 };
+
