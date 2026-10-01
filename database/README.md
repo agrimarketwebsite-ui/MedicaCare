@@ -12,6 +12,7 @@ patients/doctors/appointments sa lahat ng console).
 | File | Ano |
 | --- | --- |
 | `schema.sql` | Buong schema: tables, enums, indexes, triggers, slot-availability function, commented RLS policies para sa Supabase, **at seed data sa dulo** — fictional demo data ng buong app (doctors, patients, appointments, ratings, labs/meds, messages, stories, activity) + demo login accounts. |
+| `migrations/` | Backend-owned migrations — HIWALAY sa `schema.sql` (hindi clinic domain). Bawat file ay idempotent (`IF NOT EXISTS`) at naka-number nang sunod-sunod. |
 
 ## Paano i-run
 
@@ -25,6 +26,28 @@ patients/doctors/appointments sa lahat ng console).
 ```bash
 psql -U postgres -d medicacare -f database/schema.sql
 ```
+
+## Migrations (backend-owned)
+
+Ang `schema.sql` ang singleton source of truth ng 21 clinic tables. Ang mga
+backend-owned tables (hal. `refresh_tokens` — JWT session store) ay HINDI
+kasama doon (docs/BACKEND_ARCHITECTURE.md §6.3) — nasa `migrations/` sila.
+
+| # | File | Ano |
+| --- | --- | --- |
+| 001 | `migrations/001_refresh_tokens.sql` | `refresh_tokens` table — hash-only JWT refresh token store, rotation + reuse-detection semantics (Phase 1). |
+
+**Paano i-apply (sa ibabaw ng schema.sql):**
+
+Supabase dashboard → SQL Editor → i-paste ang migration file → Run. O sa psql:
+
+```bash
+psql -U postgres -d medicacare -f database/migrations/001_refresh_tokens.sql
+```
+
+Idempotent ang mga migration (ligtas i-run nang paulit-ulit). Huwag nang
+baguhin ang isang migration na na-apply na sa shared database — gumawa ng
+bagong numbered file sa halip.
 
 ## Demo accounts (seed data — naka-hash ang passwords sa DB)
 
@@ -207,3 +230,4 @@ guidance) — buong detalye sa `docs/DATABASE_SECURITY_AUDIT.md`:
 5. Phase 3 (optional): audit log table (may `activity_log` na), email
    reminders integration (kapag may backend), at notification triggers na
    nagpopopulate ng `notifications` tuwing may status change.
+
