@@ -36,6 +36,7 @@ kasama doon (docs/BACKEND_ARCHITECTURE.md §6.3) — nasa `migrations/` sila.
 | # | File | Ano |
 | --- | --- | --- |
 | 001 | `migrations/001_refresh_tokens.sql` | `refresh_tokens` table — hash-only JWT refresh token store, rotation + reuse-detection semantics (Phase 1). |
+| 002 | `migrations/002_password_resets.sql` | `password_resets` table — hash-only, single-use, 1h TTL reset token store (Phase 2; email send sa Phase 8). |
 
 **Paano i-apply (sa ibabaw ng schema.sql):**
 
