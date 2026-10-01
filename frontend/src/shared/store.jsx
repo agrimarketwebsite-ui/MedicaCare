@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
 import AnimatedContent from './reactbits/AnimatedContent.jsx';
-import { onUnauthorized, bootstrapSession, setNotify } from './api.js';
+import { onUnauthorized, bootstrapSession, setNotify, api, clearAccessToken } from './api.js';
 
 // ---------- App-wide store (kept simple, in-memory + localStorage for appointments/role) ----------
 const StoreCtx = createContext(null);
@@ -72,9 +72,9 @@ function StoreProvider({ children }) {
   const [lastBookingId, setLastBookingId] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [users, setUsers] = useState(() => {
-    // Registered accounts (prototype auth) — persisted so credentials survive
-    // reloads. Starts empty: accounts come from the backend credential store
-    // (patients/admins/doctor_accounts) once the API is wired.
+    // LEGACY (Phase 2): ang Login/Register ay hindi na gumagamit nito (API na).
+    // Nananatili lang para sa admin "grant doctor portal access" flow — ito ay
+    // ia-wire sa backend sa Phase 6 (admin console), at doon tuluyang tatanggalin.
     try {
       const saved = JSON.parse(localStorage.getItem('nmc.users'));
       if (Array.isArray(saved)) return saved.map(migratedEmail);
@@ -268,21 +268,29 @@ function StoreProvider({ children }) {
 
   // Login = profile mula sa API response (Phase 2: POST /api/auth/login).
   // Tandaan: hindi dito dumadaan ang tokens — nasa api.js (memory) sila.
+  // Phase 2 — server logout: i-revoke ang refresh sessions sa backend.
+  // Best-effort: kahit mag-fail (offline), ang local session ay naka-clear pa rin.
+  const serverLogout = useCallback(() => {
+    api('/auth/logout', { method: 'POST' }).catch(() => {});
+    clearAccessToken();
+  }, []);
+
   const loginPatient = useCallback((profile) => {
     setPatientSession({ ...profile, at: Date.now() });
     setCurrentPatient(profile);
   }, []);
   const logoutPatient = useCallback(() => {
+    serverLogout();
     setPatientSession(null);
     // Reset to the seeded demo identity so the portal still renders after logout
     setCurrentPatient(window.CURRENT_PATIENT);
-  }, []);
+  }, [serverLogout]);
   const loginAdmin = useCallback((profile) => {
     setAdminSession({ ...profile, at: Date.now() });
   }, []);
-  const logoutAdmin = useCallback(() => setAdminSession(null), []);
+  const logoutAdmin = useCallback(() => { serverLogout(); setAdminSession(null); }, [serverLogout]);
   const loginDoctor = useCallback((profile) => setDoctorSession({ ...profile, at: Date.now() }), []);
-  const logoutDoctor = useCallback(() => setDoctorSession(null), []);
+  const logoutDoctor = useCallback(() => { serverLogout(); setDoctorSession(null); }, [serverLogout]);
   // I-route ang API profile sa tamang session base sa role (Phase 2 contract:
   // refresh/login responses ay may { profile, role }).
   const applyApiSession = useCallback((role, profile) => {

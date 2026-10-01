@@ -1,7 +1,7 @@
 // DoctorLogin — public (split from screens-public.jsx)
 import { useEffect, useState } from 'react';
-import { BrandMark, Field, Icon, navigate, OtpVerifyModal, TextInput, useStore } from '../shared/components.jsx';
-import { findDoctor, initials } from '../shared/data.js';
+import { BrandMark, Field, Icon, navigate, TextInput, useStore } from '../shared/components.jsx';
+import { api, setAccessToken } from '../shared/api.js';
 import Aurora from '../shared/reactbits/Aurora.jsx';
 import SplitText from '../shared/reactbits/SplitText.jsx';
 import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
@@ -20,10 +20,6 @@ function DoctorLogin({ removed = false }) {
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState(null);
   const [loading, setLoading] = useState(false);
-  // Step 2 of doctor login (prototype demo): the emailed 6-character code
-  // gates the portal — `pendingDoc` holds the session payload and the
-  // session is only created from onVerified
-  const [pendingDoc, setPendingDoc] = useState(null);
   // A stale session for a doctor the staff console has removed is cleared
   // here (in an effect, not during render) so the next login starts clean
   useEffect(() => {
@@ -33,7 +29,10 @@ function DoctorLogin({ removed = false }) {
 
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); setAuthError(null); };
 
-  const submit = (evt) => {
+  // Phase 2 — POST /api/auth/login na may role:'doctor' (doctor_accounts table).
+  // Walang OTP step (prototype demo lang). Ang doctor name ay galing sa
+  // directory (Phase 5 pa ang doctors API) — fallback sa email.
+  const submit = async (evt) => {
     evt.preventDefault();
     const e = {};
     if (!form.email.trim()) e.email = 'Doctor email is required';
@@ -44,33 +43,29 @@ function DoctorLogin({ removed = false }) {
 
     setLoading(true);
     setAuthError(null);
-    setTimeout(() => {
-      setLoading(false);
-      const em = form.email.toLowerCase().trim();
-      // Portal access is admin-issued: doctor accounts live in store.users
-      // with role 'doctor' (granted from the Admin console's Doctors page)
-      const account = store.users.find(u => u.role === 'doctor' && u.email.toLowerCase() === em);
-      if (!account || account.password !== form.password) {
-        // Generic message — does not reveal whether the doctor account exists
-        setAuthError('Invalid doctor credentials. Please try again.');
-        return;
-      }
-      const doctor = window.findDoctor(account.doctorId);
+    try {
+      const data = await api('/auth/login', {
+        method: 'POST',
+        body: { email: form.email.trim(), password: form.password, role: 'doctor' },
+        auth: false,
+      });
+      setAccessToken(data.accessToken);
+      const p = data.profile;
+      const doctor = window.findDoctor ? window.findDoctor(p.doctor_id) : null;
       if (!doctor) {
-        // The account exists but staff removed the doctor from the directory
+        // Ang account ay valid pero wala na ang doctor sa directory
         setAuthError('This doctor account is no longer active. Please contact the administrator.');
         return;
       }
-      // Credentials verified — the emailed code is the next gate
-      setPendingDoc({ doctorId: account.doctorId, email: em, name: doctor.name });
-    }, 700);
-  };
-
-  const finishLogin = () => {
-    store.loginDoctor(pendingDoc);
-    store.setRole('doctor');
-    setPendingDoc(null);
-    navigate('/doctor/dashboard');
+      store.loginDoctor({ ...p, doctorId: p.doctor_id, name: doctor.name, email: p.email });
+      store.setRole('doctor');
+      navigate('/doctor/dashboard');
+    } catch (err) {
+      // Generic message — does not reveal whether the doctor account exists
+      setAuthError(err.status === 401 ? 'Invalid doctor credentials. Please try again.' : (err.message || 'Sign in failed. Please try again.'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -143,18 +138,9 @@ function DoctorLogin({ removed = false }) {
       </div>
       </AnimatedContent>
 
-      {/* Step 2 — the emailed 6-character code before the portal opens;
-          the session is only created from onVerified */}
-      <OtpVerifyModal
-        open={!!pendingDoc}
-        onClose={() => setPendingDoc(null)}
-        onVerified={finishLogin}
-        email={pendingDoc ? pendingDoc.email : ''}
-        title="Verify doctor sign-in"
-        subtitle={`Enter the code sent to ${pendingDoc ? pendingDoc.email : 'your email'} to open the doctor portal.`}
-      />
     </main>
   );
 }
 
 export { DoctorLogin };
+

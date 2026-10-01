@@ -1,6 +1,7 @@
 // AdminLogin — public (split from screens-public.jsx)
 import { useState } from 'react';
-import { BrandMark, Field, Icon, navigate, OtpVerifyModal, TextInput, useStore } from '../shared/components.jsx';
+import { BrandMark, Field, Icon, navigate, TextInput, useStore } from '../shared/components.jsx';
+import { api, setAccessToken } from '../shared/api.js';
 import Aurora from '../shared/reactbits/Aurora.jsx';
 import SplitText from '../shared/reactbits/SplitText.jsx';
 import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
@@ -9,9 +10,8 @@ import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
 // Separate, unlinked login for hospital staff/admin. Kept off the public
 // patient login on purpose — patients never see staff entry points, and the
 // admin console routes are guarded so this page is the only way in.
-// NOTE: prototype-only. A real backend must verify staff credentials
-// server-side and enforce role checks on every API request. Staff accounts
-// are matched against the backend admins store once the API is wired.
+// Phase 2 — ang staff credentials ay vine-verify ng backend (admins table);
+// ang role checks ay nasa API (requireRole) sa bawat request.
 
 function AdminLogin() {
   const store = useStore();
@@ -19,15 +19,11 @@ function AdminLogin() {
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState(null);
   const [loading, setLoading] = useState(false);
-  // Step 2 of staff login: the emailed 6-character code gates the console —
-  // the session is only created from onVerified. `pendingAdmin` holds the
-  // account awaiting verification.
-  const [otpOpen, setOtpOpen] = useState(false);
-  const [pendingAdmin, setPendingAdmin] = useState(null);
-
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); setAuthError(null); };
 
-  const submit = (evt) => {
+  // Phase 2 — POST /api/auth/login na may role:'admin' (ibang account source,
+  // parehong JWT flow). Walang OTP step (prototype demo lang).
+  const submit = async (evt) => {
     evt.preventDefault();
     const e = {};
     if (!form.email.trim()) e.email = 'Staff email is required';
@@ -38,28 +34,23 @@ function AdminLogin() {
 
     setLoading(true);
     setAuthError(null);
-    setTimeout(() => {
+    try {
+      const data = await api('/auth/login', {
+        method: 'POST',
+        body: { email: form.email.trim(), password: form.password, role: 'admin' },
+        auth: false,
+      });
+      setAccessToken(data.accessToken);
+      const p = data.profile;
+      store.loginAdmin({ ...p, name: p.full_name });
+      store.setRole('admin');
+      navigate('/admin/dashboard');
+    } catch (err) {
+      // Generic message — does not reveal whether the staff account exists
+      setAuthError(err.status === 401 ? 'Invalid staff credentials. Please try again.' : (err.message || 'Sign in failed. Please try again.'));
+    } finally {
       setLoading(false);
-      const em = form.email.toLowerCase().trim();
-      // Staff accounts live in the backend credential store (admins table)
-      // once wired; until then no staff login can succeed
-      const account = store.users.find(u => u.role === 'admin' && u.email.toLowerCase() === em);
-      if (account && account.password === form.password) {
-        // Credentials verified — the emailed code is the next gate
-        setPendingAdmin(account);
-        setOtpOpen(true);
-      } else {
-        // Generic message — does not reveal whether the staff account exists
-        setAuthError('Invalid staff credentials. Please try again.');
-      }
-    }, 700);
-  };
-
-  const finishLogin = () => {
-    store.loginAdmin({ email: pendingAdmin.email, name: pendingAdmin.name, role: pendingAdmin.role || 'Administrator' });
-    store.setRole('admin');
-    setOtpOpen(false);
-    navigate('/admin/dashboard');
+    }
   };
 
   return (
@@ -126,17 +117,9 @@ function AdminLogin() {
       </div>
       </AnimatedContent>
 
-      {/* Step 2 — the emailed 6-character code before the console opens */}
-      <OtpVerifyModal
-        open={otpOpen}
-        onClose={() => setOtpOpen(false)}
-        onVerified={finishLogin}
-        email={pendingAdmin ? pendingAdmin.email : ''}
-        title="Verify staff sign-in"
-        subtitle={`Enter the code sent to ${pendingAdmin ? pendingAdmin.email : 'your email'} to open the admin console.`}
-      />
     </main>
   );
 }
 
 export { AdminLogin };
+

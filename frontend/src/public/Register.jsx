@@ -1,7 +1,7 @@
 // Register — public (split from screens-public.jsx)
 import { useState } from 'react';
 import { BrandMark, Field, Icon, navigate, TextInput, useStore } from '../shared/components.jsx';
-import { findPatient, PATIENTS } from '../shared/data.js';
+import { api } from '../shared/api.js';
 import Aurora from '../shared/reactbits/Aurora.jsx';
 import SplitText from '../shared/reactbits/SplitText.jsx';
 import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
@@ -31,40 +31,45 @@ function Register() {
     return e;
   };
 
-  const submit = (evt) => {
+  // Phase 2 — ang account ay ginagawa sa backend (POST /api/auth/register),
+  // hindi na sa localStorage. Ang 409 mula sa backend ay naka-map sa email error.
+  const submit = async (evt) => {
     evt.preventDefault();
     const e = validate();
-    const em = form.email.toLowerCase().trim();
-    const reservedEmails = ['mwawlasly@gmail.com', 'angelitotallod1234@gmail.com'];
-    if (!e.email && (reservedEmails.includes(em) || store.users.some(u => u.email.toLowerCase() === em))) {
-      e.email = 'An account with this email already exists. Try logging in instead.';
-    }
     setErrors(e);
     if (Object.keys(e).length) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      const newUser = {
-        id: 'u' + Date.now().toString(36),
-        name: form.name.trim(),
-        email: em,
-        phone: form.phone.trim(),
-        password: form.password,
-        role: 'patient',
-        createdAt: new Date().toISOString().slice(0, 10),
-        // Dummy portrait so new accounts show up with a photo across the portal
-        photo: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 99) + 1}.jpg`,
-      };
-      store.setUsers([...store.users, newUser]);
-      // Keep the static PATIENTS registry (used by window.findPatient in the
-      // admin console tables and the printable schedule) in sync — same
-      // pattern as the admin add-patient flow — so new accounts never render
-      // as "Unknown patient" in staff views
-      window.PATIENTS.unshift({ id: newUser.id, name: newUser.name, email: newUser.email, phone: newUser.phone, gender: '', age: null, joined: newUser.createdAt, lastVisit: null, photo: newUser.photo });
-      store.setPatients([...window.PATIENTS]);
+    try {
+      await api('/auth/register', {
+        method: 'POST',
+        body: {
+          full_name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          password: form.password,
+        },
+        auth: false,
+      });
       store.pushToast({ title: 'Account created', msg: 'You can now log in with your new credentials.' });
       navigate('/login');
-    }, 900);
+    } catch (err) {
+      if (err.status === 409) {
+        setErrors({ email: 'An account with this email already exists. Try logging in instead.' });
+      } else if (err.details && err.details.length) {
+        // Backend zod errors → i-map sa form fields
+        const fieldMap = { full_name: 'name', email: 'email', phone: 'phone', password: 'password' };
+        const fe = {};
+        for (const d of err.details) {
+          const key = fieldMap[d.path] || d.path;
+          if (!fe[key]) fe[key] = d.message;
+        }
+        setErrors(fe);
+      } else {
+        store.pushToast({ kind: 'error', title: 'Registration failed', msg: err.message || 'Please try again.' });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -154,3 +159,4 @@ function Register() {
 }
 
 export { Register };
+

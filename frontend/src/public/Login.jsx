@@ -1,6 +1,7 @@
 // Login — public (split from screens-public.jsx)
 import { useState } from 'react';
-import { BrandMark, Field, Icon, navigate, OtpVerifyModal, PwField, TextInput, useStore } from '../shared/components.jsx';
+import { BrandMark, Field, Icon, navigate, PwField, TextInput, useStore } from '../shared/components.jsx';
+import { api, setAccessToken } from '../shared/api.js';
 import Aurora from '../shared/reactbits/Aurora.jsx';
 import SplitText from '../shared/reactbits/SplitText.jsx';
 import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
@@ -14,30 +15,22 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState(null);
   const [loading, setLoading] = useState(false);
-  // Step 2 of login (prototype demo): after the credentials check passes,
-  // a 6-character code must be entered before the portal opens. `otpAccount`
-  // holds the account awaiting verification; the account is only logged in
-  // from the OTP modal's onVerified callback.
-  const [otpAccount, setOtpAccount] = useState(null);
-
-  const finishLogin = (account) => {
-    // Registered account — enter the portal as that patient identity so
-    // bookings/history belong to them. Health summary fields start empty
-    // until the backend supplies the real profile.
-    store.setCurrentPatient({
-      id: account.id, name: account.name, email: account.email, phone: account.phone,
+  // Phase 2 — ang profile ay galing sa API response (POST /api/auth/login).
+  // Ang access token ay nasa memory lang (api.js); walang OTP step (ang email
+  // OTP ay prototype demo lang — walang email service hanggang Phase 8).
+  const finishLogin = (profile) => {
+    store.loginPatient({
+      id: profile.id, name: profile.full_name, email: profile.email, phone: profile.phone || '',
       dob: '', gender: '', address: '', emergencyContact: '', bloodType: '—', allergies: 'None',
-      photo: account.photo || '',
+      photo: profile.photo_url || '',
     });
-    store.loginPatient(account);
     store.setRole('patient');
-    setOtpAccount(null);
     navigate('/patient/dashboard');
   };
 
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); setAuthError(null); };
 
-  const submit = (evt) => {
+  const submit = async (evt) => {
     evt.preventDefault();
     const e = {};
     if (!form.email.trim()) e.email = 'Email is required';
@@ -48,19 +41,21 @@ function Login() {
 
     setLoading(true);
     setAuthError(null);
-    setTimeout(() => {
+    try {
+      // Ang backend ay laging generic ang error (ASVS V2.5) — hindi nito
+      // sinasabi kung ang email o ang password ang mali.
+      const data = await api('/auth/login', {
+        method: 'POST',
+        body: { email: form.email.trim(), password: form.password },
+        auth: false,
+      });
+      setAccessToken(data.accessToken);
+      finishLogin(data.profile);
+    } catch (err) {
+      setAuthError(err.message || 'Login failed. Please try again.');
+    } finally {
       setLoading(false);
-      const em = form.email.toLowerCase().trim();
-      const account = store.users.find(u => u.email.toLowerCase() === em);
-      if (account && account.password === form.password) {
-        // Credentials verified — the emailed code is the next gate
-        setOtpAccount(account);
-      } else {
-        setAuthError(account
-          ? 'The password you entered is incorrect. Please try again.'
-          : 'No account found with this email. Please register first.');
-      }
-    }, 700);
+    }
   };
 
   return (
@@ -132,18 +127,9 @@ function Login() {
       </div>
       </AnimatedContent>
 
-      {/* Step 2 — the emailed 6-character code gates the portal itself;
-          the session is only created from onVerified */}
-      <OtpVerifyModal
-        open={!!otpAccount}
-        onClose={() => setOtpAccount(null)}
-        onVerified={() => finishLogin(otpAccount)}
-        email={otpAccount ? otpAccount.email : ''}
-        title="Verify your login"
-        subtitle={`Enter the code sent to ${otpAccount ? otpAccount.email : 'your email'} to open your patient portal.`}
-      />
     </main>
   );
 }
 
 export { Login };
+

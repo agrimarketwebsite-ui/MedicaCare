@@ -1,28 +1,41 @@
 // ForgotPassword — public (split from screens-public.jsx)
 import { useState } from 'react';
 import { BrandMark, Field, Icon, navigate, TextInput } from '../shared/components.jsx';
+import { api } from '../shared/api.js';
 
 import Aurora from '../shared/reactbits/Aurora.jsx';
 import SplitText from '../shared/reactbits/SplitText.jsx';
 import AnimatedContent from '../shared/reactbits/AnimatedContent.jsx';
 
 // ---------- Forgot password ----------
+// Phase 2 — POST /api/auth/forgot-password. Ang backend ay laging generic
+// ang response (ASVS V2.5) — ang UI ay nagpapakita ng "sent" state anuman
+// ang resulta, maliban sa validation/network errors. Ang email send ay
+// ia-attach sa Phase 8 (Brevo).
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const submit = (evt) => {
+  const submit = async (evt) => {
     evt.preventDefault();
     if (!email.trim()) { setError('Email is required'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email address'); return; }
     setError(null);
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await api('/auth/forgot-password', {
+        method: 'POST',
+        body: { email: email.trim() },
+        auth: false,
+      });
       setSent(true);
-    }, 800);
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,3 +111,4 @@ function ForgotPassword() {
 }
 
 export { ForgotPassword };
+
