@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: f68aeaac31cc26d084f403e1cc72b65cbc53624b)
 // Landing — public (split from screens-public.jsx)
 import { useEffect, useRef, useState } from 'react';
 import { ClinicStatus, DoctorAvatar, FaqAccordion, Icon, navigate, NoticeBar, PublicFooter, PublicNav, StatusBadge, TestimonialCarousel, useStore } from '../shared/components.jsx';
