@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
 import AnimatedContent from './reactbits/AnimatedContent.jsx';
+import { onUnauthorized, bootstrapSession, setNotify } from './api.js';
 
 // ---------- App-wide store (kept simple, in-memory + localStorage for appointments/role) ----------
 const StoreCtx = createContext(null);
@@ -89,9 +90,11 @@ function StoreProvider({ children }) {
     } catch { /* fall through */ }
     return window.CURRENT_PATIENT;
   });
-  // Prototype auth sessions — separate flags for the patient portal and the
-  // admin console so neither area can be reached without logging in first.
-  // Client-side only in the prototype; a real backend must re-check every request.
+  // API-backed auth sessions (Phase 1 plumbing — ang login/logout API calls ay Phase 2).
+  // Ang session ay PROFILE lang mula sa API response — WALANG token dito:
+  // ang access token ay nasa memory lang (api.js), ang refresh token ay
+  // httpOnly cookie. Profile cache lang ang naka-persist sa localStorage
+  // (FRONTEND_SECURITY_AUDIT — token storage decision).
   const [patientSession, setPatientSession] = useState(() => {
     try { return JSON.parse(localStorage.getItem('nmc.patientSession')) || null; } catch { return null; }
   });
@@ -208,6 +211,27 @@ function StoreProvider({ children }) {
     ].slice(0, 20));
   }, []);
 
+  // Phase 1 plumbing wiring (isang beses sa mount):
+  //  - network-error toasts mula sa api.js → pushToast
+  //  - tuluyang 401 (refresh nabigo) → logout lahat ng sessions
+  //  - silent refresh sa boot → i-restore ang session nang walang login
+  useEffect(() => {
+    setNotify((t) => pushToast(t));
+    onUnauthorized(() => {
+      setPatientSession(null);
+      setAdminSession(null);
+      setDoctorSession(null);
+      setCurrentPatient(window.CURRENT_PATIENT);
+      pushToast({ kind: 'error', title: 'Nag-expire ang session', message: 'Pakilog-in muli.' });
+    });
+    let cancelled = false;
+    bootstrapSession().then((data) => {
+      if (!cancelled && data) applyApiSession(data.role, data.profile);
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => { localStorage.setItem('nmc.role', role); }, [role]);
   useEffect(() => { localStorage.setItem('nmc.appointments', JSON.stringify(appointments)); }, [appointments]);
   useEffect(() => { localStorage.setItem('nmc.users', JSON.stringify(users)); }, [users]);
@@ -242,20 +266,34 @@ function StoreProvider({ children }) {
   }, []);
   const dismissToast = useCallback((id) => setToasts(prev => prev.filter(x => x.id !== id)), []);
 
-  const loginPatient = useCallback((account) => {
-    setPatientSession({ id: account.id, email: account.email, at: Date.now() });
+  // Login = profile mula sa API response (Phase 2: POST /api/auth/login).
+  // Tandaan: hindi dito dumadaan ang tokens — nasa api.js (memory) sila.
+  const loginPatient = useCallback((profile) => {
+    setPatientSession({ ...profile, at: Date.now() });
+    setCurrentPatient(profile);
   }, []);
   const logoutPatient = useCallback(() => {
     setPatientSession(null);
     // Reset to the seeded demo identity so the portal still renders after logout
     setCurrentPatient(window.CURRENT_PATIENT);
   }, []);
-  const loginAdmin = useCallback((account) => {
-    setAdminSession({ email: account.email, name: account.name, role: account.role, at: Date.now() });
+  const loginAdmin = useCallback((profile) => {
+    setAdminSession({ ...profile, at: Date.now() });
   }, []);
   const logoutAdmin = useCallback(() => setAdminSession(null), []);
-  const loginDoctor = useCallback((session) => setDoctorSession({ ...session, at: Date.now() }), []);
+  const loginDoctor = useCallback((profile) => setDoctorSession({ ...profile, at: Date.now() }), []);
   const logoutDoctor = useCallback(() => setDoctorSession(null), []);
+  // I-route ang API profile sa tamang session base sa role (Phase 2 contract:
+  // refresh/login responses ay may { profile, role }).
+  const applyApiSession = useCallback((role, profile) => {
+    if (!profile) return;
+    if (role === 'admin') setAdminSession({ ...profile, at: Date.now() });
+    else if (role === 'doctor') setDoctorSession({ ...profile, at: Date.now() });
+    else {
+      setPatientSession({ ...profile, at: Date.now() });
+      setCurrentPatient(profile);
+    }
+  }, []);
 
   const store = {
     role, setRole,
@@ -284,3 +322,4 @@ function StoreProvider({ children }) {
 }
 
 export { StoreCtx, useStore, migratedEmail, StoreProvider };
+
