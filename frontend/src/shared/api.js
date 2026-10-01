@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: 48a9c2f6061e03b7585b32022d7d34e4e9983b11)
 // frontend/src/shared/api.js
 // Phase 1 — Shared plumbing: fetch wrapper + session/token architecture.
 // (docs/INTEGRATION_ROADMAP.md Phase 1 · docs/FRONTEND_SECURITY_AUDIT.md)
