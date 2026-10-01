@@ -1,3 +1,4 @@
+successfully downloaded text file (SHA: e926443b8861e6e2836463d0aa7ac3d6e9fa342a)
 // layout.jsx — split from components.jsx (layered shared UI)
 import { Fragment, useEffect, useRef, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
@@ -487,7 +488,10 @@ function PublicNav({ activeLink = 'home' }) {
   );
 }
 
-function PublicFooter() {
+// Phase 3 — tumatanggap ng `clinic` prop (reactive, mula sa store); kapag
+// wala, bumabagsak sa window.HOSPITAL (na naka-sync mula sa store).
+function PublicFooter({ clinic }) {
+  const c = clinic && clinic.name ? clinic : window.HOSPITAL;
   return (
     <footer className="public-footer">
       {/* Always-on urgent-care line (NHS pattern: red is reserved for urgent
@@ -497,7 +501,7 @@ function PublicFooter() {
         <span><strong>Emergencies:</strong> go directly to the ER or call 911. Online booking is for scheduled visits only.</span>
       </div>
       <div>
-        <div>© 2026 {window.HOSPITAL.name} · {window.HOSPITAL.address} · {window.HOSPITAL.phone}</div>
+        <div>© 2026 {c.name} · {c.address} · {c.phone}</div>
         <div style={{ marginTop: 4 }}>Clinic hours: Mon–Fri 8:00 AM – 5:00 PM · Sat 9:00 AM – 1:00 PM · Closed on Sundays</div>
       </div>
       <div style={{ display: 'flex', gap: 16 }}>
@@ -717,3 +721,4 @@ function PageHeader({ title, subtitle, breadcrumbs, actions }) {
 }
 
 export { DesktopOnlyNotice, BrandMark, Sidebar, Topbar, AppShell, PublicNav, PublicFooter, NoticeBar, ClinicStatus, FaqAccordion, TestimonialCarousel, PageHeader };
+
