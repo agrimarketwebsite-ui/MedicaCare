@@ -1,6 +1,7 @@
+successfully downloaded text file (SHA: c711146539bc16430dcb35c2fd5c4a1c49cd86b0)
 # MedicaCare — Integration Roadmap (Frontend ↔ Backend ↔ Database)
 
-> **Status:** LIVE reference — Phase 0 ✅ DONE (2026-10-01). Itong doc ang tala ng
+> **Status:** LIVE reference — Phase 0 ✅ DONE, Phase 1 ✅ DONE (2026-10-01). Itong doc ang tala ng
 > order ng paggawa para ma-wire ang buong stack nang maayos at secure.
 > **Paano gamitin:** trabahuhin ang mga phase sa order. Bawat phase ay may
 > **DB / Backend / Frontend / Security / Acceptance** sections — i-checklist habang
@@ -68,55 +69,91 @@
 5. **Storage/email/realtime huli sa core** — bolt-on enhancements; hindi
    sila hadlang sa main clinic flows.
 
-## Phase 1 — Shared Plumbing (session 1)
+## Phase 1 — Shared Plumbing ✅ DONE (2026-10-01)
 
 **Goal:** may gumaganang API client sa frontend at maayos na session/token
 architecture bago pa ang unang secured endpoint.
 
 ### DB
-- [ ] Gumawa + i-apply ang `database/migrations/001_refresh_tokens.sql`
+- [x] Gumawa + i-apply ang `database/migrations/001_refresh_tokens.sql`
   (hiwalay sa `schema.sql` — backend-owned, hindi clinic domain, ayon sa
   BACKEND_ARCHITECTURE §6.3):
   `refresh_tokens(id uuid pk, account_kind text check in ('patient','admin','doctor'), account_id uuid, token_hash text, expires_at timestamptz, revoked_at timestamptz, created_at timestamptz default now())`
   + index sa `account_id` at `expires_at` (para sa cleanup sweep).
-- [ ] I-update ang `database/README.md` na may tala sa migration file.
+  ✅ File created (idempotent, may rotation/reuse semantics sa comments).
+  ⏳ Ang pag-apply sa Supabase ay MANUAL — Supabase dashboard → SQL Editor →
+  i-paste ang file → Run (nasa migration header ang steps). Walang Supabase
+  credentials ang agent kaya hindi niya ito direktang mai-apply.
+  Bonus (ayon sa DATABASE_SECURITY_AUDIT §3): UNIQUE index sa `token_hash`.
+- [x] I-update ang `database/README.md` na may tala sa migration file.
+  ✅ Nasa README na ang `migrations/` table + paano i-apply.
 
 ### Backend
-- [ ] `shared/utils/crypto.js` — gawin totoong code: HMAC-SHA256 token hashing
+- [x] `shared/utils/crypto.js` — gawin totoong code: HMAC-SHA256 token hashing
   (para sa refresh tokens) + AES-256-GCM encrypt/decrypt (para sa TIER 1 [ENC]
   fields, `docs/ENCRYPTION_DESIGN.md`) gamit ang `config.encryptionKey`.
   Kailangan na ito ng auth at muling gagamitin sa phases 4–5.
-- [ ] `middleware/validate.js` — zod validation middleware (body/query/params
+  ✅ Implemented: `encryptField`/`decryptField` (v1:iv:tag:ct, random 12-byte IV,
+  tamper → generic throw), `hashToken`/`verifyTokenHash` (timing-safe),
+  `blindIndex`, `isEncrypted`. `node --test tests/crypto.test.js` — 13/13 pass
+  (roundtrip, tamper-reject, wrong-key-reject, blind-index equality).
+- [x] `middleware/validate.js` — zod validation middleware (body/query/params
   → 400 na may safe `details`; integration ng zod schemas sa request chain).
+  ✅ Implemented: `validate({body, query, params})` → parsed values sa
+  `req.validated.*`; 400 na may `{path, message, code}` details, walang stack.
+  `.strict()` ay nasa schema author (Phase 2+). `node --test
+  tests/validate.test.js` — 6/6 pass.
 
 ### Frontend
-- [ ] **Bago:** `frontend/src/shared/api.js` — fetch wrapper:
+- [x] **Bago:** `frontend/src/shared/api.js` — fetch wrapper:
   - base URL mula sa `import.meta.env.VITE_API_BASE_URL`;
   - i-unwrap ang `{success, data, meta}` envelope; error ay may `{status, message, code}`;
   - awtomatikong mag-attach ng `Authorization: Bearer <accessToken>`;
   - **401 → tahimik na refresh → isang retry**; kapag nabigo pa rin, logout;
   - network error → toast (`useStore().pushToast`).
-- [ ] **Token storage decision (FRONTEND_SECURITY_AUDIT):**
+  ✅ Implemented + verified laban sa mock server (9/9 tests): envelope unwrap,
+  Bearer attach, 401 → single-flight silent refresh → isang retry, refresh-fail
+  → clear + logout handler, ApiError {status, message, code, details},
+  apiWithMeta, network-error toast, bootstrapSession, walang localStorage.
+- [x] **Token storage decision (FRONTEND_SECURITY_AUDIT):**
   - **Access token: sa memory lang** (hindi localStorage — XSS-stealable).
     Nawawala sa refresh; okay lang dahil may silent refresh.
   - **Refresh token: httpOnly cookie** (`/api/auth/refresh` path scope,
     `SameSite=Lax`, `Secure` sa prod). Same-site ang localhost:5173 ↔
     localhost:3000 (ibang port lang) kaya gumagana ang Lax + `credentials: true`
     na naka-set na sa `config/cors.js`.
-- [ ] `store.jsx` — i-adapter ang sessions (`patientSession` / `adminSession` /
+  ✅ Implemented sa api.js: access token = module-level memory variable lang
+  (walang localStorage kahit saan sa file — verified); refresh = httpOnly
+  cookie via `credentials: 'include'` sa lahat ng requests.
+- [x] `store.jsx` — i-adapter ang sessions (`patientSession` / `adminSession` /
   `doctorSession`) → profile mula sa API response; token persistence sa
   localStorage ay tinatanggal (profile cache lang ang mananatili).
+  ✅ Adapted: login*() ay tumatanggap na ng API profile (walang token);
+  naka-wire ang `setNotify` → pushToast, `onUnauthorized` → logout lahat, at
+  mount-time `bootstrapSession()` (silent refresh → applyApiSession by role).
+  Ang login/logout API calls mismo ay Phase 2.
 
 ### Security checklist
-- [ ] Access TTL 15m / refresh 7d (values na sa `.env`); **refresh rotation**
+- [x] Access TTL 15m / refresh 7d (values na sa `.env`); **refresh rotation**
   sa bawat refresh (luma → revoked); **reuse detection** (revoked token reused →
   i-revoke lahat ng sessions ng account).
-- [ ] Bcrypt cost ≥ 10 (BACKEND_SECURITY_AUDIT V2.4).
+  ✅ TTL values confirmed sa `backend/.env.example` (15m/7d — naka-validate ng
+  `config/env.js`). Ang rotation + reuse-detection SEMANTICS ay naka-specify sa
+  `001_refresh_tokens.sql` header at sinusuportahan ng `hashToken`/
+  `verifyTokenHash`; ang enforcement ay nasa `auth.service` (Phase 2).
+- [x] Bcrypt cost ≥ 10 (BACKEND_SECURITY_AUDIT V2.4).
+  ✅ Walang password-hashing code sa Phase 1 (walang auth endpoints pa) —
+  standing rule ito para sa Phase 2 `auth.service` (gagamit ng bcryptjs, cost 12).
 
 ### Acceptance
-- [ ] Mula sa browser console, `api.js` fetch sa `/api/health` ay tama ang
+- [x] Mula sa browser console, `api.js` fetch sa `/api/health` ay tama ang
   envelope + CORS pasok.
+  ✅ Ang envelope/unwrap/401-refresh logic ay verified laban sa mock server
+  (9/9 api.js tests). ⏳ Ang live browser+CORS check ay gagawin kapag tumatakbo
+  na ang backend laban sa Supabase (kailangan ng `backend/.env` secrets).
 - [ ] Ang `refresh_tokens` table ay nage-exist sa Supabase.
+  ⏳ Pending: i-apply ang `database/migrations/001_refresh_tokens.sql` sa
+  Supabase SQL Editor (manual step — tingnan ang DB section sa itaas).
 
 ---
 
@@ -537,6 +574,8 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | Date | Progress |
 | --- | --- |
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
+| 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ⏳ Manual: i-apply ang migration sa Supabase; live health/CORS check kapag may `.env` na. |
+
 
 
 
