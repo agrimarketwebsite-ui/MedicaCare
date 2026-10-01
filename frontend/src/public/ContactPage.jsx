@@ -1,7 +1,8 @@
+successfully downloaded text file (SHA: cfd34a1d9a6984c64e0e04e0a9b53a56ac85fb63)
 // ContactPage — public (split from screens-public.jsx)
 import { useState } from 'react';
 import { ClinicStatus, Field, Icon, PublicFooter, PublicNav, TextArea, TextInput, useStore } from '../shared/components.jsx';
-import { HOSPITAL } from '../shared/data.js';
+import { api, ApiError } from '../shared/api.js';
 import { HeroAurora, HeroTitle } from './hero.jsx';
 
 // ---------- Contact page ----------
@@ -9,10 +10,11 @@ function ContactPage() {
   const store = useStore();
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
+  const [sending, setSending] = useState(false);
 
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); };
 
-  const submit = (evt) => {
+  const submit = async (evt) => {
     evt.preventDefault();
     const e = {};
     if (!form.name.trim()) e.name = 'Please enter your name';
@@ -23,12 +25,35 @@ function ContactPage() {
     setErrors(e);
     if (Object.keys(e).length) return;
 
-    // Demo build — no backend; acknowledge via toast only
-    store.pushToast({
-      title: 'Message sent',
-      msg: `Thanks, ${form.name.trim().split(' ')[0]}! Our team will get back to you within 1–2 business days.`,
-    });
-    setForm({ name: '', email: '', message: '' });
+    // Phase 3 — tunay na POST sa /api/contact (ang name/email/message ay
+    // naka-encrypt sa DB bago i-save). Public endpoint: auth: false.
+    setSending(true);
+    try {
+      await api('/contact', {
+        method: 'POST',
+        auth: false,
+        body: { name: form.name.trim(), email: form.email.trim(), message: form.message.trim() },
+      });
+      store.pushToast({
+        title: 'Message sent',
+        msg: `Thanks, ${form.name.trim().split(' ')[0]}! Our team will get back to you within 1–2 business days.`,
+      });
+      setForm({ name: '', email: '', message: '' });
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 400 && Array.isArray(err.details)) {
+        const fe = {};
+        for (const d of err.details) {
+          if (d.path && !fe[d.path]) fe[d.path] = d.message;
+        }
+        setErrors(fe);
+      } else if (err instanceof ApiError && err.status === 429) {
+        store.pushToast({ kind: 'error', title: 'Too many messages', msg: 'Please wait a few minutes before sending another message.' });
+      } else {
+        store.pushToast({ kind: 'error', title: 'Message not sent', msg: 'Hindi makakonekta sa server. Please try again.' });
+      }
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -53,9 +78,9 @@ function ContactPage() {
         <div className="public-section-inner contact-cols">
           <div className="contact-info-list">
             {[
-              { icon: 'map-pin', title: 'Address', body: HOSPITAL.address },
-              { icon: 'phone', title: 'Phone', body: HOSPITAL.phone },
-              { icon: 'mail', title: 'Email', body: HOSPITAL.email },
+              { icon: 'map-pin', title: 'Address', body: store.clinic.address },
+              { icon: 'phone', title: 'Phone', body: store.clinic.phone },
+              { icon: 'mail', title: 'Email', body: store.clinic.email },
               { icon: 'clock', title: 'Hours', body: <>Mon–Sat: 7:00 AM – 8:00 PM · Sun: 8:00 AM – 5:00 PM<br />Emergency: 24/7</> },
             ].map(c => (
               <div key={c.title} className="contact-info-row">
@@ -86,7 +111,7 @@ function ContactPage() {
                 <TextArea rows={5} placeholder="How can we help you?" value={form.message}
                   onChange={e => update('message', e.target.value)} error={errors.message} />
               </Field>
-              <button type="submit" className="btn btn-primary">Send message</button>
+              <button type="submit" className="btn btn-primary" disabled={sending}>{sending ? "Sending…" : "Send message"}</button>
             </form>
           </div>
         </div>
@@ -114,7 +139,7 @@ function ContactPage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-              <Icon name="map-pin" size={14} /> {HOSPITAL.address}
+              <Icon name="map-pin" size={14} /> {store.clinic.address}
             </div>
             <a
               href="https://www.openstreetmap.org/?mlat=14.63000&mlon=121.03200#map=16/14.63000/121.03200"
@@ -128,9 +153,10 @@ function ContactPage() {
         </div>
       </section>
 
-      <PublicFooter />
+      <PublicFooter clinic={store.clinic} />
     </main>
   );
 }
 
 export { ContactPage };
+
