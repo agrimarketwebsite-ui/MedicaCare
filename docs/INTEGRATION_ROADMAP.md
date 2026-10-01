@@ -261,7 +261,7 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 
 ---
 
-## Phase 3 — Public Content + Directory (walang login)
+## Phase 3 — Public Content + Directory (walang login) — ✅ TAPOS (verified live 2026-10-02)
 
 **Goal:** ang lahat ng public pages ay nabubuhay na mula sa DB.
 
@@ -314,16 +314,25 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
   ✅ Verified: walang `dangerouslySetInnerHTML` sa mga binagong pages.
 
 ### Acceptance
-- [ ] Landing + Doctors page nagre-render mula sa totoong DB rows.
-  ⏳ USER VERIFICATION PENDING: `git pull`, patakbuhin ang backend+frontend,
-  buksan ang `#/` at `#/doctors` — dapat may laman ang departments/doctors
-  mula sa DB (hindi na "connecting…" placeholders).
-- [ ] Contact submission lumilitaw sa DB (encrypted fields) — i-verify sa
+- [x] Landing + Doctors page nagre-render mula sa totoong DB rows.
+  ✅ LIVE VERIFIED 2026-10-02: `#/` → 10 department chips mula sa DB;
+  `#/doctors` → "18 of 18 doctors" na may ★ rating + review count mula sa
+  `v_doctor_rating_averages`; `#/about` → stats (18 specialists, 10 departments)
+  galing sa DB. Screenshots confirmed ng user.
+- [x] Contact submission lumilitaw sa DB (encrypted fields) — i-verify sa
   Supabase table editor na ciphertext ang nasa [ENC] columns.
-  ⏳ USER VERIFICATION PENDING: mag-submit sa `#/contact`, tingnan sa Supabase
-  Table Editor → `contact_messages` — ang `name`/`email`/`message` ay `v1:...`
-  ciphertext. (Ang integration test `public.test.js` ay awtomatikong
-  nagpapatunay nito kapag tumatakbo ang `npm test`.)
+  ✅ LIVE VERIFIED 2026-10-02: ang integration test (`POST /contact → 201`)
+  ay nagpatunay na ang `name`/`email`/`message` ay `v1:` ciphertext sa DB
+  (walang plaintext leak), at naglinis pagkatapos — kaya empty ang table sa
+  Table Editor. `npm test`: **76/76 passed, 0 failed**.
+
+> **Phase 3 sign-off (2026-10-02):** lahat ng acceptance criteria ay verified
+> live — `npm test` 76/76 sa user machine (laban sa tunay na Supabase), at ang
+> browser checks (landing departments, doctors directory + ratings, about
+> stats, API endpoints) ay green ayon sa screenshots at API responses ng user.
+> Natagpuang isyu sa verification at naayos: 7 frontend files ang na-push na
+> may `ghfetch` header line (Vite parse error) — tinanggal at na-push ulit.
+> Phase 3 ay sarado; susunod ay Phase 4.
 
 ---
 
@@ -670,8 +679,12 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
   stories/testimonials + prefs), `window.DOCTORS`/`window.SPECIALTIES` sync,
   Landing/DoctorsPage/AboutPage/ContactPage/ServicesPage ← store,
   `DoctorRatingPill` API rating props, `PublicFooter clinic` prop, ContactPage
-  → tunay na POST. ⏳ Hinihintay ang user live verification (git pull +
-  browser) bago ang formal Phase 3 sign-off.
+  → tunay na POST.
+- **2026-10-02 — Phase 3 LIVE VERIFIED + formal sign-off:** `npm test` 76/76
+  sa user machine; landing/doctors/about nagre-render mula sa DB (screenshots);
+  contact encryption at-rest verified (`v1:` ciphertext). Naayos: 7 frontend
+  files na na-push na may `ghfetch` header line (Vite error) — tinanggal at
+  na-push ulit. Phase 3 ay TAPOS; susunod ay Phase 4.
 
 ## Changelog
 
