@@ -266,34 +266,64 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 **Goal:** ang lahat ng public pages ay nabubuhay na mula sa DB.
 
 ### Backend
-- [ ] `modules/settings` — **GET public** clinic info (`clinic_info` +
+- [x] `modules/settings` — **GET public** clinic info (`clinic_info` +
   `app_settings` public subset; ang admin write ay nasa Phase 6).
-- [ ] `modules/doctors` — public directory: list + filter by specialty +
+  ✅ Implemented 2026-10-02: `GET /api/settings/public` → `{ clinic, preferences }`.
+- [x] `modules/doctors` — public directory: list + filter by specialty +
   search; rating average galing sa `v_doctor_rating_averages` (laging may
   review count); specialties lookup.
-- [ ] `modules/stories` — approved testimonials lang (`status='approved'`).
-- [ ] `modules/contact` — **POST** submission; i-encrypt ang [ENC] fields
+  ✅ Implemented 2026-10-02: `GET /api/doctors` (specialty uuid/name, search sa
+  name+specialty, status, limit/offset), `GET /api/doctors/specialties`,
+  `GET /api/doctors/:id`; rating merge mula sa view.
+- [x] `modules/stories` — approved testimonials lang (`status='approved'`).
+  ✅ Implemented 2026-10-02: `GET /api/stories` — walang `patient_id`/`reviewed_by` (PII).
+- [x] `modules/contact` — **POST** submission; i-encrypt ang [ENC] fields
   (`contact_messages.name/email/message`) via `crypto.js`.
+  ✅ Implemented 2026-10-02: `POST /api/contact` + `contactLimiter` (5/15min);
+  encrypt bago i-save; 201 generic ack.
 
 ### Frontend
-- [ ] `Landing.jsx` — hero, stats, featured doctors, care finder ← settings/doctors API.
-- [ ] `DoctorsPage.jsx` — directory + specialty filter ← doctors API.
-- [ ] `ServicesPage.jsx`, `AboutPage.jsx` ← settings API (clinic identity).
-- [ ] `ContactPage.jsx` — form → POST; success toast.
-- [ ] `data.js` — ang `HOSPITAL`/`SPECIALTIES`/`DOCTORS` constants ay
+- [x] `Landing.jsx` — hero, stats, featured doctors, care finder ← settings/doctors API.
+  ✅ Implemented 2026-10-02: `store.doctors`/`store.specialties`/`store.clinic` (reactive).
+- [x] `DoctorsPage.jsx` — directory + specialty filter ← doctors API.
+  ✅ Implemented 2026-10-02: client-side filter sa API data; `DoctorRatingPill`
+  ay nagpapakita ng `avg_rating`/`rating_count` mula sa view; skeleton hanggang
+  mag-load ang API (2.5s fallback).
+- [x] `ServicesPage.jsx`, `AboutPage.jsx` ← settings API (clinic identity).
+  ✅ Implemented 2026-10-02: `store.clinic` + `PublicFooter clinic` prop.
+- [x] `ContactPage.jsx` — form → POST; success toast.
+  ✅ Implemented 2026-10-02: `POST /api/contact` (auth:false); server 400 →
+  field errors; 429 → rate-limit toast; `Sending…` disabled state.
+- [x] `data.js` — ang `HOSPITAL`/`SPECIALTIES`/`DOCTORS` constants ay
   gawing hydration targets (store.clinic ← API), hindi hardcoded.
+  ✅ Implemented 2026-10-02: store hydration sa mount (`apiOptional`, tahimik
+  kapag offline); `window.DOCTORS`/`window.SPECIALTIES` naka-sync para sa
+  direktang imports (`findDoctor`); `nmc.specialties` persisted.
 
 ### Security checklist
-- [ ] Public endpoints: read-only, walang PII leakage (TIER 3 plaintext lang —
+- [x] Public endpoints: read-only, walang PII leakage (TIER 3 plaintext lang —
   ENCRYPTION_DESIGN §1).
-- [ ] Contact POST: zod validation + rate limit + [ENC] encryption bago i-save.
-- [ ] XSS: React default escaping; **bawal `dangerouslySetInnerHTML`** sa
+  ✅ Verified: doctors=`GET` lang (walang [ENC] columns sa table); stories=
+  walang `patient_id`/`reviewed_by`; settings=public subset lang.
+- [x] Contact POST: zod validation + rate limit + [ENC] encryption bago i-save.
+  ✅ Verified: `contactSchema.strict()` (message 10–2000 = DB CHECK),
+  `contactLimiter` 5/15min, `encryptField` sa service; integration test ay
+  nagpapatunay na `v1:` ciphertext ang nasa DB.
+- [x] XSS: React default escaping; **bawal `dangerouslySetInnerHTML`** sa
   anumang DB-sourced text (FRONTEND_SECURITY_AUDIT).
+  ✅ Verified: walang `dangerouslySetInnerHTML` sa mga binagong pages.
 
 ### Acceptance
 - [ ] Landing + Doctors page nagre-render mula sa totoong DB rows.
+  ⏳ USER VERIFICATION PENDING: `git pull`, patakbuhin ang backend+frontend,
+  buksan ang `#/` at `#/doctors` — dapat may laman ang departments/doctors
+  mula sa DB (hindi na "connecting…" placeholders).
 - [ ] Contact submission lumilitaw sa DB (encrypted fields) — i-verify sa
   Supabase table editor na ciphertext ang nasa [ENC] columns.
+  ⏳ USER VERIFICATION PENDING: mag-submit sa `#/contact`, tingnan sa Supabase
+  Table Editor → `contact_messages` — ang `name`/`email`/`message` ay `v1:...`
+  ciphertext. (Ang integration test `public.test.js` ay awtomatikong
+  nagpapatunay nito kapag tumatakbo ang `npm test`.)
 
 ---
 
@@ -625,6 +655,23 @@ curl http://localhost:3000/api/health
 manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 
 ---
+
+## Changelog
+- **2026-10-02 — Phase 3 implemented (backend + frontend, na-push sa `main`):**
+  `modules/settings` (`GET /api/settings/public`), `modules/doctors`
+  (`GET /api/doctors`, `/specialties`, `/:id` + rating merge mula sa
+  `v_doctor_rating_averages`), `modules/stories` (`GET /api/stories`,
+  approved-only, walang PII), `modules/contact` (`POST /api/contact`,
+  `contactLimiter` 5/15min, [ENC] encryption bago i-save); mount sa
+  `routes/index.js`. Tests: `public.unit.test.js` (8 unit) +
+  `public.test.js` (10 integration, kasama ang ciphertext-at-rest check at
+  429 spam test) — 23/23 unit pasado sa scratch, lint malinis. Frontend:
+  `apiOptional` (quiet), store public hydration (clinic/doctors/specialties/
+  stories/testimonials + prefs), `window.DOCTORS`/`window.SPECIALTIES` sync,
+  Landing/DoctorsPage/AboutPage/ContactPage/ServicesPage ← store,
+  `DoctorRatingPill` API rating props, `PublicFooter clinic` prop, ContactPage
+  → tunay na POST. ⏳ Hinihintay ang user live verification (git pull +
+  browser) bago ang formal Phase 3 sign-off.
 
 ## Changelog
 
