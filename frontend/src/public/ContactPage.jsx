@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: cfd34a1d9a6984c64e0e04e0a9b53a56ac85fb63)
 // ContactPage — public (split from screens-public.jsx)
 import { useState } from 'react';
 import { ClinicStatus, Field, Icon, PublicFooter, PublicNav, TextArea, TextInput, useStore } from '../shared/components.jsx';
