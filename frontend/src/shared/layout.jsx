@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: e926443b8861e6e2836463d0aa7ac3d6e9fa342a)
 // layout.jsx — split from components.jsx (layered shared UI)
 import { Fragment, useEffect, useRef, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
