@@ -1,3 +1,12 @@
 // backend/modules/settings/setting.routes.js
-// Blueprint stub - walang code pa (tingnan ang docs/BACKEND_ARCHITECTURE.md).
-// Role: GET (public read ng clinic info) / PATCH (admin) clinic + preferences; binabasa din ng public footer/Contact + booking flow.
+// Phase 3 — public, read-only. Ang general apiLimiter (300/15min) ay sapat;
+// walang auth — ito ang binabasa ng landing at footer bago mag-login.
+
+import { Router } from 'express';
+import * as controller from './setting.controller.js';
+
+const router = Router();
+
+router.get('/public', controller.getPublicSettings);
+
+export default router;
