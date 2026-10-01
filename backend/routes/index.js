@@ -9,6 +9,10 @@ import { ok } from '../shared/utils/apiResponse.js';
 import { supabase } from '../config/db.js';
 import { config } from '../config/env.js';
 import authRoutes from '../modules/auth/auth.routes.js';
+import settingRoutes from '../modules/settings/setting.routes.js';
+import doctorRoutes from '../modules/doctors/doctor.routes.js';
+import storyRoutes from '../modules/stories/story.routes.js';
+import contactRoutes from '../modules/contact/contact.routes.js';
 
 const router = Router();
 
@@ -39,5 +43,12 @@ router.get(
 // Phase 2 — auth module (register/login/refresh/logout/forgot/reset).
 router.use('/auth', authRoutes);
 
+// Phase 3 — public content (read-only) + contact submission.
+router.use('/settings', settingRoutes);
+router.use('/doctors', doctorRoutes);
+router.use('/stories', storyRoutes);
+router.use('/contact', contactRoutes);
+
 export default router;
+
 
