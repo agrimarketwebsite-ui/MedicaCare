@@ -192,10 +192,11 @@ function App() {
       screen = <DoctorLogin />;
     } else if (!store.doctorSession) {
       screen = <DoctorLogin />;
-    } else if (!window.findDoctor(store.doctorSession.doctorId)) {
-      // The session points at a doctor the Admin console has removed from
-      // the directory — show the login with an explanation (the login screen
-      // clears the stale session in an effect) instead of bouncing silently
+    } else if ((window.DOCTORS || []).length > 0 && !window.findDoctor(store.doctorSession.doctorId)) {
+      // Phase 2: ang directory ay empty pa (Phase 5 pa ang doctors API) — ang
+      // check na ito ay gumagana lang kapag may laman ang directory (tulad ng
+      // original intent: session ng doctor na tinanggal ng Admin console).
+      // The login screen clears the stale session in an effect.
       screen = <DoctorLogin removed />;
     } else if (sub === 'patients') screen = <DoctorPatients />;
     else if (sub === 'week') screen = <DoctorWeekView />;
@@ -216,3 +217,4 @@ function App() {
 }
 
 export default App;
+

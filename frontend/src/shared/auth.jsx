@@ -144,7 +144,10 @@ function PwField({ label, required, error, help, value, onChange, autoComplete }
           value={value}
           onChange={onChange}
           autoComplete={autoComplete}
-          style={{ paddingRight: 40 }}
+          // Tandaan: ang `.input-group .input` CSS ay nagse-set ng
+          // padding-left:38px para sa left-icon inputs — walang left icon dito
+          // kaya ibalik sa normal na 12px para mag-align ang text sa ibang fields.
+          style={{ paddingRight: 40, paddingLeft: 12 }}
         />
         <button
           type="button"

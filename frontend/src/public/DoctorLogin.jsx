@@ -30,8 +30,9 @@ function DoctorLogin({ removed = false }) {
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); setAuthError(null); };
 
   // Phase 2 — POST /api/auth/login na may role:'doctor' (doctor_accounts table).
-  // Walang OTP step (prototype demo lang). Ang doctor name ay galing sa
-  // directory (Phase 5 pa ang doctors API) — fallback sa email.
+  // Walang OTP step (prototype demo lang). WALANG directory gate dito: ang
+  // doctor directory ay empty pa (Phase 5 pa ang doctors API), kaya ang API
+  // mismo ang source of truth ng account. Ang display name ay email muna.
   const submit = async (evt) => {
     evt.preventDefault();
     const e = {};
@@ -51,13 +52,7 @@ function DoctorLogin({ removed = false }) {
       });
       setAccessToken(data.accessToken);
       const p = data.profile;
-      const doctor = window.findDoctor ? window.findDoctor(p.doctor_id) : null;
-      if (!doctor) {
-        // Ang account ay valid pero wala na ang doctor sa directory
-        setAuthError('This doctor account is no longer active. Please contact the administrator.');
-        return;
-      }
-      store.loginDoctor({ ...p, doctorId: p.doctor_id, name: doctor.name, email: p.email });
+      store.loginDoctor({ ...p, doctorId: p.doctor_id, name: p.email, email: p.email });
       store.setRole('doctor');
       navigate('/doctor/dashboard');
     } catch (err) {
