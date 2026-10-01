@@ -1,3 +1,10 @@
 // backend/modules/stories/story.validation.js
-// Blueprint stub - walang code pa (tingnan ang docs/BACKEND_ARCHITECTURE.md).
-// Role: display name <= 40, quote 30-280 (tugma sa DB CHECK).
+// Phase 3 — query validation para sa public testimonials.
+
+import { z } from 'zod';
+
+export const listStoriesQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+});
+
+export default { listStoriesQuerySchema };
