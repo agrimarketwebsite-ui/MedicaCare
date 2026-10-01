@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: 350b734ff6ebf3cc3be01bc4670ff420ea23fa8d)
 // ServicesPage — public (split from screens-public.jsx)
 
 import { FaqAccordion, Icon, navigate, PublicFooter, PublicNav, useStore } from '../shared/components.jsx';
