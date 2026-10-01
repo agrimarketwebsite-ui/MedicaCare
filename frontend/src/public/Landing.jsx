@@ -1,7 +1,8 @@
+successfully downloaded text file (SHA: f68aeaac31cc26d084f403e1cc72b65cbc53624b)
 // Landing — public (split from screens-public.jsx)
 import { useEffect, useRef, useState } from 'react';
 import { ClinicStatus, DoctorAvatar, FaqAccordion, Icon, navigate, NoticeBar, PublicFooter, PublicNav, StatusBadge, TestimonialCarousel, useStore } from '../shared/components.jsx';
-import { APPOINTMENTS, CURRENT_PATIENT, DOCTORS, findDoctor, HOSPITAL, SPECIALTIES } from '../shared/data.js';
+import { APPOINTMENTS, CURRENT_PATIENT } from '../shared/data.js';
 import Magnet from '../shared/reactbits/Magnet.jsx';
 import ScrollVelocity from '../shared/reactbits/ScrollVelocity.jsx';
 import GlareHover from '../shared/reactbits/GlareHover.jsx';  // hero preview card only — the one deliberate hover flourish
@@ -30,7 +31,7 @@ function Landing() {
   const [pickedSymptom, setPickedSymptom] = useState(null);
   const pickedGuide = CARE_GUIDE.find(g => g.symptom === pickedSymptom) || null;
   const pickedDoctors = pickedGuide
-    ? DOCTORS.filter(d => d.specialty === pickedGuide.specialty && d.status === 'available').length
+    ? store.doctors.filter(d => d.specialty === pickedGuide.specialty && d.status === 'available').length
     : 0;
 
   // Mobile: the stacked full-width chips push the result panel below the
@@ -49,7 +50,7 @@ function Landing() {
 
   return (
     <main>
-      <NoticeBar phone={HOSPITAL.phone} />
+      <NoticeBar phone={store.clinic.phone} />
       <PublicNav activeLink="home" />
 
       {/* Landing-only photo hero (public-hero--photo): auto-crossfading
@@ -193,7 +194,7 @@ function Landing() {
                     We recommend our <span style={{ color: 'var(--primary)' }}>{pickedGuide.specialty}</span> department
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
-                    {DOCTORS.length === 0
+                    {store.doctors.length === 0
                       ? 'Our doctor directory is being connected to the hospital database — available specialists will appear here shortly.'
                       : pickedDoctors > 0
                         ? `${pickedDoctors} available specialist${pickedDoctors === 1 ? '' : 's'} right now. Bookings open as early as this week.`
@@ -250,11 +251,11 @@ function Landing() {
           <span className="section-kicker">Our departments</span>
           <h2>Departments</h2>
           <p className="public-section-sub">Tap a department to see its specialists.</p>
-          {SPECIALTIES.length > 0 ? (
+          {store.specialties.length > 0 ? (
             <div className="grid-4">
               {/* Arrow kept deliberately: it signals "this chip navigates to the
                   filtered doctors list", which is exactly where it goes (R-08) */}
-              {SPECIALTIES.map(s => (
+              {store.specialties.map(s => (
                 <button key={s} className="dept-chip" onClick={() => navigate(`/doctors?spec=${encodeURIComponent(s)}`)}>
                   {s}
                   <Icon name="arrow-right" size={14} className="dept-arrow" />
@@ -320,7 +321,7 @@ function Landing() {
         </div>
       </section>
 
-      <PublicFooter />
+      <PublicFooter clinic={store.clinic} />
     </main>
   );
 }
