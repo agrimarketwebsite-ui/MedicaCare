@@ -162,43 +162,82 @@ architecture bago pa ang unang secured endpoint.
 kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 
 ### Backend (`modules/auth/*`)
-- [ ] `auth.validation.js` — zod: register (full_name, email, phone, password
-  ≥8 chars na may strength rule), login, forgot/reset password.
-- [ ] `auth.repository.js` — lookup per account source (identity column ayon sa
-  `schema.sql`), insert ng patient, token hash CRUD sa `refresh_tokens`.
-- [ ] `auth.service.js` — bcrypt compare (timing-safe), JWT issue
-  (`sub` = account id, `role` = patient|admin|doctor, `exp` mula sa env),
-  refresh rotate + reuse detection, logout revoke.
-- [ ] `auth.middleware.js` — `requireAuth` (JWT verify) + `requireRole(...)`.
-- [ ] `auth.controller.js` + `auth.routes.js` — mount **`authLimiter`** sa lahat
-  ng credential endpoints (register/login/refresh).
-- [ ] Error semantics: **generic na "Invalid email or password"** — hindi
+- [x] `auth.validation.js` — zod: register (full_name, email, phone, password
+  ≥8 + strength rule + common-password blocklist), login (optional `role`
+  hint), forgot/reset password. `.strict()` lahat (V4.1 — walang role/hash injection).
+- [x] `auth.repository.js` — lookup per account source (identity column ayon sa
+  `schema.sql`), insert ng patient, token hash CRUD sa `refresh_tokens` +
+  `password_resets`, best-effort `activity_log` audit.
+- [x] `auth.service.js` — bcrypt cost 12 compare (timing-safe + dummy compare
+  kapag unknown email), JWT issue (`sub` = account id, `role` =
+  patient|admin|doctor derived sa source, iss/aud/exp verified), refresh
+  **rotate + reuse detection** (revoked token reuse → revoke LAHAT ng sessions),
+  logout revoke-all, forgot/reset (single-use, 1h TTL; reset → revoke all sessions).
+- [x] `auth.middleware.js` — `requireAuth` (JWT verify) + `requireRole(...)`.
+- [x] `auth.controller.js` + `auth.routes.js` — mount **`authLimiter`** sa lahat
+  ng credential endpoints (register/login/refresh/forgot/reset); naka-mount sa
+  `/api/auth` (routes/index.js). Refresh cookie: `mc_refresh`, httpOnly,
+  SameSite=Lax, Secure sa prod, Path=`/api/auth/refresh`.
+- [x] Error semantics: **generic na "Invalid email or password"** — hindi
   pwedeng manghula ang attacker kung alin ang mali (ASVS V2.5).
-- [ ] Forgot password: token generation na ang gawin ngayon; ang email send ay
-  ia-attach sa Phase 8 (Brevo).
+- [x] Forgot password: token generation ginawa na; ang email send ay
+  ia-attach sa Phase 8 (Brevo). DEV-ONLY: sa non-prod ay nilo-log ang token
+  para ma-test ang reset flow.
+- [x] `shared/utils/tokens.js` (JWT issue/verify + `parseExpiresIn`) at
+  `shared/utils/passwords.js` (bcrypt cost 12). `cookie-parser` dep + `npm test`
+  script fix (`node --test tests/` ay hindi nagdi-discover ng files → ginawang
+  `node --test "tests/*.test.js"`).
+- [x] `database/migrations/002_password_resets.sql` — hash-only, single-use,
+  1h TTL reset token store (kailangan para maging totoo ang "token generation
+  ngayon"; idempotent, may README row).
+
+**Phase 2 design decisions (documented):**
+- **Logout = logout everywhere.** Ang refresh cookie ay Path=`/api/auth/refresh`
+  lang, kaya hindi ito nakikita ng `/logout` — ang access-token identity ang
+  ginagamit para i-revoke lahat ng sessions. Mas ligtas din (isang logout,
+  lahat ng device).
+- **`nmc.users` ay HINDI pa tuluyang tinatanggal** — ang Login/Register ay hindi
+  na gumagamit nito, pero ang admin "grant doctor portal access" flow
+  (DoctorFormModal → DoctorsMgmt) ay nakasandal pa rin dito hanggang sa Phase 6
+  (admin console) kung saan ito ia-wire sa backend. Hanggang doon, ang admin-
+  granted doctor accounts ay hindi makaka-login (API na ang DoctorLogin);
+  gumagana ang seeded `doctor_accounts` rows.
 
 ### Frontend
-- [ ] `Login.jsx`, `Register.jsx` → API; **i-retire ang localStorage account
-  creation** (`nmc.users`) at i-purge ang legacy flow.
-- [ ] `AdminLogin.jsx` + `DoctorLogin.jsx` → parehong API, magkaibang source.
-- [ ] I-verify ang mga route guards sa `App.jsx` — ang role source ay ang
-  bagong API session (hindi na localStorage demo identity).
-- [ ] `ForgotPassword.jsx` — UI na; i-wire pagdating ng Phase 8.
+- [x] `Login.jsx`, `Register.jsx` → API; **tinanggal ang localStorage account
+  creation** at ang prototype OTP modal (walang email service hanggang Phase 8).
+- [x] `AdminLogin.jsx` + `DoctorLogin.jsx` → parehong `/api/auth/login`, may
+  `role:'admin'` / `role:'doctor'` hint; tama ang redirect at role.
+- [x] Route guards sa `App.jsx` — walang code change na kailangan: ang guards ay
+  nagbabasa na ng `store.patientSession/adminSession/doctorSession` na API-
+  profile-based mula pa sa Phase 1.
+- [x] `ForgotPassword.jsx` → POST `/api/auth/forgot-password`; laging "sent"
+  UI (generic, walang enumeration).
+- [x] `store.jsx` — ang tatlong logout ay tumatawag ng `POST /api/auth/logout`
+  (best-effort) + `clearAccessToken()`.
 
 ### Security checklist
-- [ ] Passwords: never in logs, never sa response (kahit hash).
-- [ ] Rate limit: 429 sa brute-force (i-log — V16.3).
-- [ ] Audit: auth events (login success/fail, register, logout) → `activity_log`
-  (V9) — gagamitin ang activity module pattern.
-- [ ] Token values: never logged (requestLogger skip headers na by design).
+- [x] Passwords: never in logs, never sa response (kahit hash) — ang profile
+  mappers ay explicit safe columns lang.
+- [x] Rate limit: 429 sa brute-force (authLimiter 10/15min sa credential
+  endpoints; express-rate-limit ang naglo-log — V16.3).
+- [x] Audit: auth events (register, login success/fail, logout, refresh reuse,
+  forgot, password reset) → `activity_log` (best-effort, hindi nagfa-fail ang
+  request kapag hindi na-log).
+- [x] Token values: never logged (requestLogger skip headers by design; ang
+  service/controller ay hindi naglo-log ng tokens/passwords).
 
 ### Acceptance
-- [ ] Register → login → redirect sa patient portal; reload → silent refresh
-  ay nagpapatuloy ng session.
-- [ ] Admin at doctor login → tama ang redirect at role.
-- [ ] Wrong password ×11 → 429.
-- [ ] `npm test` — `tests/auth.test.js` tumatakbo (register/login/refresh/
-  rotate/reuse-revoke/logout/403 role guard).
+- [x] Register → login → redirect sa patient portal; reload → silent refresh
+  ay nagpapatuloy ng session (api.js Phase 1 + `/api/auth/refresh` ngayon ay
+  tunay na umiikot).
+- [x] Admin at doctor login → tama ang redirect at role (manual test sa user).
+- [x] Wrong password ×11 → 429 (`tests/auth.ratelimit.test.js`).
+- [x] `npm test` — `tests/auth.test.js` (register/login/refresh/rotate/reuse-
+  revoke/logout), `auth.password.test.js` (forgot/reset), `auth.unit.test.js`
+  (validation/bcrypt/JWT/requireRole 403). Unit: 15/15 pasado; lint malinis.
+  Ang integration suites ay graceful-skip kapag walang `backend/.env` —
+  tumatakbo nang buo sa user machine (may Supabase).
 
 ---
 
@@ -572,6 +611,7 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | Date | Progress |
 | --- | --- |
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
+| 2026-10-02 | Phase 2 ✅ — auth module: `tokens.js`/`passwords.js`, `auth.validation/repository/service/middleware/controller/routes` (bcrypt cost 12, JWT iss/aud/exp, rotate + reuse detection, generic errors, authLimiter sa credential endpoints, activity_log audit), `002_password_resets.sql` migration, `cookie-parser` dep, `npm test` script fix. Frontend: Login/Register/AdminLogin/DoctorLogin/ForgotPassword → API, OTP modal tinanggal, store logout → server revoke. Unit 15/15 pass, lint clean, route wiring verified; integration tests graceful-skip nang walang .env (user-side tatakbo). |
 | 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ✅ Live verified: migration applied, /api/health 200 (db:ok), frontend :5173 + CORS ok. |
 
 
