@@ -1,7 +1,6 @@
 // DoctorsPage — public (split from screens-public.jsx)
 import { useEffect, useMemo, useState } from 'react';
 import { DoctorAvatar, DoctorRatingPill, DoctorStatusBadge, EmptyState, Icon, Modal, Pagination, PublicFooter, PublicNav, SelectInput, useStore } from '../shared/components.jsx';
-import { DOCTORS, SPECIALTIES } from '../shared/data.js';
 import Magnet from '../shared/reactbits/Magnet.jsx';
 import { HeroAurora, HeroTitle } from './hero.jsx';
 
@@ -12,16 +11,20 @@ const MOBILE_DOCTORS_PAGE_SIZE = 6;
 
 function DoctorsPage({ initialSpecialty = '' }) {
   const store = useStore();
-  // Simulated fetch — skeleton cards while "loading", same 600ms pattern as
-  // the patient Doctor Listing
+  // Skeleton cards habang naglo-load ang directory mula sa API (Phase 3);
+  // 2.5s fallback para hindi ma-stuck kapag offline ang backend
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
+  useEffect(() => {
+    if (store.doctors.length > 0) { setLoading(false); return; }
+    const t = setTimeout(() => setLoading(false), 2500);
+    return () => clearTimeout(t);
+  }, [store.doctors]);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   // Pre-filtered when navigated here with a specialty (e.g. #/doctors?spec=Cardiology
   // from the Landing care finder or department chips); defaults to "all".
   const [specialty, setSpecialty] = useState(
-    SPECIALTIES.includes(initialSpecialty) ? initialSpecialty : 'all'
+    store.specialties.includes(initialSpecialty) ? initialSpecialty : 'all'
   );
   const [avail, setAvail] = useState('all');
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_DOCTORS_QUERY).matches);
@@ -43,11 +46,11 @@ function DoctorsPage({ initialSpecialty = '' }) {
   // mounted (e.g. /doctors?spec=Cardiology → plain /doctors clears the filter).
   // Manual dropdown changes don't re-trigger this because the prop stays put.
   useEffect(() => {
-    setSpecialty(SPECIALTIES.includes(initialSpecialty) ? initialSpecialty : 'all');
+    setSpecialty(store.specialties.includes(initialSpecialty) ? initialSpecialty : 'all');
   }, [initialSpecialty]);
 
   const filtered = useMemo(() => (
-    DOCTORS.filter(d => {
+    store.doctors.filter(d => {
       if (query) {
         const hay = (d.name + ' ' + d.specialty).toLowerCase();
         if (!hay.includes(query.toLowerCase())) return false;
@@ -56,7 +59,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
       if (avail !== 'all' && d.status !== avail) return false;
       return true;
     })
-  ), [query, specialty, avail]);
+  ), [query, specialty, avail, store.doctors]);
 
   const visibleDoctors = isMobile
     ? filtered.slice((page - 1) * MOBILE_DOCTORS_PAGE_SIZE, page * MOBILE_DOCTORS_PAGE_SIZE)
@@ -72,7 +75,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
         <div className="public-hero-inner">
           <HeroTitle>Find a doctor</HeroTitle>
           <p className="public-hero-sub">
-            {DOCTORS.length} specialists on staff. Availability is updated in real time once you're logged in.
+            {store.doctors.length} specialists on staff. Availability is updated in real time once you're logged in.
           </p>
         </div>
       </section>
@@ -89,7 +92,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
               <div className="doctor-filter-field">
                 <SelectInput value={specialty} onChange={e => setSpecialty(e.target.value)}>
                   <option value="all">All specialties</option>
-                  {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                  {store.specialties.map(s => <option key={s} value={s}>{s}</option>)}
                 </SelectInput>
               </div>
               <div className="doctor-filter-field sm">
@@ -101,7 +104,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
                 </SelectInput>
               </div>
               <div className="doctor-filter-count">
-                <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> of {DOCTORS.length} doctors
+                <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> of {store.doctors.length} doctors
               </div>
             </div>
           </div>
@@ -173,7 +176,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
                     </div>
                   </div>
                   <div className="doctor-card-meta">
-                    <DoctorRatingPill ratings={store.ratings} doctorId={d.id} />
+                    <DoctorRatingPill ratings={store.ratings} doctorId={d.id} avg={d.rating} count={d.ratingCount} />
                     <DoctorStatusBadge status={d.status} />
                   </div>
                   <div className="doctor-card-meta">
@@ -286,9 +289,10 @@ function DoctorsPage({ initialSpecialty = '' }) {
         )}
       </Modal>
 
-      <PublicFooter />
+      <PublicFooter clinic={store.clinic} />
     </main>
   );
 }
 
 export { MOBILE_DOCTORS_QUERY, MOBILE_DOCTORS_PAGE_SIZE, DoctorsPage };
+
