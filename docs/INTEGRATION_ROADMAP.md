@@ -202,6 +202,14 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
   (admin console) kung saan ito ia-wire sa backend. Hanggang doon, ang admin-
   granted doctor accounts ay hindi makaka-login (API na ang DoctorLogin);
   gumagana ang seeded `doctor_accounts` rows.
+- **Doctor directory bridge:** ang `DOCTORS` directory ay empty pa (Phase 5 pa
+  ang doctors API) — kaya tinanggal ang `findDoctor` gate sa `DoctorLogin.jsx`
+  (ang API ang source of truth ng account) at ang `App.jsx` guard ay gumagana
+  lang kapag may laman ang directory. Ang portal ay nagpapakita ng "Unknown
+  doctor" fallback (graceful, hindi crash) hanggang sa Phase 5.
+- **PwField alignment fix:** ang `.input-group .input` CSS (padding-left:38px
+  para sa left-icon inputs) ay maling naa-apply sa password field na walang
+  left icon — ibinalik sa 12px.
 
 ### Frontend
 - [x] `Login.jsx`, `Register.jsx` → API; **tinanggal ang localStorage account
