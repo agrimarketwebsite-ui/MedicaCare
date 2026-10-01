@@ -81,9 +81,7 @@ architecture bago pa ang unang secured endpoint.
   `refresh_tokens(id uuid pk, account_kind text check in ('patient','admin','doctor'), account_id uuid, token_hash text, expires_at timestamptz, revoked_at timestamptz, created_at timestamptz default now())`
   + index sa `account_id` at `expires_at` (para sa cleanup sweep).
   ✅ File created (idempotent, may rotation/reuse semantics sa comments).
-  ⏳ Ang pag-apply sa Supabase ay MANUAL — Supabase dashboard → SQL Editor →
-  i-paste ang file → Run (nasa migration header ang steps). Walang Supabase
-  credentials ang agent kaya hindi niya ito direktang mai-apply.
+  ✅ Na-apply ng user sa Supabase SQL Editor (2026-10-01); verified sa Table Editor.
   Bonus (ayon sa DATABASE_SECURITY_AUDIT §3): UNIQUE index sa `token_hash`.
 - [x] I-update ang `database/README.md` na may tala sa migration file.
   ✅ Nasa README na ang `migrations/` table + paano i-apply.
@@ -148,12 +146,12 @@ architecture bago pa ang unang secured endpoint.
 ### Acceptance
 - [x] Mula sa browser console, `api.js` fetch sa `/api/health` ay tama ang
   envelope + CORS pasok.
-  ✅ Ang envelope/unwrap/401-refresh logic ay verified laban sa mock server
-  (9/9 api.js tests). ⏳ Ang live browser+CORS check ay gagawin kapag tumatakbo
-  na ang backend laban sa Supabase (kailangan ng `backend/.env` secrets).
-- [ ] Ang `refresh_tokens` table ay nage-exist sa Supabase.
-  ⏳ Pending: i-apply ang `database/migrations/001_refresh_tokens.sql` sa
-  Supabase SQL Editor (manual step — tingnan ang DB section sa itaas).
+  ✅ Verified live (2026-10-01): frontend :5173 at backend :3000 tumatakbo;
+  ang cross-origin `POST /api/auth/refresh` ay nakabalik ng JSON 404 (hindi
+  CORS error) — pumapasa ang CORS. Ang 404 mismo ay expected (auth endpoints
+  ay Phase 2). Envelope unwrap logic: 9/9 api.js mock-server tests.
+- [x] Ang `refresh_tokens` table ay nage-exist sa Supabase.
+  ✅ Na-apply ng user sa Supabase SQL Editor; verified sa Table Editor.
 
 ---
 
@@ -574,7 +572,7 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | Date | Progress |
 | --- | --- |
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
-| 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ⏳ Manual: i-apply ang migration sa Supabase; live health/CORS check kapag may `.env` na. |
+| 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ✅ Live verified: migration applied, /api/health 200 (db:ok), frontend :5173 + CORS ok. |
 
 
 
