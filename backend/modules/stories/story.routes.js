@@ -1,3 +1,13 @@
 // backend/modules/stories/story.routes.js
-// Blueprint stub - walang code pa (tingnan ang docs/BACKEND_ARCHITECTURE.md).
-// Role: POST /api/stories (patient, lalabas as pending), admin approve/reject/unpublish/restore, GET public (approved lang).
+// Phase 3 — public, read-only.
+
+import { Router } from 'express';
+import { validate } from '../../middleware/validate.js';
+import { listStoriesQuerySchema } from './story.validation.js';
+import * as controller from './story.controller.js';
+
+const router = Router();
+
+router.get('/', validate({ query: listStoriesQuerySchema }), controller.listStories);
+
+export default router;
