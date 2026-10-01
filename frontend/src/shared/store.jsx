@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
 import AnimatedContent from './reactbits/AnimatedContent.jsx';
-import { onUnauthorized, bootstrapSession, setNotify, api, clearAccessToken } from './api.js';
+import { onUnauthorized, bootstrapSession, setNotify, api, apiOptional, clearAccessToken } from './api.js';
 
 // ---------- App-wide store (kept simple, in-memory + localStorage for appointments/role) ----------
 const StoreCtx = createContext(null);
@@ -56,6 +56,26 @@ function migratedEmail(user) {
     : user;
 }
 
+// Phase 3 — API doctor shape → frontend shape (tugma sa inaasahan ng
+// DoctorsPage/Landing: d.name, d.specialty (name), d.exp, d.fee, d.photo,
+// d.rating / d.ratingCount mula sa v_doctor_rating_averages).
+function toFrontendDoctor(d) {
+  return {
+    id: d.id,
+    name: d.full_name,
+    specialty: d.specialty_name,
+    specialty_id: d.specialty_id,
+    status: d.status,
+    exp: d.years_of_experience,
+    fee: Number(d.consultation_fee),
+    room: d.room,
+    gender: d.gender,
+    photo: d.photo_url,
+    rating: d.avg_rating,
+    ratingCount: d.rating_count,
+  };
+}
+
 function StoreProvider({ children }) {
   purgeSeedRows();
   const [role, setRole] = useState(() => localStorage.getItem('nmc.role') || 'patient');
@@ -67,6 +87,18 @@ function StoreProvider({ children }) {
     return [];
   });
   const [doctors, setDoctors] = useState(window.DOCTORS);
+  // Phase 3 — specialties mula sa DB (mga pangalan lang; ang reactive source
+  // ay ang store, naka-sync sa window.SPECIALTIES para sa direktang imports)
+  const [specialties, setSpecialties] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('nmc.specialties'));
+      if (Array.isArray(saved) && saved.length) {
+        window.SPECIALTIES.push(...saved.filter((s) => !window.SPECIALTIES.includes(s)));
+        return saved;
+      }
+    } catch { /* fall through */ }
+    return [];
+  });
   const [patients, setPatients] = useState(window.PATIENTS);
   const [pendingBooking, setPendingBooking] = useState(null); // {doctorId, date, time}
   const [lastBookingId, setLastBookingId] = useState(null);
@@ -228,6 +260,49 @@ function StoreProvider({ children }) {
     bootstrapSession().then((data) => {
       if (!cancelled && data) applyApiSession(data.role, data.profile);
     });
+    // Phase 3 — public data hydration (walang login na kailangan). Best-effort:
+    // apiOptional ay tahimik kapag offline — mananatili ang cached/empty states.
+    apiOptional('/settings/public', { auth: false }).then((data) => {
+      if (cancelled || !data) return;
+      if (data.clinic) {
+        setClinic({
+          name: data.clinic.name || '',
+          short: data.clinic.short_name || '',
+          tagline: data.clinic.tagline || '',
+          phone: data.clinic.phone || '',
+          email: data.clinic.email || '',
+          address: data.clinic.address || '',
+          hours: data.clinic.hours || null,
+        });
+      }
+      if (data.preferences) {
+        setPrefs((p) => ({
+          ...p,
+          autoConfirm: data.preferences.auto_confirm_appointments,
+          slotInterval: String(data.preferences.slot_interval_minutes ?? p.slotInterval),
+          emailNewAppointments: data.preferences.email_admins_on_new_appointment,
+          remindPatients: data.preferences.remind_patients,
+        }));
+      }
+    });
+    apiOptional('/doctors?limit=100', { auth: false }).then((data) => {
+      if (cancelled || !data) return;
+      setDoctors((data.doctors || []).map(toFrontendDoctor));
+    });
+    apiOptional('/doctors/specialties', { auth: false }).then((data) => {
+      if (cancelled || !data) return;
+      setSpecialties((data.specialties || []).map((s) => s.name));
+    });
+    apiOptional('/stories?limit=10', { auth: false }).then((data) => {
+      if (cancelled || !data) return;
+      setTestimonials((data.stories || []).map((s) => ({
+        id: s.id,
+        quote: s.quote,
+        displayName: s.display_name,
+        status: 'approved',
+        created_at: s.created_at,
+      })));
+    });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -243,6 +318,20 @@ function StoreProvider({ children }) {
     Object.assign(window.HOSPITAL, clinic);
     try { localStorage.setItem('nmc.clinic', JSON.stringify(clinic)); } catch { /* private mode */ }
   }, [clinic]);
+  // Phase 3 — i-sync ang window.DOCTORS / window.SPECIALTIES para sa mga
+  // direktang import (findDoctor at iba pa); ang reactive source ay ang store.
+  // Tandaan: kopyahin muna — ang initial state AY ang window array mismo.
+  useEffect(() => {
+    const next = [...doctors];
+    window.DOCTORS.length = 0;
+    window.DOCTORS.push(...next);
+  }, [doctors]);
+  useEffect(() => {
+    const next = [...specialties];
+    window.SPECIALTIES.length = 0;
+    window.SPECIALTIES.push(...next);
+    try { localStorage.setItem('nmc.specialties', JSON.stringify(next)); } catch { /* private mode */ }
+  }, [specialties]);
   useEffect(() => {
     try { localStorage.setItem('nmc.prefs', JSON.stringify(prefs)); } catch { /* private mode */ }
   }, [prefs]);
@@ -309,6 +398,7 @@ function StoreProvider({ children }) {
     ratings, setRatings,
     testimonials, setTestimonials,
     doctors, setDoctors,
+    specialties, setSpecialties,
     patients, setPatients,
     pendingBooking, setPendingBooking,
     lastBookingId, setLastBookingId,
