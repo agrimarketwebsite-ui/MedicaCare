@@ -8,6 +8,7 @@ import asyncHandler from '../shared/utils/asyncHandler.js';
 import { ok } from '../shared/utils/apiResponse.js';
 import { supabase } from '../config/db.js';
 import { config } from '../config/env.js';
+import authRoutes from '../modules/auth/auth.routes.js';
 
 const router = Router();
 
@@ -35,5 +36,8 @@ router.get(
   }),
 );
 
-// TODO(module wiring): router.use('/auth', authRoutes) — una sa susunod na wave
+// Phase 2 — auth module (register/login/refresh/logout/forgot/reset).
+router.use('/auth', authRoutes);
+
 export default router;
+

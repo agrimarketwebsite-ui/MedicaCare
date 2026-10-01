@@ -6,6 +6,7 @@
 // para TAMA ang client IP na nakikita ng rate limiter (hindi lahat iisang IP).
 
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import corsMiddleware from './config/cors.js';
 import requestLogger from './middleware/requestLogger.js';
@@ -26,6 +27,7 @@ export function createApp() {
   // ~1.4MB encoded para sa 1MB file) ay route-specific limit kapag nai-implement
   // na (docs/STORAGE_DESIGN.md §3).
   app.use(express.json({ limit: '1mb' }));
+  app.use(cookieParser()); // kailangan ng /api/auth/refresh para basahin ang httpOnly cookie
   app.use(express.urlencoded({ extended: false }));
   app.use(requestLogger);
 
@@ -37,3 +39,4 @@ export function createApp() {
 }
 
 export default createApp;
+
