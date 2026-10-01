@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: aa713892d8ac0e5d40575753f43f7d7cedf2af2a)
 // AboutPage — public (split from screens-public.jsx)
 
 import { ClinicStatus, Icon, PublicFooter, PublicNav, useStore } from '../shared/components.jsx';
