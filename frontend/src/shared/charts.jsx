@@ -1,3 +1,4 @@
+successfully downloaded text file (SHA: 065783531234a706f817ae144b57c65f5fab7a24)
 // charts.jsx — split from components.jsx (layered shared UI)
 import { useEffect, useRef, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
@@ -127,8 +128,12 @@ function computeDoctorRating(ratings, doctorId) {
   return { count: list.length, avg: Math.round(avg * 10) / 10 };
 }
 
-function DoctorRatingPill({ ratings, doctorId, compact = false }) {
-  const { count, avg } = computeDoctorRating(ratings, doctorId);
+// Phase 3 — ang `avg`/`count` props ay galing sa API (v_doctor_rating_averages)
+// at nauuna sa local ratings kapag ibinigay; kung wala, local computation.
+function DoctorRatingPill({ ratings, doctorId, compact = false, avg: avgProp, count: countProp }) {
+  const computed = computeDoctorRating(ratings, doctorId);
+  const count = countProp ?? computed.count;
+  const avg = avgProp ?? computed.avg;
   if (!count) return <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>No ratings yet</span>;
   const label = `${count} ${compact ? 'rating' : 'patient rating'}${count === 1 ? '' : 's'}`;
   return (
@@ -146,3 +151,4 @@ function DoctorRatingPill({ ratings, doctorId, compact = false }) {
 }
 
 export { MiniBarChart, Sparkline, computeDoctorRating, DoctorRatingPill };
+
