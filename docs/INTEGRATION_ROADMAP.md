@@ -155,11 +155,18 @@ architecture bago pa ang unang secured endpoint.
 
 ---
 
-## Phase 2 — Auth Module 🔑 (una sa modules)
+## Phase 2 — Auth Module 🔑 (una sa modules) — ✅ TAPOS (verified live 2026-10-02)
 
 **Goal:** tatlong account source (`patients` self-register, `admins`,
 `doctor_accounts` admin-issued) — iisang JWT flow. Role claim ay derived sa
 kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
+
+> **Phase 2 sign-off (2026-10-02):** lahat ng acceptance criteria ay verified
+> live — `npm test` 59/59 sa user machine (laban sa tunay na Supabase), at ang
+> browser flows (register/login/reload/admin/doctor/forgot/logout) ay green
+> ayon sa backend logs. Mga natagpuang isyu sa verification at naayos: 429→500
+> rate-limiter bug, doctor-login directory gate, PwField padding. Phase 2 ay
+> sarado; susunod ay Phase 3.
 
 ### Backend (`modules/auth/*`)
 - [x] `auth.validation.js` — zod: register (full_name, email, phone, password
@@ -237,15 +244,20 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 
 ### Acceptance
 - [x] Register → login → redirect sa patient portal; reload → silent refresh
-  ay nagpapatuloy ng session (api.js Phase 1 + `/api/auth/refresh` ngayon ay
-  tunay na umiikot).
-- [x] Admin at doctor login → tama ang redirect at role (manual test sa user).
-- [x] Wrong password ×11 → 429 (`tests/auth.ratelimit.test.js`).
-- [x] `npm test` — `tests/auth.test.js` (register/login/refresh/rotate/reuse-
-  revoke/logout), `auth.password.test.js` (forgot/reset), `auth.unit.test.js`
-  (validation/bcrypt/JWT/requireRole 403). Unit: 15/15 pasado; lint malinis.
-  Ang integration suites ay graceful-skip kapag walang `backend/.env` —
-  tumatakbo nang buo sa user machine (may Supabase).
+  ay nagpapatuloy ng session.
+  ✅ LIVE VERIFIED 2026-10-02: backend logs — `POST /register 201`, duplicate
+  `409`, `POST /login 200` → portal, reload → naka-login pa rin.
+- [x] Admin at doctor login → tama ang redirect at role.
+  ✅ LIVE VERIFIED 2026-10-02: admin login `200` → admin console (backend logs);
+  doctor login — ang `findDoctor` directory gate ay tinanggal (ang directory ay
+  empty hanggang Phase 5; ang API ang source of truth), ang `App.jsx` guard ay
+  gumagana lang kapag may laman ang directory.
+- [x] Wrong password ×11 → 429.
+  ✅ LIVE VERIFIED 2026-10-02: `tests/auth.ratelimit.test.js` green; ang 429
+  handler bug (500 imbis na 429) ay naayos at na-verify.
+- [x] `npm test` — lahat ng auth tests tumatakbo.
+  ✅ LIVE VERIFIED 2026-10-02: **59/59 passed, 0 failed** sa user machine
+  (kasama ang 3 integration suites laban sa tunay na Supabase).
 
 ---
 
