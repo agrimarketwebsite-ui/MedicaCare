@@ -11,16 +11,6 @@ import { VisitNotesModal } from './VisitNotesModal.jsx';
 
 const MUTABLE = new Set(['pending', 'confirmed']);
 
-// Status accent para sa schedule-style rows — tugma sa StatusBadge semantics
-// (pending=amber, confirmed=blue, completed=green, cancelled=gray, no-show=red).
-const STATUS_ACCENT = {
-  pending: '#d97706',
-  confirmed: 'var(--primary)',
-  completed: '#059669',
-  cancelled: '#9ca3af',
-  'no-show': '#dc2626',
-};
-
 function DoctorDashboard() {
   const store = useStore();
   // Ang session name ay email (mula sa DoctorLogin) — gamitin ang directory
@@ -94,19 +84,17 @@ function DoctorDashboard() {
 
         <div className="stat-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12, marginBottom: 16 }}>
           {[
-            { label: 'Appointments today', value: appointments.length, icon: 'calendar-days', accent: 'var(--primary)', soft: 'var(--primary-soft)' },
-            { label: 'Up next', value: upcoming.length, icon: 'clock', accent: '#d97706', soft: '#fef3c7' },
-            { label: 'Completed', value: done.filter(a => a.status === 'completed').length, icon: 'check-circle', accent: '#059669', soft: '#d1fae5' },
+            { label: 'Appointments today', value: appointments.length, icon: 'calendar-days' },
+            { label: 'Up next', value: upcoming.length, icon: 'clock' },
+            { label: 'Completed', value: done.filter(a => a.status === 'completed').length, icon: 'check-circle' },
           ].map(s => (
-            <div key={s.label} className="card" style={{ borderTop: `3px solid ${s.accent}` }}>
+            <div key={s.label} className="card">
               <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 46, height: 46, borderRadius: 12, background: s.soft, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon name={s.icon} size={22} style={{ color: s.accent }} />
-                </div>
+                <Icon name={s.icon} size={22} style={{ color: 'var(--primary)' }} />
                 <div>
-                  <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.15 }}>
+                  <div style={{ fontSize: 22, fontWeight: 800 }}>
                     {loading
-                      ? <span className="skel" aria-hidden="true" style={{ width: 30, height: 26, display: 'inline-block', verticalAlign: 'middle' }} />
+                      ? <span className="skel" aria-hidden="true" style={{ width: 30, height: 24, display: 'inline-block', verticalAlign: 'middle' }} />
                       : s.value}
                   </div>
                   <div className="t-muted" style={{ fontSize: 12.5 }}>{s.label}</div>
@@ -122,7 +110,7 @@ function DoctorDashboard() {
             {loading ? (
               <div className="stack md" aria-hidden="true">
                 {[0, 1, 2].map(i => (
-                  <div key={i} className="card" style={{ background: 'var(--surface)', borderLeft: '4px solid var(--border)' }}>
+                  <div key={i} className="card" style={{ background: 'var(--surface)' }}>
                     <div className="card-body" style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
                       <div style={{ minWidth: 92 }}>
                         <span className="skel" style={{ width: 64, height: 15, display: 'block', marginBottom: 5 }} />
@@ -151,12 +139,11 @@ function DoctorDashboard() {
                   .map(a => {
                     const patientName = a.patient?.full_name || a.booked_for || 'Patient';
                     const actionable = MUTABLE.has(a.status);
-                    const accent = STATUS_ACCENT[a.status] || '#9ca3af';
                     return (
-                      <div key={a.id} className="card" style={{ background: 'var(--surface)', borderLeft: `4px solid ${accent}` }}>
+                      <div key={a.id} className="card" style={{ background: 'var(--surface)' }}>
                         <div className="card-body" style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
                           <div style={{ minWidth: 92 }}>
-                            <div style={{ fontWeight: 800, fontSize: 15, color: accent }}>{fmtTime12(a.start_time)}</div>
+                            <div style={{ fontWeight: 800, fontSize: 15 }}>{fmtTime12(a.start_time)}</div>
                             <div className="t-muted" style={{ fontSize: 12 }}>to {fmtTime12(a.end_time)}</div>
                           </div>
                           <div style={{ flex: 1, minWidth: 180 }}>
