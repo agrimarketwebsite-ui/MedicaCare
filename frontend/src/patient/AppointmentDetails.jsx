@@ -103,8 +103,10 @@ function AppointmentDetails({ apptId }) {
     photo: dirDoctor?.photo,
   };
   const cancellable = appt.status === 'pending' || appt.status === 'confirmed';
-  const hasRated = (store.ratings || []).some(r => r.appointmentId === appt.id);
   const myRating = (store.ratings || []).find(r => r.appointmentId === appt.id);
+  // Ang API `rated` flag ang source of truth (gumagana cross-device); ang
+  // local record ay dagdag lang — ito ang may stars/comment na maipapakita.
+  const hasRated = Boolean(appt.rated) || Boolean(myRating);
 
   const doReschedule = async () => {
     if (!resSlot) return;
@@ -297,6 +299,10 @@ function AppointmentDetails({ apptId }) {
                       {myRating.comment && <p className="t-muted" style={{ fontSize: 13, margin: 0, lineHeight: 1.55 }}>{myRating.comment}</p>}
                       {myRating.createdAt && <div className="t-help">Submitted {window.formatDate(String(myRating.createdAt).slice(0, 10))}</div>}
                     </>
+                  ) : hasRated ? (
+                    <p className="t-muted" style={{ fontSize: 13, margin: 0, lineHeight: 1.55 }}>
+                      You rated this visit. Thank you!
+                    </p>
                   ) : (
                     <>
                       <p className="t-muted" style={{ fontSize: 13, margin: 0, lineHeight: 1.55 }}>

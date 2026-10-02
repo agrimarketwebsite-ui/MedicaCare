@@ -47,6 +47,9 @@ function AppointmentHistory() {
   // after a successful POST, enforced server-side with 409)
   const [rateAppt, setRateAppt] = useState(null);
   const hasRated = (apptId) => (store.ratings || []).some(r => r.appointmentId === apptId);
+  // Ang API `rated` flag ang source of truth (cross-device); ang local
+  // record ay para lang sa rating na ginawa sa device/session na ito.
+  const isRated = (a) => Boolean(a.rated) || hasRated(a.id);
   // Column sorting (guideline 18) — default stays newest-first by date
   const [sortKey, setSortKey] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
@@ -164,7 +167,7 @@ function AppointmentHistory() {
             </SelectInput>
           </div>
 
-          {filtered.length === 0 ? (
+          {!loading && filtered.length === 0 ? (
             <EmptyState icon="calendar-search" title={appts.length === 0 ? 'No appointments yet' : 'No appointments match your filters'}
               message={appts.length === 0 ? 'Book your first appointment with one of our specialists.' : 'Try changing your filters or search terms.'}
               actions={appts.length === 0
@@ -234,7 +237,7 @@ function AppointmentHistory() {
                           <td className="col-actions" data-label="Actions">
                             <div className="appt-actions">
                               <button className="btn btn-ghost sm" onClick={() => navigate('/patient/appointment/' + a.id)}>View details</button>
-                              {a.status === 'completed' && !hasRated(a.id) && (
+                              {a.status === 'completed' && !isRated(a) && (
                                 <button className="btn btn-primary sm" onClick={() => setRateAppt(a)}><Icon name="star" size={13} /> Rate visit</button>
                               )}
                               {cancellable && (

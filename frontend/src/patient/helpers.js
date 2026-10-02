@@ -166,6 +166,7 @@ function toFrontendAppt(a) {
     endTime: a.end_time ? time24(a.end_time) : '',
     duration: a.duration_minutes,
     status: a.status,
+    rated: Boolean(a.rated),
     reason: a.reason,
     bookedFor: a.booked_for,
     contact: a.contact_number,
@@ -251,5 +252,5 @@ function buildRecordsHTML(patient, records, meds, labs, bills) {
 // Patient screens
 // ============================================================
 
-export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, buildRecordsHTML, time24, fmtTime12, nextDays, toFrontendAppt, time24Value };
+export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, buildRecordsHTML, time24, fmtTime12, nextDays, toFrontendAppt, time24Value, downloadFile };
 
