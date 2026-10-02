@@ -335,7 +335,7 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 
 ---
 
-## Phase 4 — Patient Portal Core (profile + appointments)
+## Phase 4 — Patient Portal Core (profile + appointments) — ✅ TAPOS (verified live 2026-10-02)
 
 **Goal:** booking end-to-end — ang pinaka-critical na clinic path. Dito
 inaaktibo ang [ENC] PHI fields at ang slot logic.
@@ -385,16 +385,36 @@ inaaktibo ang [ENC] PHI fields at ang slot logic.
   `fn_available_slots` — oras na wala sa availability ay 409).
 
 ### Acceptance
-- [ ] Book → visible agad sa history + status timeline; reschedule/cancel
-  gumagana; double-booking attempt → 409. (PENDING: IVAN live verification —
-  code + unit tests tapos na.)
-- [ ] Patient A HINDI makikita ang appointment ni Patient B (404/403) —
-  i-test gamit ang dalawang account. (PENDING: IVAN live verification;
-  ownership tests nasa `appointments.unit.test.js`.)
+- [x] Book → visible agad sa history + status timeline; reschedule/cancel
+  gumagana; double-booking attempt → 409.
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): booking end-to-end + confirmation
+  `AP-xxxxxx`, history + details timeline, reschedule, cancel, proxy
+  booking (booked_for = family member), slot double-booking → disabled sa
+  UI + 409 sa API, patient-level overlap guard (ibang doctor, parehong
+  oras, parehong tao → 409 "You already have an appointment at this
+  time."; family member at back-to-back slots ay pinapayagan).
+- [x] Patient A HINDI makikita ang appointment ni Patient B (404/403) —
+  i-test gamit ang dalawang account.
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): dalawang account — walang leakage;
+  integration tests: read/cancel/reschedule ng iba → 404, list ay
+  self-scoped.
 - [x] `npm test` — `tests/appointments.test.js` (conflict, race, ownership):
-  **47/47 pass** sa scratch (24 bagong unit tests; integration suite ay
-  graceful-skip nang walang .env — tatakbo sa user machine laban sa tunay
-  na Supabase).
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): **131/131 passed, 0 failed** sa user
+  machine laban sa tunay na Supabase (kasama ang race test: eksaktong
+  isang 201 + isang 409, never 500; ciphertext-at-rest; ratings guard;
+  overlap guard).
+
+> **✅ PHASE 4 COMPLETE — formal sign-off 2026-10-02.** Live-verified ni
+> IVAN sa browser + `npm test` 131/131. Mga fix round na kasama sa
+> sign-off: (1) AppointmentDetails blank page (`downloadFile` hindi
+> naka-re-export sa `helpers.js` — lazy chunk link error); (2) `rated`
+> flag sa appointment DTOs (Rate button ay nawawala kapag rated na);
+> (3) My Appointments loading skeleton (loading check bago ang
+> empty-state); (4) tolerant `decryptRow` (seeded `v1:` values na hindi
+> gawa ng live key ay hindi na nag-500); (5) patient-level overlap guard;
+> (6) BookAppointment — ibinalik ang original full form (doctor/date/time
+> sa loob ng page, API slots; draft ay pre-fill lang). Susunod: Phase 5 —
+> HUWAG simulan nang walang explicit na go ni IVAN.
 
 ---
 
@@ -680,6 +700,16 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 ---
 
 ## Changelog
+- **2026-10-02 — Phase 4 LIVE VERIFIED + formal sign-off:** `npm test`
+  **131/131** sa user machine (tunay na Supabase); browser acceptance ni
+  IVAN green: profile CRUD + [ENC] ciphertext-at-rest, family CRUD,
+  booking (slots, proxy, `AP-xxxxxx`), history/details timeline,
+  reschedule, cancel, double-booking 409 + patient-overlap guard,
+  ratings (one-per-appointment, `rated` flag), BOLA dalawang account
+  (walang leakage). Fix rounds bago ang sign-off: details-page blank
+  (`downloadFile` export), skeleton order, tolerant `decryptRow`,
+  overlap guard, BookAppointment full-form restore. Phase 4 ay TAPOS;
+  susunod ay Phase 5 (Doctor Portal) — hintayin ang go ni IVAN.
 - **2026-10-02 — Phase 4 implemented (backend + frontend, code-complete —
   pending live verification):** `modules/patients` (GET/PUT own profile,
   [ENC] encrypt-on-write/decrypt-on-read ng `date_of_birth`/`blood_type`/
@@ -701,9 +731,8 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
   untouched), `patient/helpers.js`, `RatingModal.jsx`, Profile/DoctorAvailability/
   BookAppointment/BookingConfirmation/AppointmentDetails/AppointmentStatus/
   AppointmentHistory/PatientDashboard/DoctorListing ← tunay na API. FIX bago
-  i-push: gender select `M/F/O` → backend enum `male/female/other`. Hindi pa
-  tapos ang Phase 4 — naghihintay ng IVAN live verification bago ang formal
-  sign-off.
+  i-push: gender select `M/F/O` → backend enum `male/female/other`. (Ang
+  live verification at formal sign-off ay nasa entry sa itaas nito.)
 - **2026-10-02 — Phase 3 implemented (backend + frontend, na-push sa `main`):**
   `modules/settings` (`GET /api/settings/public`), `modules/doctors`
   (`GET /api/doctors`, `/specialties`, `/:id` + rating merge mula sa
@@ -731,6 +760,7 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
 | 2026-10-02 | Phase 2 ✅ — auth module: `tokens.js`/`passwords.js`, `auth.validation/repository/service/middleware/controller/routes` (bcrypt cost 12, JWT iss/aud/exp, rotate + reuse detection, generic errors, authLimiter sa credential endpoints, activity_log audit), `002_password_resets.sql` migration, `cookie-parser` dep, `npm test` script fix. Frontend: Login/Register/AdminLogin/DoctorLogin/ForgotPassword → API, OTP modal tinanggal, store logout → server revoke. Unit 15/15 pass, lint clean, route wiring verified; integration tests graceful-skip nang walang .env (user-side tatakbo). FIX 2026-10-02: ang rate-limiter 429 handler ay nagbabalik ng 500 (`next(string)` bug sa Phase 0 `rateLimiter.js` — ginawang `next(ApiError.tooManyRequests())`); + `auth.test.js` harness fix (hindi pwedeng lagyan ng properties ang frozen module namespace — ginawang local `state`). |
 | 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ✅ Live verified: migration applied, /api/health 200 (db:ok), frontend :5173 + CORS ok. |
+
 
 
 
