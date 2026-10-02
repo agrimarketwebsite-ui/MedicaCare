@@ -457,47 +457,114 @@ inaaktibo ang [ENC] PHI fields at ang slot logic.
 
 ---
 
-## Phase 5 — Doctor Portal
+## Phase 5 — Doctor Portal — ✅ TAPOS (verified live 2026-10-02)
 
 **Goal:** kumpleto ang appointment lifecycle sa doctor side (schedule →
 complete visit / no-show → notes → records → feedback).
 
 ### Backend
-- [ ] `modules/doctors` — own schedule (weekly availability editor sa
-  `doctor_weekly_availability`), own profile view; portal-access grant /
-  reset / revoke ng admin ay nasa Phase 6 (bcrypt hashing sa
-  `doctor.service`).
-- [ ] `modules/appointments` (doctor-scoped) — today/week views,
-  complete visit (gumagawa ng `medical_records` row) + no-show status.
-- [ ] `modules/records` — write `medical_records` / `lab_results` /
-  `medications` (LAHAT may [ENC] fields — schema registry); doctor-scoped
-  read ng pasyenteng na-attendan niya.
-- [ ] `modules/ratings` (doctor view) — `visit_ratings` ng sariling visits +
-  `v_doctor_rating_averages`.
+- [x] `modules/doctors` — own profile (`GET /me/profile`) + weekly
+  availability CRUD (`doctor_weekly_availability`; nakakaapekto sa patient
+  booking slots); auth refresh: null profile → 401 (hindi 500).
+- [x] `modules/appointments` (doctor-scoped) — today/week/list/detail,
+  complete visit (pending/confirmed → completed; gumagawa ng Consultation
+  `medical_records` row; repeat → 409), no-show (→ no-show + slot
+  napapalaya), `my-patients` aggregation (non-cancelled appointments).
+  Kritikal: ang doctor JWT `sub` ay `doctor_accounts.id` — nire-resolve sa
+  `doctors.id` via `resolveDoctorId()` bago ang lahat ng queries (BOLA).
+- [x] `modules/records` — write/read `medical_records` / `lab_results` /
+  `medications` (LAHAT may [ENC]: title/summary, test_name/findings,
+  name/dose/instructions); doctor-scoped read — pasyenteng may
+  doctor-patient relation lang (hindi buong directory); amend ay sariling
+  record lang (→ 404 kung hindi kanya).
+- [x] `modules/ratings` (doctor view) — sariling `visit_ratings` +
+  average/count mula sa `v_doctor_rating_averages`.
 
 ### Frontend
-- [ ] `DoctorDashboard.jsx` — today's schedule, complete visit / no-show.
-- [ ] `DoctorWeekView.jsx` + `WeekGrid.jsx` — week view.
-- [ ] `CompleteVisitModal.jsx` + `VisitNotesModal.jsx` — notes + records.
-- [ ] `DoctorPatients.jsx` + `PatientHistoryModal.jsx` — visit history +
-  amended notes.
-- [ ] `DoctorFeedback.jsx` — ratings page.
+- [x] `DoctorDashboard.jsx` — today's schedule (Manila date), stat cards,
+  complete visit / no-show / view notes actions; skeleton loading.
+- [x] `DoctorWeekView.jsx` + `WeekGrid.jsx` — Mon–Sun week grid + weekly
+  availability editor (add 201 / duplicate 409 / edit 200 / delete 204
+  via ConfirmModal); PageSpinner loading.
+- [x] `CompleteVisitModal.jsx` + `VisitNotesModal.jsx` — visit notes
+  (10–500 chars validation) + consultation record view/amend; centered
+  spinner loading.
+- [x] `DoctorPatients.jsx` + `PatientHistoryModal.jsx` — my-patients list
+  (search) + visit history + records/labs/meds; ang Amend button ay sa
+  sariling records lang ng doctor (BOLA UX gating); skeleton + centered
+  spinner loading.
+- [x] `DoctorFeedback.jsx` — sariling ratings + average/count; skeleton
+  loading.
 
 ### Security checklist
-- [ ] Doctor sees OWN appointments/patients ONLY (`doctor_id = JWT.sub`).
-- [ ] Revoked `doctor_accounts` → login fail + existing tokens invalidated
-  (revoke refresh rows; access token mawawala in ≤15m).
-- [ ] [ENC] sa lahat ng records fields; doctor lang ang may access sa
-  pasyenteng na-attendan niya (hindi buong directory).
+- [x] Doctor sees OWN appointments/patients ONLY — lahat ng endpoints ay
+  naka-scope sa `resolveDoctorId(JWT.sub)`; Doctor B → 404 sa data ni
+  Doctor A (automated tests + manual PowerShell verification: appointment
+  detail, complete-visit attempt, at record-amend attempt → pawang 404).
+- [x] Revoked `doctor_accounts` → refresh ay 401 (null-profile guard sa
+  `auth.service.refresh`); login fail. Ang admin-side grant/reset/revoke
+  UI ay Phase 6.
+- [x] [ENC] sa lahat ng records fields (ciphertext-at-rest verified);
+  doctor lang ang may access sa pasyenteng na-attendan niya.
 
 ### Acceptance
-- [ ] Complete visit → `medical_records` row + status='completed' + rating
+- [x] Complete visit → `medical_records` row + status='completed' + rating
   prompt available sa patient.
-- [ ] No-show → slot napapalaya (hindi naka-block sa
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): pending/confirmed → Complete visit
+  (notes 10–500) → completed + Consultation record; repeat → 409;
+  notes <10 chars → validation error. Ang record ay nakikita sa
+  My patients → visit history; ang patient-side Rate button ay Phase 4
+  verified + ratings integration tests green.
+- [x] No-show → slot napapalaya (hindi naka-block sa
   `uq_appointments_active_slot`).
-- [ ] Doctor B hindi makikita ang schedule/pasyente ni Doctor A.
-- [ ] `npm test` — `tests/doctors.test.js`, `tests/records.test.js`,
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): pending → No-show → status
+  no-show (browser). Ang slot-release mechanism ay automated-test
+  verified ("No-show releases the slot" — 167/167 suite). Ang manual
+  patient-side rebook (201) ng seeded demo slot ay naka-schedule sa
+  araw ng demo appointment (d1: 2026-10-03, d2: 2026-10-05) — hindi
+  blocker sa sign-off.
+- [x] Doctor B hindi makikita ang schedule/pasyente ni Doctor A.
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): manual PowerShell test bilang
+  doctor2 — sariling appointments → 200; d1 appointment detail,
+  d1 complete-visit attempt, d1 record-amend attempt → pawang 404.
+  Integration tests: BOLA 404 cases green.
+- [x] `npm test` — `tests/doctors.test.js`, `tests/records.test.js`,
   `tests/ratings.test.js`.
+  ✅ LIVE VERIFIED 2026-10-02 (IVAN): **167/167 passed, 0 failed,
+  0 skipped** sa user machine laban sa tunay na Supabase (buong suite:
+  Phase 1–4 regression + doctor profile/availability CRUD, today/week,
+  complete/no-show, ratings BOLA, records [ENC] at-rest, lab/meds
+  encryption, doctor-patient relation, patient-role 403).
+
+> **✅ PHASE 5 COMPLETE — formal sign-off 2026-10-02.** Live-verified ni
+> IVAN sa browser (doctor@medicacare.ph + doctor2@medicacare.ph) + `npm
+> test` 167/167. Walang migration, walang `.env` change. Mga fix bago/
+> habang ang walkthrough:
+> 1. Greeting ay email ("Good day, doctor@medicacare.ph") → tunay na
+>    pangalan mula sa directory, tulad ng sidebar (`9d6489dd`).
+> 2. F5 ay nagbabalik sa doctor login — ang silent-refresh restore ay
+>    nawawalan ng `doctorId` (snake/camel mismatch) → normalize sa
+>    `applyApiSession` (`9f6124bb`); VERIFIED — paulit-ulit na F5 ay
+>    nananatili sa portal.
+> 3. Availability delete ay native `window.confirm` → tunay na
+>    `ConfirmModal` (`2610ebbb`); VERIFIED.
+> 4. Amend button ay nakikita sa records ng ibang doctor → Save ay
+>    404 lang ("Medical record not found" — tamang BOLA behavior);
+>    ngayon ang button ay sa sariling records lang (`2610ebbb`); VERIFIED.
+> 5. Loading states sa lahat ng 5 pages: skeletons (dashboard/patients/
+>    feedback) + `PageSpinner` (week) + centered circle spinners (history
+>    modal, visit-notes modal) (`79ed607d`, `827d8899`); VERIFIED.
+> 6. Stale sidebar badge ("Today's schedule 0") — bumibilang mula sa
+>    legacy seed store, hindi sa API → tinanggal (`82c240aa`); VERIFIED.
+> 7. UI polish attempt (stat accents, status rails, compact week grid) —
+>    ni-revert ayon kay IVAN (`83d157d9` → `c0325624`).
+> 8. Demo seed `database/seeds/doctor_demo_appointments.sql` (idempotent,
+>    Manila-today aware) — 4 appointments bawat doctor (pending,
+>    confirmed, completed+record, future no-show candidate) para sa
+>    manual testing (`2757c329`); pangalawang doctor account
+>    (doctor2@medicacare.ph → Dr. Rafael Domingo, Pediatrics) para sa
+>    BOLA manual test.
+> Susunod: Phase 6 — HUWAG simulan nang walang explicit na go ni IVAN.
 
 ---
 
@@ -739,6 +806,23 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 ---
 
 ## Changelog
+- **2026-10-02 — Phase 5 LIVE VERIFIED + formal sign-off:** `npm test`
+  **167/167 passed, 0 failed, 0 skipped** sa user machine (tunay na
+  Supabase); browser walkthrough ni IVAN green: doctor login, Today's
+  schedule (Manila date, patient/time/status, stats), Complete visit
+  (409 repeat, <10 chars validation), No-show, This week grid,
+  availability editor (add 201 / duplicate 409 / edit 200 / delete 204
+  + patient slots nagbabago), My patients (history + records/labs/meds),
+  Patient feedback (average/count), Amend notes (na-save sa consultation
+  record), BOLA manual (doctor2 → d1 data pawang 404). Fix bago/habang
+  walkthrough: greeting name (hindi email), F5 doctorId normalize (hindi
+  na bumabalik sa login), delete ConfirmModal (hindi window.confirm),
+  Amend button gating (sariling records lang), loading states (skeletons
+  + spinners sa 5 pages), stale sidebar badge tinanggal, UI polish
+  ni-revert ayon kay IVAN. Demo seed
+  `database/seeds/doctor_demo_appointments.sql` (idempotent) + doctor2
+  account para sa manual testing. Walang migration, walang `.env`
+  change. Phase 5 ay TAPOS; susunod ay Phase 6 — hintayin ang go ni IVAN.
 - **2026-10-02 — Phase 1–4 regression sweep SARADO + Phase 4 ganap na TAPOS:**
   ni-re-test ni IVAN ang buong Phase 1–4 sa bagong account; 8 isyu natagpuan
   at lahat naayos/na-push/na-verify: (1) F5 silent-refresh logout + sidebar
