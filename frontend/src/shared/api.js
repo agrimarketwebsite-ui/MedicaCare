@@ -207,10 +207,76 @@ export async function apiWithMeta(path, opts = {}) {
   return { data: payload.data, meta: payload.meta };
 }
 
+// ---------------------------------------------------------------------------
+// Phase 4 — Patient Portal Core endpoints. Lahat ay dumadaan sa api()
+// (Bearer + silent refresh), kaya authFetch na rin ang mga ito. Ang envelope
+// ay { success, data }; bawat helper ay nag-u-unwrap ng data key nito.
+// ---------------------------------------------------------------------------
+
+/** GET /api/patients/me → patient profile ([ENC] fields ay decrypted na). */
+export const getProfile = () => api('/patients/me').then((d) => d.patient);
+
+/** PUT /api/patients/me → updated patient profile. */
+export const updateProfile = (body) =>
+  api('/patients/me', { method: 'PUT', body }).then((d) => d.patient);
+
+/** GET /api/patients/me/family → family members (proxy booking). */
+export const listFamily = () => api('/patients/me/family').then((d) => d.family || []);
+
+/** POST /api/patients/me/family → bagong family member (201). */
+export const createFamily = (body) =>
+  api('/patients/me/family', { method: 'POST', body }).then((d) => d.member);
+
+/** PUT /api/patients/me/family/:id → updated family member. */
+export const updateFamily = (id, body) =>
+  api(`/patients/me/family/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.member);
+
+/** DELETE /api/patients/me/family/:id → 204. */
+export const deleteFamily = (id) =>
+  api(`/patients/me/family/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/appointments/slots?doctor_id&date&duration → slot grid. */
+export const getSlots = (doctorId, date, duration = 30) =>
+  api(
+    `/appointments/slots?doctor_id=${encodeURIComponent(doctorId)}&date=${encodeURIComponent(date)}&duration=${encodeURIComponent(duration)}`,
+  ).then((d) => d.slots || []);
+
+/** POST /api/appointments → 201 { appointment }; 409 kapag taken ang slot. */
+export const bookAppointment = (body) =>
+  api('/appointments', { method: 'POST', body }).then((d) => d.appointment);
+
+/** GET /api/appointments?status= → appointment list ng patient. */
+export const getAppointments = (status) =>
+  api(`/appointments${status ? `?status=${encodeURIComponent(status)}` : ''}`).then(
+    (d) => d.appointments || [],
+  );
+
+/** GET /api/appointments/:id → appointment + doctor + status_history. */
+export const getAppointment = (id) =>
+  api(`/appointments/${encodeURIComponent(id)}`).then((d) => d.appointment);
+
+/** POST /api/appointments/:id/reschedule → 200 { appointment }. */
+export const rescheduleAppointment = (id, body) =>
+  api(`/appointments/${encodeURIComponent(id)}/reschedule`, { method: 'POST', body }).then(
+    (d) => d.appointment,
+  );
+
+/** POST /api/appointments/:id/cancel → 200 { appointment }. */
+export const cancelAppointment = (id) =>
+  api(`/appointments/${encodeURIComponent(id)}/cancel`, { method: 'POST' }).then((d) => d.appointment);
+
+/** POST /api/ratings → 201 { rating }; 409 kapag rated na o hindi completed. */
+export const submitRating = (body) =>
+  api('/ratings', { method: 'POST', body }).then((d) => d.rating);
+
 export { API_BASE_URL };
 export default {
   api, apiOptional, apiWithMeta, silentRefresh, bootstrapSession,
   setAccessToken, getAccessToken, clearAccessToken,
   onUnauthorized, setNotify, ApiError, API_BASE_URL,
+  getProfile, updateProfile, listFamily, createFamily, updateFamily, deleteFamily,
+  getSlots, bookAppointment, getAppointments, getAppointment,
+  rescheduleAppointment, cancelAppointment, submitRating,
 };
+
 

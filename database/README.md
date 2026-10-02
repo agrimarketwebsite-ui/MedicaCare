@@ -37,6 +37,7 @@ kasama doon (docs/BACKEND_ARCHITECTURE.md §6.3) — nasa `migrations/` sila.
 | --- | --- | --- |
 | 001 | `migrations/001_refresh_tokens.sql` | `refresh_tokens` table — hash-only JWT refresh token store, rotation + reuse-detection semantics (Phase 1). |
 | 002 | `migrations/002_password_resets.sql` | `password_resets` table — hash-only, single-use, 1h TTL reset token store (Phase 2; email send sa Phase 8). |
+| 003 | `migrations/003_phase4.sql` | Phase 4 [ENC] enablement (idempotent DO blocks): `patients.date_of_birth` `date → text` (ciphertext-capable; existing rows → ISO text) + drop ng `char_length` CHECKs sa `appointments.reason`/`notes` (ang base64 ciphertext ay mas mahaba sa 500 chars; validation lumipat sa backend Zod). |
 
 **Paano i-apply (sa ibabaw ng schema.sql):**
 
@@ -231,4 +232,5 @@ guidance) — buong detalye sa `docs/DATABASE_SECURITY_AUDIT.md`:
 5. Phase 3 (optional): audit log table (may `activity_log` na), email
    reminders integration (kapag may backend), at notification triggers na
    nagpopopulate ng `notifications` tuwing may status change.
+
 

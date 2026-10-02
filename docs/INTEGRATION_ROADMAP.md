@@ -1,4 +1,3 @@
-successfully downloaded text file (SHA: c711146539bc16430dcb35c2fd5c4a1c49cd86b0)
 # MedicaCare — Integration Roadmap (Frontend ↔ Backend ↔ Database)
 
 > **Status:** LIVE reference — Phase 0 ✅ DONE, Phase 1 ✅ DONE (2026-10-01). Itong doc ang tala ng
@@ -342,45 +341,60 @@ kung aling account source ang tumugma (BACKEND_ARCHITECTURE §6.1).
 inaaktibo ang [ENC] PHI fields at ang slot logic.
 
 ### Backend
-- [ ] `modules/patients` — GET/PUT own profile; **[ENC]** fields
+- [x] `modules/patients` — GET/PUT own profile; **[ENC]** fields
   (`date_of_birth`, `blood_type`, `allergies`, `address`, `emergency_contact`)
-  i-encrypt on write / i-decrypt on read (`crypto.js`); `phone_search` blind
-  index (TIER 2) kung kailangan ng equality search.
-- [ ] `modules/appointments` — create (slots mula sa
+  i-encrypt on write / i-decrypt on read (`crypto.js`); implemented + unit
+  tested. `phone_search` blind index: HINDI kinailangan (walang equality
+  search sa phone sa Phase 4 scope — profile ay self-scoped).
+- [x] `modules/appointments` — create (slots mula sa
   `fn_available_slots(doctor_id, date, duration)`), reschedule
   (`p_exclude_appt_id` — hindi kino-consider na taken ang sariling slot),
   cancel, list own; proxy booking (`booked_for` / family members);
   `auto_confirm_appointments` pref mula sa `app_settings`; status transitions
   valid paths lang; reference code (`AP-000123`) sa confirmation.
-- [ ] `modules/ratings` — submit (one per completed appointment —
+- [x] `modules/ratings` — submit (one per completed appointment —
   `UNIQUE(appointment_id)` DB guard).
+- [x] Migration `database/migrations/003_phase4.sql` (idempotent):
+  `patients.date_of_birth` date→text (ciphertext storage), drop ng
+  `char_length` CHECKs sa `appointments.reason`/`notes` (validation lumipat
+  sa backend Zod — ayon sa schema.sql encryption playbook).
 
 ### Frontend
-- [ ] `Profile.jsx` — profile CRUD + toggles (`email_reminders`,
-  `portal_notifications`) + family members (`patient_family_members`).
-- [ ] `DoctorListing.jsx` → `DoctorAvailability.jsx` → `BookAppointment.jsx` →
-  `BookingConfirmation.jsx` — full booking flow.
-- [ ] `AppointmentDetails/Status/History.jsx` — timeline
-  (`appointment_status_history`), reschedule, cancel, .ics download.
-- [ ] Rating modal pagkatapos ng completed visit.
+- [x] `Profile.jsx` — profile CRUD + toggles (`email_reminders`,
+  `portal_notifications`) + family members (`patient_family_members`) —
+  wired sa tunay na API.
+- [x] `DoctorListing.jsx` → `DoctorAvailability.jsx` → `BookAppointment.jsx` →
+  `BookingConfirmation.jsx` — full booking flow, wired sa tunay na API
+  (slots, proxy booking, confirmation via `?ref=`).
+- [x] `AppointmentDetails/Status/History.jsx` — timeline
+  (`appointment_status_history`), reschedule, cancel, .ics download —
+  wired sa tunay na API.
+- [x] Rating modal pagkatapos ng completed visit (`RatingModal.jsx` —
+  POST `/api/ratings`; completed-only, one-per-appointment).
 
 ### Security checklist (pinaka-maraming BOLA surface — API1)
-- [ ] **LAHAT** ng queries ay naka-scope: `patient_id = JWT.sub` sa WHERE —
-  hindi trusted mula sa body/param (BOLA #1).
-- [ ] Slot race: re-check sa service + `uq_appointments_active_slot`
+- [x] **LAHAT** ng queries ay naka-scope: `patient_id = JWT.sub` sa WHERE —
+  hindi trusted mula sa body/param (BOLA #1). Iba pang pasyente → 404.
+- [x] Slot race: re-check sa service + `uq_appointments_active_slot`
   partial unique index ang DB backstop; i-handle ang unique violation nang
-  graceful (409, hindi 500).
-- [ ] Status transitions: hindi pwedeng i-cancel ng patient ang completed;
+  graceful (409, hindi 500) — 23505 → `ApiError.conflict`.
+- [x] Status transitions: hindi pwedeng i-cancel ng patient ang completed;
   hindi pwedeng baguhin ng iba.
-- [ ] [ENC] fields: never in logs; decrypt lang kung owner ang requester.
-- [ ] Reschedule: date future + within clinic hours (V5.2/V11).
+- [x] [ENC] fields: never in logs; decrypt lang kung owner ang requester.
+- [x] Reschedule: date future + within clinic hours (via
+  `fn_available_slots` — oras na wala sa availability ay 409).
 
 ### Acceptance
 - [ ] Book → visible agad sa history + status timeline; reschedule/cancel
-  gumagana; double-booking attempt → 409.
+  gumagana; double-booking attempt → 409. (PENDING: IVAN live verification —
+  code + unit tests tapos na.)
 - [ ] Patient A HINDI makikita ang appointment ni Patient B (404/403) —
-  i-test gamit ang dalawang account.
-- [ ] `npm test` — `tests/appointments.test.js` (conflict, race, ownership).
+  i-test gamit ang dalawang account. (PENDING: IVAN live verification;
+  ownership tests nasa `appointments.unit.test.js`.)
+- [x] `npm test` — `tests/appointments.test.js` (conflict, race, ownership):
+  **47/47 pass** sa scratch (24 bagong unit tests; integration suite ay
+  graceful-skip nang walang .env — tatakbo sa user machine laban sa tunay
+  na Supabase).
 
 ---
 
@@ -666,6 +680,30 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 ---
 
 ## Changelog
+- **2026-10-02 — Phase 4 implemented (backend + frontend, code-complete —
+  pending live verification):** `modules/patients` (GET/PUT own profile,
+  [ENC] encrypt-on-write/decrypt-on-read ng `date_of_birth`/`blood_type`/
+  `allergies`/`address`/`emergency_contact`, family CRUD),
+  `modules/appointments` (slots via `fn_available_slots`, book, reschedule
+  with own-slot exclusion, cancel, list own, proxy booking via family,
+  `auto_confirm_appointments` mula sa `app_settings`, `AP-000123` reference
+  codes, 23505→409 race backstop), `modules/ratings` (completed-only,
+  `UNIQUE(appointment_id)`→409, iba pang pasyente →404); mount sa
+  `routes/index.js`; `bookingLimiter` 20/15min. Migration
+  `003_phase4.sql` (idempotent: `patients.date_of_birth` date→text, drop
+  ng `char_length` CHECKs sa `appointments.reason`/`notes` — validation sa
+  backend Zod). Tests: `appointments.unit.test.js` (24 unit — conflict, race,
+  ownership, ciphertext-at-rest, ratings guard, status transitions) +
+  `appointments.test.js` integration (graceful-skip nang walang .env) —
+  **47/47 pass** sa scratch, lint malinis. BOLA: lahat ng queries scoped
+  `patient_id = JWT.sub`; [ENC] never logged. Frontend: `api.js` (13 bagong
+  endpoints), `store.jsx` (profile+family hydration, DOCTORS/SPECIALTIES sync
+  untouched), `patient/helpers.js`, `RatingModal.jsx`, Profile/DoctorAvailability/
+  BookAppointment/BookingConfirmation/AppointmentDetails/AppointmentStatus/
+  AppointmentHistory/PatientDashboard/DoctorListing ← tunay na API. FIX bago
+  i-push: gender select `M/F/O` → backend enum `male/female/other`. Hindi pa
+  tapos ang Phase 4 — naghihintay ng IVAN live verification bago ang formal
+  sign-off.
 - **2026-10-02 — Phase 3 implemented (backend + frontend, na-push sa `main`):**
   `modules/settings` (`GET /api/settings/public`), `modules/doctors`
   (`GET /api/doctors`, `/specialties`, `/:id` + rating merge mula sa
@@ -693,6 +731,7 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
 | 2026-10-02 | Phase 2 ✅ — auth module: `tokens.js`/`passwords.js`, `auth.validation/repository/service/middleware/controller/routes` (bcrypt cost 12, JWT iss/aud/exp, rotate + reuse detection, generic errors, authLimiter sa credential endpoints, activity_log audit), `002_password_resets.sql` migration, `cookie-parser` dep, `npm test` script fix. Frontend: Login/Register/AdminLogin/DoctorLogin/ForgotPassword → API, OTP modal tinanggal, store logout → server revoke. Unit 15/15 pass, lint clean, route wiring verified; integration tests graceful-skip nang walang .env (user-side tatakbo). FIX 2026-10-02: ang rate-limiter 429 handler ay nagbabalik ng 500 (`next(string)` bug sa Phase 0 `rateLimiter.js` — ginawang `next(ApiError.tooManyRequests())`); + `auth.test.js` harness fix (hindi pwedeng lagyan ng properties ang frozen module namespace — ginawang local `state`). |
 | 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ✅ Live verified: migration applied, /api/health 200 (db:ok), frontend :5173 + CORS ok. |
+
 
 
 
