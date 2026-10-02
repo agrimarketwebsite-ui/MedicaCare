@@ -400,7 +400,19 @@ function StoreProvider({ children }) {
   const applyApiSession = useCallback((role, profile) => {
     if (!profile) return;
     if (role === 'admin') setAdminSession({ ...profile, at: Date.now() });
-    else if (role === 'doctor') setDoctorSession({ ...profile, at: Date.now() });
+    else if (role === 'doctor') {
+      // Tulad ng patient `name` fix: ang API profile ay may `doctor_id`
+      // (snake_case), pero ang App.jsx guard at DoctorLogin ay umaasa sa
+      // `doctorId` (camelCase). Kung hindi ito i-normalize dito, pagkatapos
+      // ng F5 (silent refresh) ay mawawala ang doctorId sa session at
+      // ibabalik ang user sa doctor login page kahit valid pa ang session.
+      setDoctorSession({
+        ...profile,
+        doctorId: profile.doctorId || profile.doctor_id,
+        name: profile.name || profile.email || '',
+        at: Date.now(),
+      });
+    }
     else {
       setPatientSession({ ...profile, at: Date.now() });
       // Ang API profile ay may full_name, pero ang sidebar (layout.jsx) ay
