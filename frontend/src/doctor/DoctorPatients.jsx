@@ -3,7 +3,7 @@
 // Ang pag-click ay nagbubukas ng PatientHistoryModal (visit history +
 // records + amended notes).
 import { useEffect, useState } from 'react';
-import { AppShell, EmptyState, ErrorState, Icon, PageHeader, TextInput, useStore } from '../shared/components.jsx';
+import { AppShell, EmptyState, ErrorState, Icon, PageHeader, SkeletonRows, TextInput, useStore } from '../shared/components.jsx';
 import { getDoctorPatients } from '../shared/api.js';
 import { PatientHistoryModal } from './PatientHistoryModal.jsx';
 
@@ -52,7 +52,16 @@ function DoctorPatients() {
         </div>
 
         {loading ? (
-          <div className="card"><div className="card-body"><p className="t-muted" style={{ fontSize: 13.5 }}>Loading patients…</p></div></div>
+          <div className="card">
+            <table className="table" aria-hidden="true">
+              <thead>
+                <tr><th>Patient</th><th>Contact</th><th>Visits</th><th>Last visit</th><th></th></tr>
+              </thead>
+              <tbody>
+                <SkeletonRows rows={6} cols={5} />
+              </tbody>
+            </table>
+          </div>
         ) : error ? (
           <ErrorState title="Could not load patients" message={error} onRetry={() => setRetryKey(k => k + 1)} />
         ) : filtered.length === 0 ? (

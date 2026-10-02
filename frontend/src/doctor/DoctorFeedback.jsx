@@ -46,21 +46,38 @@ function DoctorFeedback() {
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{ fontSize: 40, fontWeight: 800, color: 'var(--warning, #b45309)' }}>
-              {loading ? '—' : avg !== null ? Number(avg).toFixed(1) : '—'}
+              {loading
+                ? <span className="skel" aria-hidden="true" style={{ width: 72, height: 40, display: 'inline-block', verticalAlign: 'middle' }} />
+                : avg !== null ? Number(avg).toFixed(1) : '—'}
             </div>
             <div>
               <div style={{ fontSize: 20, letterSpacing: 2, color: '#d97706' }}>
-                {starsDisplay(avg || 0)}
+                {loading ? <span className="skel" aria-hidden="true" style={{ width: 110, height: 20, display: 'inline-block', verticalAlign: 'middle' }} /> : starsDisplay(avg || 0)}
               </div>
               <div className="t-muted" style={{ fontSize: 13 }}>
-                {loading ? 'Loading…' : count === 0 ? 'No ratings yet' : `Based on ${count} rating${count === 1 ? '' : 's'}`}
+                {loading
+                  ? <span className="skel" aria-hidden="true" style={{ width: 140, height: 12, display: 'inline-block', verticalAlign: 'middle' }} />
+                  : count === 0 ? 'No ratings yet' : `Based on ${count} rating${count === 1 ? '' : 's'}`}
               </div>
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="card"><div className="card-body"><p className="t-muted" style={{ fontSize: 13.5 }}>Loading feedback…</p></div></div>
+          <div className="stack md" aria-hidden="true">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="card">
+                <div className="card-body">
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
+                    <span className="skel" style={{ width: 90, height: 15, display: 'block' }} />
+                    <span className="skel" style={{ width: 130, height: 14, display: 'block' }} />
+                    <span className="skel" style={{ width: 100, height: 11, display: 'block' }} />
+                  </div>
+                  <span className="skel" style={{ width: '85%', height: 12, display: 'block' }} />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : error ? (
           <ErrorState title="Could not load feedback" message={error} onRetry={() => setRetryKey(k => k + 1)} />
         ) : ratings.length === 0 ? (

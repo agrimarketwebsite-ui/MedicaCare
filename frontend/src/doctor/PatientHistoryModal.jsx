@@ -108,7 +108,13 @@ function PatientHistoryModal({ open, onClose, patient }) {
       footer={<button className="btn btn-ghost" onClick={onClose}>Close</button>}
     >
       {loading ? (
-        <p className="t-muted" style={{ fontSize: 13.5 }}>Loading history…</p>
+        <div
+          role="status"
+          aria-label="Loading"
+          style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+        >
+          <div className="spinner" />
+        </div>
       ) : error ? (
         <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)' }}>
           {error}

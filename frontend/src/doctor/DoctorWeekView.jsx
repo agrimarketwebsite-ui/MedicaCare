@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import {
   AppShell, ConfirmModal, EmptyState, ErrorState, Field, Icon, Modal, PageHeader,
-  SelectInput, TextInput, useStore,
+  PageSpinner, SelectInput, TextInput, useStore,
 } from '../shared/components.jsx';
 import {
   createDoctorAvailability, deleteDoctorAvailability, getDoctorAvailability,
@@ -150,7 +150,7 @@ function DoctorWeekView() {
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-body">
             {loading ? (
-              <p className="t-muted" style={{ fontSize: 13.5 }}>Loading week…</p>
+              <PageSpinner />
             ) : error ? (
               <ErrorState title="Could not load week" message={error} onRetry={() => loadWeek(weekStart)} />
             ) : (

@@ -92,7 +92,11 @@ function DoctorDashboard() {
               <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <Icon name={s.icon} size={22} style={{ color: 'var(--primary)' }} />
                 <div>
-                  <div style={{ fontSize: 22, fontWeight: 800 }}>{s.value}</div>
+                  <div style={{ fontSize: 22, fontWeight: 800 }}>
+                    {loading
+                      ? <span className="skel" aria-hidden="true" style={{ width: 30, height: 24, display: 'inline-block', verticalAlign: 'middle' }} />
+                      : s.value}
+                  </div>
                   <div className="t-muted" style={{ fontSize: 12.5 }}>{s.label}</div>
                 </div>
               </div>
@@ -104,7 +108,25 @@ function DoctorDashboard() {
           <div className="card-header"><h2 className="h-section">Today's appointments</h2></div>
           <div className="card-body">
             {loading ? (
-              <p className="t-muted" style={{ fontSize: 13.5 }}>Loading schedule…</p>
+              <div className="stack md" aria-hidden="true">
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="card" style={{ background: 'var(--surface)' }}>
+                    <div className="card-body" style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div style={{ minWidth: 92 }}>
+                        <span className="skel" style={{ width: 64, height: 15, display: 'block', marginBottom: 5 }} />
+                        <span className="skel" style={{ width: 52, height: 11, display: 'block' }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 180 }}>
+                        <span className="skel" style={{ width: '45%', height: 14, display: 'block', marginBottom: 6 }} />
+                        <span className="skel" style={{ width: '70%', height: 11, display: 'block', marginBottom: 5 }} />
+                        <span className="skel" style={{ width: '30%', height: 11, display: 'block' }} />
+                      </div>
+                      <span className="skel" style={{ width: 76, height: 22, borderRadius: 999 }} />
+                      <span className="skel" style={{ width: 128, height: 32, borderRadius: 8 }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : error ? (
               <ErrorState title="Could not load schedule" message={error} onRetry={() => setRetryKey(k => k + 1)} />
             ) : appointments.length === 0 ? (
