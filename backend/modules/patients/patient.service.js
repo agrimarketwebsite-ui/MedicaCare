@@ -36,13 +36,26 @@ export function encryptRow(row, fields = PATIENT_ENC_FIELDS) {
  * I-decrypt ang [ENC] fields ng isang row para sa owner.
  * Kapag ang value ay HINDI ciphertext (legacy/seed plaintext), ibinabalik
  * as-is — hindi nag-throw. null/undefined ay mananatili.
+ * TOLERANT din sa v1:-prefixed na value na HINDI ma-decrypt ng kasalukuyang
+ * ENCRYPTION_KEY (hal. seed/sample ciphertext na ginawa sa ibang key, o
+ * placeholder tulad ng 'v1:seed'): ibinabalik ang raw value as-is imbis na
+ * mag-500 ang buong read. Ang decryptField mismo ay nananatiling STRICT
+ * (ang tamper detection ay nasa crypto layer; dito sa service layer ay
+ * availability ang priority — ang owner ay nakikita ang sariling row).
  */
 export function decryptRow(row, fields = PATIENT_ENC_FIELDS) {
   const out = { ...row };
   for (const f of fields) {
     const v = out[f];
     if (v === undefined || v === null) continue;
-    out[f] = isEncrypted(v) ? decryptField(v) : v;
+    if (!isEncrypted(v)) continue; // legacy/seed plaintext — as-is
+    try {
+      out[f] = decryptField(v);
+    } catch {
+      // v1:-prefixed pero hindi ma-decrypt (ibang key / corrupt / sample
+      // seed value) — huwag ibagsak ang read; raw value na lang.
+      out[f] = v;
+    }
   }
   return out;
 }

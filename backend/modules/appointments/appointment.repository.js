@@ -108,6 +108,26 @@ export async function getRatedAppointmentIds(patientId, appointmentIds) {
   return must({ data, error }, 'getRatedAppointmentIds');
 }
 
+/**
+ * Mga AKTIBONG (pending/confirmed) appointment ng pasyente sa isang petsa —
+ * ISANG query, ginagamit ng attendee-overlap guard sa service (hindi pwedeng
+ * magkasabay ang dalawang appointment ng IISANG attendee — kahit magkaibang
+ * doctor). Ang cancelled/completed/no-show ay hindi kasama (hindi na sila
+ * humaharang ng oras). Returns ang hilaw na rows; ang overlap logic ay nasa
+ * purong findAttendeeOverlap() ng service (unit-testable).
+ */
+export async function listActiveAppointmentsOnDate(patientId, date, excludeId = null) {
+  let query = supabase
+    .from('appointments')
+    .select('id, start_time, end_time, booked_for, status')
+    .eq('patient_id', patientId)
+    .eq('appointment_date', date)
+    .in('status', ['pending', 'confirmed']);
+  if (excludeId) query = query.neq('id', excludeId);
+  const { data, error } = await query.order('start_time', { ascending: true });
+  return must({ data, error }, 'listActiveAppointmentsOnDate');
+}
+
 export default {
   getSlots,
   listAppointments,
@@ -116,4 +136,5 @@ export default {
   updateAppointment,
   getStatusHistory,
   getRatedAppointmentIds,
+  listActiveAppointmentsOnDate,
 };

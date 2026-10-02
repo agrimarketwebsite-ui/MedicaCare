@@ -88,6 +88,46 @@ async function ratedIdSet(patientId, rows) {
   return new Set(rated.map((r) => r.appointment_id));
 }
 
+// ---- Attendee overlap guard (patient-level double-booking) ----
+// Ang uq_appointments_active_slot ay per-DOCTOR lang: hindi nito napipigilan
+// ang IISANG attendee na mag-book ng dalawang magkaibang doctor sa parehong
+// oras. Ang attendee identity sa schema ay ang `booked_for` snapshot
+// (NULL = self; family booking = pangalan ng family member — ang
+// family_member_id ay request-scoped lang, hindi naka-store na column).
+const ACTIVE_STATUSES = new Set(['pending', 'confirmed']);
+
+/**
+ * Purong overlap test (unit-testable): may conflict ba ang candidate
+ * [start_time, end_time) + attendee laban sa mga existing row?
+ * - Parehong attendee lang ang kinukumpara (booked_for; null = self).
+ * - Half-open interval: ang back-to-back (end == start) ay HINDI overlap.
+ * - Rows na hindi active (kung may status field) ay nilalaktawan — ang
+ *   repository query ay naka-filter na, ito ay defense-in-depth.
+ * @returns ang conflicting row, o null kung walang overlap.
+ */
+export function findAttendeeOverlap(existingRows, { start_time, end_time, booked_for = null }) {
+  const start = normalizeTime(start_time);
+  const end = normalizeTime(end_time);
+  const attendee = booked_for ?? null;
+  return (
+    existingRows.find(
+      (r) =>
+        (r.booked_for ?? null) === attendee &&
+        (!r.status || ACTIVE_STATUSES.has(r.status)) &&
+        normalizeTime(r.start_time) < end &&
+        start < normalizeTime(r.end_time),
+    ) ?? null
+  );
+}
+
+/** I-409 kapag ang attendee ay may aktibong appointment na kasabay ng oras na ito. */
+async function assertNoAttendeeOverlap(patientId, date, candidate, excludeId = null) {
+  const rows = await repo.listActiveAppointmentsOnDate(patientId, date, excludeId);
+  if (findAttendeeOverlap(rows, candidate)) {
+    throw ApiError.conflict('You already have an appointment at this time. Please choose another time.');
+  }
+}
+
 // ---- Slots ----
 
 /** Hanapin ang hiniling na start_time sa fn output — dapat available. */
@@ -147,6 +187,17 @@ export async function createAppointment(patientId, input) {
     throw ApiError.conflict('The selected time slot is not available. Please choose another slot.');
   }
 
+  // Attendee overlap: kahit available ang slot ng doctor, hindi pwedeng
+  // kasabay nito ang isa pang aktibong appointment ng PAREHONG attendee
+  // (self vs. family member ay magkaibang attendee).
+  const newStart = normalizeTime(start_time);
+  const newEnd = addMinutesToTime(start_time, duration_minutes);
+  await assertNoAttendeeOverlap(patientId, appointment_date, {
+    start_time: newStart,
+    end_time: newEnd,
+    booked_for: bookedFor,
+  });
+
   const prefs = await getPublicPreferences().catch(() => null);
   const status = prefs?.auto_confirm_appointments ? 'confirmed' : 'pending';
 
@@ -156,8 +207,8 @@ export async function createAppointment(patientId, input) {
       patient_id: patientId,
       doctor_id,
       appointment_date,
-      start_time: normalizeTime(start_time),
-      end_time: addMinutesToTime(start_time, duration_minutes),
+      start_time: newStart,
+      end_time: newEnd,
       reason: encryptField(reason),
       additional_notes: additional_notes ? encryptField(additional_notes) : null,
       contact_number: encryptField(contact_number),
@@ -206,6 +257,20 @@ export async function rescheduleAppointment(patientId, id, { appointment_date, s
     throw ApiError.conflict('The selected time slot is not available. Please choose another slot.');
   }
 
+  // Attendee overlap: ang bagong oras ay hindi pwedeng kasabay ng ibang
+  // aktibong appointment ng parehong attendee (ang appointment na ito mismo
+  // ay excluded sa query — ang booked_for niya ang attendee identity).
+  await assertNoAttendeeOverlap(
+    patientId,
+    appointment_date,
+    {
+      start_time: normalizeTime(start_time),
+      end_time: addMinutesToTime(start_time, duration_minutes),
+      booked_for: current.booked_for ?? null,
+    },
+    id,
+  );
+
   const row = await repo.updateAppointment(id, patientId, {
     appointment_date,
     start_time: normalizeTime(start_time),
@@ -229,6 +294,7 @@ export default {
   patientRescheduleAllowed,
   normalizeTime,
   addMinutesToTime,
+  findAttendeeOverlap,
   toAppointmentDTO,
   getSlots,
   createAppointment,

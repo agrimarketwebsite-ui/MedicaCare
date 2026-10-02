@@ -4,9 +4,9 @@
 // 201 navigates to the confirmation with the reference_code; 409 (slot taken)
 // shows a friendly message with a back-to-slots action.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, EmptyState, Field, Icon, navigate, PageHeader, PageSpinner, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
+import { AppShell, DoctorAvatar, DoctorRatingPill, EmptyState, Field, Icon, navigate, PageHeader, PageSpinner, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
 import { bookAppointment, ApiError } from '../shared/api.js';
-import { fmtTime12, focusFirstError } from './helpers.js';
+import { activateOnKey, fmtTime12, focusFirstError } from './helpers.js';
 
 function BookAppointment() {
   const store = useStore();
@@ -50,6 +50,10 @@ function BookAppointment() {
   }
 
   if (!pending || !doctor) {
+    // Walang slot draft (hal. dumiretso sa sidebar "Book appointment"):
+    // huwag dead-end — may inline doctor picker sa ibaba ng paliwanag,
+    // click → availability ng doctor na iyon (parehong card ng DoctorListing).
+    const pickerDoctors = store.doctors || [];
     return (
       <AppShell current="book">
         <div className="page">
@@ -69,6 +73,59 @@ function BookAppointment() {
               actions={<button className="btn btn-primary" onClick={() => navigate('/patient/doctors')}><Icon name="stethoscope" size={14} /> Find a doctor</button>}
             />
           </div>
+
+          <h2 className="h-section" style={{ margin: '22px 0 12px' }}>Choose a doctor</h2>
+          {!doctorsReady ? (
+            <div className="doctor-grid" aria-hidden="true">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="doctor-card">
+                  <div className="doctor-card-head">
+                    <span className="skel" style={{ width: 52, height: 52, borderRadius: '50%', flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span className="skel" style={{ width: '80%', height: 14, display: 'block' }} />
+                      <span className="skel" style={{ width: '50%', height: 11, display: 'block', marginTop: 7 }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="doctor-grid">
+              {pickerDoctors.map(d => (
+                <div
+                  key={d.id}
+                  className="doctor-card"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View availability and book with ${d.name}`}
+                  onClick={() => navigate('/patient/availability/' + d.id)}
+                  onKeyDown={activateOnKey(() => navigate('/patient/availability/' + d.id))}
+                >
+                  <div className="doctor-card-head">
+                    <DoctorAvatar doctor={d} size={52} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="doctor-card-name">{d.name}</div>
+                      <div className="doctor-card-spec">{d.specialty}</div>
+                    </div>
+                  </div>
+                  <div className="doctor-card-meta">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <DoctorRatingPill avg={d.rating} count={d.ratingCount} />
+                      {d.exp != null && <span>· {d.exp} yrs</span>}
+                    </div>
+                    <div style={{ fontWeight: 500, color: 'var(--text)' }}>₱{Number(d.fee || 0).toLocaleString()}</div>
+                  </div>
+                  <div className="doctor-card-footer">
+                    <button className="btn btn-primary sm"
+                      disabled={d.status === 'on-leave'}
+                      onClick={(e) => { e.stopPropagation(); navigate('/patient/availability/' + d.id); }}>
+                      View availability
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </AppShell>
     );

@@ -367,4 +367,75 @@ describe('appointments integration — Phase 4 patient portal core', { skip: !H 
     // …pero si B mismo ay 201
     assert.equal((await apiB('POST', '/ratings', { body: { appointment_id: compB.id, stars: 4 } })).status, 201);
   });
+
+  it('attendee overlap: ibang doctor parehong oras (self) → 409; family member → 201; adjacent → 201', async () => {
+    // Pangalawang doctor na may availability sa parehong weekday (parehong petsa)
+    const { data: av2, error: avErr } = await H.supabase
+      .from('doctor_weekly_availability')
+      .select('doctor_id')
+      .eq('weekday', avail.weekday)
+      .neq('doctor_id', doctorId)
+      .limit(1);
+    assert.ok(!avErr && av2?.length, 'may pangalawang doctor sa parehong weekday');
+    const doctor2 = av2[0].doctor_id;
+
+    const slotsOf = async (doc) => {
+      const r = await apiA('GET', `/appointments/slots?doctor_id=${doc}&date=${state.date}&duration=30`);
+      assert.equal(r.status, 200);
+      return r.json.data.slots;
+    };
+    const free1 = (await slotsOf(doctorId)).filter((s) => s.is_available);
+    const free2 = new Set((await slotsOf(doctor2)).filter((s) => s.is_available).map((s) => s.start_time));
+
+    // Mga oras na may aktibong SELF booking na si A (hindi pwedeng gamitin bilang T)
+    const list = await apiA('GET', '/appointments');
+    const busySelf = new Set(
+      list.json.data.appointments
+        .filter((a) => !a.booked_for && ['pending', 'confirmed'].includes(a.status))
+        .map((a) => a.start_time),
+    );
+    // T: free sa parehong doctor + may katabing free slot kay doctor1 (adjacent test)
+    const idx = free1.findIndex(
+      (s, i) =>
+        free2.has(s.start_time) &&
+        !busySelf.has(s.start_time) &&
+        free1[i + 1] &&
+        free1[i + 1].start_time === s.end_time &&
+        !busySelf.has(free1[i + 1].start_time),
+    );
+    assert.ok(idx >= 0, 'may common free slot na may adjacent next slot');
+    const T = free1[idx].start_time.slice(0, 5);
+    const Tnext = free1[idx + 1].start_time.slice(0, 5);
+
+    const book = (doc, slot, extra = {}) =>
+      apiA('POST', '/appointments', {
+        body: {
+          doctor_id: doc,
+          appointment_date: state.date,
+          start_time: slot,
+          reason: REASON_A,
+          contact_number: CONTACT_A,
+          ...extra,
+        },
+      });
+
+    // 1) Si A kay doctor2 sa T (self) → 201
+    assert.equal((await book(doctor2, T)).status, 201, 'unang booking sa T');
+    // 2) Si A kay doctor1 sa T (self) → 409: parehong attendee + oras, kahit
+    //    free ang slot ni doctor1 (ang per-doctor unique index ay hindi ito
+    //    sakop — attendee overlap guard ang humaharang)
+    const clash = await book(doctorId, T);
+    assert.equal(clash.status, 409, 'attendee overlap → 409');
+    assert.match(JSON.stringify(clash.json), /already have an appointment at this time/);
+    // 3) Si A kay doctor1 sa T para sa family member → 201 (ibang attendee)
+    const fm = await apiA('POST', '/patients/me/family', { body: { full_name: 'Rosa Overlap', relation: 'Aunt' } });
+    assert.equal(fm.status, 201);
+    assert.equal(
+      (await book(doctorId, T, { family_member_id: fm.json.data.member.id })).status,
+      201,
+      'family member sa parehong oras ay pwede',
+    );
+    // 4) Si A kay doctor1 sa kasunod na slot (back-to-back sa T) → 201
+    assert.equal((await book(doctorId, Tnext)).status, 201, 'adjacent slot ay hindi overlap');
+  });
 });

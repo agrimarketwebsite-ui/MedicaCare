@@ -5,6 +5,7 @@
 
 import { describe, it, before } from 'node:test';
 import assert from 'node:assert/strict';
+import { createCipheriv, randomBytes } from 'node:crypto';
 
 process.env.SUPABASE_URL = 'https://dummy.supabase.co';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'x'.repeat(40);
@@ -265,6 +266,64 @@ describe('patient.service — encryptRow/decryptRow (PHI roundtrip)', () => {
     assert.equal(enc.age, 60);
     const dec = patientService.decryptRow(enc, patientService.FAMILY_ENC_FIELDS);
     assert.deepEqual(dec, { full_name: 'Maria', relation: 'Mother', age: 60 });
+  });
+  it('decryptRow: v1:-prefixed pero malformed (hal. seed placeholder) → raw as-is, hindi nag-throw', () => {
+    // Ang integration seed/test data ay may values tulad ng 'v1:seed' —
+    // mukhang ciphertext (isEncrypted=true) pero hindi valid; dati ay
+    // nag-500 ang buong detail read dahil dito.
+    const dec = patientService.decryptRow({ allergies: 'v1:seed', address: 'v1:not:valid:ciphertext:extra' });
+    assert.equal(dec.allergies, 'v1:seed');
+    assert.equal(dec.address, 'v1:not:valid:ciphertext:extra');
+  });
+  it('decryptRow: v1: ciphertext mula sa IBANG key → raw as-is, hindi nag-throw; valid ay roundtrip pa rin', () => {
+    // Gumawa ng totoong AES-256-GCM v1: ciphertext gamit ang ibang key
+    // (hal. seed data na in-encrypt bago pa ang kasalukuyang ENCRYPTION_KEY)
+    const otherKey = randomBytes(32);
+    const iv = randomBytes(12);
+    const cipher = createCipheriv('aes-256-gcm', otherKey, iv);
+    const ct = Buffer.concat([cipher.update('Doctor notes sample', 'utf8'), cipher.final()]);
+    const foreign = `v1:${iv.toString('base64')}:${cipher.getAuthTag().toString('base64')}:${ct.toString('base64')}`;
+    const dec = patientService.decryptRow({ allergies: foreign });
+    assert.equal(dec.allergies, foreign, 'hindi ma-decrypt → raw value, walang throw');
+    // Ang sariling key ay normal pa rin ang roundtrip:
+    const enc = patientService.encryptRow({ allergies: 'Penicillin' });
+    assert.equal(patientService.decryptRow(enc).allergies, 'Penicillin');
+  });
+});
+
+describe('appointment.service — findAttendeeOverlap (patient-level double-booking)', () => {
+  const findAttendeeOverlap = (...args) => appointmentService.findAttendeeOverlap(...args);
+  const existing = (over = {}) => ({
+    id: 'x', start_time: '09:00:00', end_time: '09:30:00', booked_for: null, status: 'confirmed', ...over,
+  });
+  const cand = (over = {}) => ({ start_time: '09:00', end_time: '09:30', booked_for: null, ...over });
+
+  it('eksaktong parehong oras, self vs self → conflict', () => {
+    assert.ok(findAttendeeOverlap([existing()], cand()));
+  });
+  it('partial overlap (nagsisimula sa loob / nagtatapos sa loob) → conflict', () => {
+    assert.ok(findAttendeeOverlap([existing()], cand({ start_time: '09:15', end_time: '09:45' })));
+    assert.ok(findAttendeeOverlap([existing()], cand({ start_time: '08:45', end_time: '09:15' })));
+    assert.ok(findAttendeeOverlap([existing()], cand({ start_time: '08:00', end_time: '10:00' })), 'nakapaloob');
+  });
+  it('back-to-back / adjacent (end == start) ay HINDI overlap → null', () => {
+    assert.equal(findAttendeeOverlap([existing()], cand({ start_time: '09:30', end_time: '10:00' })), null);
+    assert.equal(findAttendeeOverlap([existing()], cand({ start_time: '08:30', end_time: '09:00' })), null);
+  });
+  it('ibang attendee (family member) sa parehong oras → null; parehong member → conflict', () => {
+    assert.equal(findAttendeeOverlap([existing()], cand({ booked_for: 'Maria Test' })), null, 'self booking vs family candidate');
+    assert.equal(findAttendeeOverlap([existing({ booked_for: 'Maria Test' })], cand()), null, 'family booking vs self candidate');
+    assert.ok(findAttendeeOverlap([existing({ booked_for: 'Maria Test' })], cand({ booked_for: 'Maria Test' })), 'parehong member');
+    assert.equal(findAttendeeOverlap([existing({ booked_for: 'Maria Test' })], cand({ booked_for: 'Jose Test' })), null, 'ibang member');
+  });
+  it('cancelled/completed rows ay nilalaktawan (hindi humaharang)', () => {
+    assert.equal(findAttendeeOverlap([existing({ status: 'cancelled' })], cand()), null);
+    assert.equal(findAttendeeOverlap([existing({ status: 'completed' })], cand()), null);
+    assert.equal(findAttendeeOverlap([existing({ status: 'no-show' })], cand()), null);
+    assert.ok(findAttendeeOverlap([existing({ status: 'pending' })], cand()), 'pending ay active');
+  });
+  it('walang existing rows → null', () => {
+    assert.equal(findAttendeeOverlap([], cand()), null);
   });
 });
 
