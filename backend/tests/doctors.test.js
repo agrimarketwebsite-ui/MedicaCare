@@ -23,9 +23,12 @@ try {
     .limit(40);
   if (error) throw error;
   const seen = new Map();
+  // HUWAG huminto sa unang 2 doctors: i-scan lahat ng distinct doctors sa
+  // rows at kunin ang unang 2 na WALANG account (ang unang mga rows ay
+  // maaaring may seed/test account na — hal. kapag tumatakbo nang sabay
+  // ang ibang suite na gumagawa ng throwaway doctor_accounts).
   for (const r of data || []) {
     if (!seen.has(r.doctor_id)) seen.set(r.doctor_id, r);
-    if (seen.size >= 2) break;
   }
   // Ang doctor ay dapat WALANG doctor_accounts row pa (unique doctor_id).
   for (const [doctorId, row] of seen) {
