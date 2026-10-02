@@ -82,13 +82,11 @@ function Sidebar({ role, current }) {
     { id: 'settings',     label: 'Settings',      icon: 'settings',    route: '/admin/settings' },
   ];
   // Doctor portal — doctors see only their own schedule and patients.
-  // Live badge: today's appointment count — same "badge means real state"
-  // rule as the admin console, so the sidebar isn't a dead two-item list.
-  const dNow = new Date();
-  const dToday = `${dNow.getFullYear()}-${String(dNow.getMonth() + 1).padStart(2, '0')}-${String(dNow.getDate()).padStart(2, '0')}`;
+  // WALANG count badge dito: ang store.appointments ay legacy seed array
+  // (doctorId/date fields) — hindi ito ang API data ng Phase 5, kaya ang
+  // badge ay permanenteng mali (badge-must-mean-real-state rule).
   const doctorNav = [
-    { id: 'd-dashboard',  label: "Today's schedule", icon: 'calendar-check', route: '/doctor/dashboard',
-      count: store.appointments.filter(a => a.doctorId === ((store.doctorSession || {}).doctorId) && a.date === dToday).length },
+    { id: 'd-dashboard',  label: "Today's schedule", icon: 'calendar-check', route: '/doctor/dashboard' },
     { id: 'd-week',       label: 'This week',        icon: 'calendar-days',  route: '/doctor/week' },
     { id: 'd-patients',   label: 'My patients',      icon: 'users-round',    route: '/doctor/patients' },
     { id: 'd-feedback',   label: 'Patient feedback', icon: 'star',           route: '/doctor/feedback' },
@@ -720,4 +718,5 @@ function PageHeader({ title, subtitle, breadcrumbs, actions }) {
 }
 
 export { DesktopOnlyNotice, BrandMark, Sidebar, Topbar, AppShell, PublicNav, PublicFooter, NoticeBar, ClinicStatus, FaqAccordion, TestimonialCarousel, PageHeader };
+
 
