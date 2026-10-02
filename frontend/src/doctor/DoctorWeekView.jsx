@@ -4,7 +4,7 @@
 // dito ay direktang nakakaapekto sa patient booking.
 import { useEffect, useState } from 'react';
 import {
-  AppShell, EmptyState, ErrorState, Field, Icon, Modal, PageHeader,
+  AppShell, ConfirmModal, EmptyState, ErrorState, Field, Icon, Modal, PageHeader,
   SelectInput, TextInput, useStore,
 } from '../shared/components.jsx';
 import {
@@ -33,6 +33,8 @@ function DoctorWeekView() {
   const [form, setForm] = useState({ weekday: 1, start_time: '08:00', end_time: '17:00' });
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // availability entry o null
+  const [deleting, setDeleting] = useState(false);
 
   const loadWeek = (start) => {
     let cancelled = false;
@@ -113,14 +115,19 @@ function DoctorWeekView() {
     }
   };
 
-  const removeEntry = async (entry) => {
-    if (!window.confirm(`Remove ${WEEKDAY_LABELS[entry.weekday]} ${entry.start_time.slice(0, 5)}–${entry.end_time.slice(0, 5)}? This affects future patient bookings.`)) return;
+  const removeEntry = async () => {
+    const entry = deleteTarget;
+    if (!entry) return;
+    setDeleting(true);
     try {
       await deleteDoctorAvailability(entry.id);
       setAvail(list => list.filter(e => e.id !== entry.id));
       store.pushToast({ title: 'Availability removed', msg: 'Future bookings will follow the updated hours.' });
     } catch (err) {
       store.pushToast({ kind: 'error', title: 'Could not remove', msg: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -187,7 +194,7 @@ function DoctorWeekView() {
                         </span>
                       </div>
                       <button className="btn btn-ghost sm" onClick={() => openEdit(e)}><Icon name="pencil" size={14} /> Edit</button>
-                      <button className="btn btn-ghost sm" onClick={() => removeEntry(e)}><Icon name="trash-2" size={14} /></button>
+                      <button className="btn btn-ghost sm" onClick={() => setDeleteTarget(e)}><Icon name="trash-2" size={14} /></button>
                     </div>
                   </div>
                 ))}
@@ -248,6 +255,16 @@ function DoctorWeekView() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="Remove availability?"
+        message={deleteTarget ? `Remove ${WEEKDAY_LABELS[deleteTarget.weekday]} ${deleteTarget.start_time.slice(0, 5)}–${deleteTarget.end_time.slice(0, 5)}? This affects future patient bookings.` : ''}
+        confirmLabel="Remove"
+        onConfirm={removeEntry}
+        loading={deleting}
+      />
     </AppShell>
   );
 }

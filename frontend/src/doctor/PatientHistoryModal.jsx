@@ -16,6 +16,12 @@ const MAX_NOTES = 2000;
 
 function PatientHistoryModal({ open, onClose, patient }) {
   const store = useStore();
+  // Ang doctor ay makaka-amend lang ng SARILING consultation records — ang
+  // listahan ay nagpapakita ng shared history (lahat ng doctors ng pasyente),
+  // pero ang PUT /records/medical/:id ay BOLA-scoped (→ 404 kapag hindi kanya).
+  // Kung hindi ito i-gate dito, ang Save ay magpapakita lang ng
+  // "Medical record not found" para sa records ng ibang doctor.
+  const canAmend = (r) => !!r.doctor_id && r.doctor_id === store.doctorSession?.doctorId;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [visits, setVisits] = useState([]);
@@ -157,7 +163,7 @@ function PatientHistoryModal({ open, onClose, patient }) {
                           <strong>{r.title}</strong>
                           <div className="t-muted" style={{ fontSize: 12.5 }}>{r.visit_date} · {r.record_type}</div>
                         </div>
-                        {amendId !== r.id && (
+                        {amendId !== r.id && canAmend(r) && (
                           <button
                             className="btn btn-ghost sm"
                             onClick={() => { setAmendId(r.id); setDraft(r.summary || ''); }}
