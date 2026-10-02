@@ -87,6 +87,103 @@ export async function getRatingsFor(doctorIds) {
   return map;
 }
 
+// ------------------------------------------------------------
+// Phase 5 — doctor portal (own profile + weekly availability).
+// ------------------------------------------------------------
+
+/**
+ * JWT.sub (doctor_accounts.id) → doctors.id. Null kapag walang account
+ * (hal. ni-revoke ng admin — ang session ay stale).
+ */
+export async function getDoctorIdByAccountId(accountId) {
+  const { data, error } = await supabase
+    .from('doctor_accounts')
+    .select('doctor_id')
+    .eq('id', accountId)
+    .maybeSingle();
+  const row = must({ data, error }, 'getDoctorIdByAccountId');
+  return row?.doctor_id ?? null;
+}
+
+/** Own doctor row (+ specialty name) para sa portal profile view. */
+export async function getOwnDoctor(doctorId) {
+  const { data, error } = await supabase
+    .from('doctors')
+    .select(DOCTOR_COLS)
+    .eq('id', doctorId)
+    .maybeSingle();
+  const row = must({ data, error }, 'getOwnDoctor');
+  if (!row) return null;
+  const account = await supabase
+    .from('doctor_accounts')
+    .select('email')
+    .eq('doctor_id', doctorId)
+    .maybeSingle();
+  const email = must(account, 'getOwnDoctorEmail')?.email ?? null;
+  return { ...row, email };
+}
+
+const AVAIL_COLS = 'id, doctor_id, weekday, start_time, end_time';
+
+export async function listAvailability(doctorId) {
+  const { data, error } = await supabase
+    .from('doctor_weekly_availability')
+    .select(AVAIL_COLS)
+    .eq('doctor_id', doctorId)
+    .order('weekday', { ascending: true })
+    .order('start_time', { ascending: true });
+  return must({ data, error }, 'listAvailability');
+}
+
+export async function createAvailability(doctorId, { weekday, start_time, end_time }) {
+  const { data, error } = await supabase
+    .from('doctor_weekly_availability')
+    .insert({ doctor_id: doctorId, weekday, start_time, end_time })
+    .select(AVAIL_COLS)
+    .single();
+  if (error) {
+    console.error('[doctor.repository] createAvailability:', error.message);
+    const err = new Error('Database error (createAvailability)');
+    err.code = error.code; // 23505 = unique(doctor_id, weekday, start_time) → 409
+    throw err;
+  }
+  return data;
+}
+
+/** Scoped sa sariling doctor_id — null kapag hindi kanya (→ 404). */
+export async function updateAvailability(doctorId, id, patch) {
+  const { data, error } = await supabase
+    .from('doctor_weekly_availability')
+    .update(patch)
+    .eq('id', id)
+    .eq('doctor_id', doctorId)
+    .select(AVAIL_COLS)
+    .maybeSingle();
+  if (error) {
+    console.error('[doctor.repository] updateAvailability:', error.message);
+    const err = new Error('Database error (updateAvailability)');
+    err.code = error.code;
+    throw err;
+  }
+  return data;
+}
+
+/** Scoped sa sariling doctor_id — false kapag hindi kanya (→ 404). */
+export async function deleteAvailability(doctorId, id) {
+  const { data, error } = await supabase
+    .from('doctor_weekly_availability')
+    .delete()
+    .eq('id', id)
+    .eq('doctor_id', doctorId)
+    .select('id')
+    .maybeSingle();
+  if (error) {
+    console.error('[doctor.repository] deleteAvailability:', error.message);
+    throw new Error('Database error (deleteAvailability)');
+  }
+  return Boolean(data);
+}
+
 export default {
   listDoctors,
   getDoctorById,
@@ -94,4 +191,10 @@ export default {
   findSpecialtyByName,
   listSpecialties,
   getRatingsFor,
+  getDoctorIdByAccountId,
+  getOwnDoctor,
+  listAvailability,
+  createAvailability,
+  updateAvailability,
+  deleteAvailability,
 };

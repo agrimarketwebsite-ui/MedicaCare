@@ -142,10 +142,18 @@ export async function refresh(presentedToken) {
     throw ApiError.unauthorized('Refresh token expired — please log in again');
   }
 
+  // Ang account ay dapat existing pa (hal. ang doctor_accounts row ay
+  // pwedeng tanggalin ng admin — Phase 6 ang grant/revoke UI): kapag wala
+  // na, ang session ay stale → 401, hindi 500 (ang toProfile ay mag-throw
+  // sa null). Naka-check BAGO mag-issue para walang orphan refresh row.
+  const profile = await repo.findProfileById(row.account_kind, row.account_id);
+  if (!profile) {
+    throw ApiError.unauthorized('Session revoked — please log in again');
+  }
+
   // Rotation: i-revoke ang luma, mag-issue ng bago (same account).
   await repo.revokeRefreshToken(row.id);
   const { accessToken, refreshToken } = await issueSession(row.account_kind, row.account_id);
-  const profile = await repo.findProfileById(row.account_kind, row.account_id);
   return { accessToken, refreshToken, profile: toProfile(row.account_kind, profile), role: row.account_kind };
 }
 

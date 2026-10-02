@@ -71,4 +71,80 @@ export async function listSpecialties() {
   return { specialties };
 }
 
-export default { listDoctors, getDoctorById, listSpecialties };
+// ------------------------------------------------------------
+// Phase 5 — doctor portal (own profile + weekly availability).
+// ------------------------------------------------------------
+
+/**
+ * JWT.sub (doctor_accounts.id) → doctors.id. LAHAT ng doctor-scoped
+ * endpoints ay dumadaan dito — ang doctor ay nakikita lang ang SARILING
+ * schedule/pasyente (BOLA). Kapag walang account (revoked), ang session ay
+ * stale → 401.
+ */
+export async function resolveDoctorId(accountId) {
+  const doctorId = await repo.getDoctorIdByAccountId(accountId);
+  if (!doctorId) throw ApiError.unauthorized('Session revoked — please log in again');
+  return doctorId;
+}
+
+/** Own profile: doctor row + specialty + rating average. */
+export async function getOwnProfile(accountId) {
+  const doctorId = await resolveDoctorId(accountId);
+  const row = await repo.getOwnDoctor(doctorId);
+  if (!row) throw ApiError.notFound('Doctor profile not found');
+  const [doctor] = await withRatings([row]);
+  return {
+    doctor: {
+      ...doctor,
+      email: row.email ?? null,
+    },
+  };
+}
+
+/** Own weekly availability (pinagmumulan ng fn_available_slots). */
+export async function listOwnAvailability(accountId) {
+  const doctorId = await resolveDoctorId(accountId);
+  const availability = await repo.listAvailability(doctorId);
+  return { availability };
+}
+
+export async function createAvailability(accountId, input) {
+  const doctorId = await resolveDoctorId(accountId);
+  try {
+    const entry = await repo.createAvailability(doctorId, input);
+    return { entry };
+  } catch (err) {
+    if (err.code === '23505') {
+      throw ApiError.conflict('An availability entry already exists for this weekday and start time.');
+    }
+    throw err;
+  }
+}
+
+export async function updateAvailability(accountId, id, patch) {
+  const doctorId = await resolveDoctorId(accountId);
+  if (Object.keys(patch).length === 0) {
+    const rows = await repo.listAvailability(doctorId);
+    const entry = rows.find((r) => r.id === id);
+    if (!entry) throw ApiError.notFound('Availability entry not found');
+    return { entry };
+  }
+  try {
+    const entry = await repo.updateAvailability(doctorId, id, patch);
+    if (!entry) throw ApiError.notFound('Availability entry not found'); // hindi kanya → 404
+    return { entry };
+  } catch (err) {
+    if (err.code === '23505') {
+      throw ApiError.conflict('An availability entry already exists for this weekday and start time.');
+    }
+    throw err;
+  }
+}
+
+export async function deleteAvailability(accountId, id) {
+  const doctorId = await resolveDoctorId(accountId);
+  const deleted = await repo.deleteAvailability(doctorId, id);
+  if (!deleted) throw ApiError.notFound('Availability entry not found'); // hindi kanya → 404
+}
+
+export default { listDoctors, getDoctorById, listSpecialties, resolveDoctorId, getOwnProfile, listOwnAvailability, createAvailability, updateAvailability, deleteAvailability };

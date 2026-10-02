@@ -23,4 +23,38 @@ export const doctorIdParamSchema = z.object({
 
 export const isUuid = (v) => UUID_RE.test(v);
 
-export default { listDoctorsQuerySchema, doctorIdParamSchema, isUuid };
+// ------------------------------------------------------------
+// Phase 5 — doctor portal: weekly availability editor.
+// ------------------------------------------------------------
+
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+export const availabilitySchema = z
+  .object({
+    weekday: z.number().int().min(1).max(7),
+    start_time: z.string().regex(TIME_RE, 'Invalid start_time (HH:MM)'),
+    end_time: z.string().regex(TIME_RE, 'Invalid end_time (HH:MM)'),
+  })
+  .strict()
+  .refine((d) => d.start_time < d.end_time, {
+    message: 'end_time must be after start_time',
+    path: ['end_time'],
+  });
+
+export const availabilityUpdateSchema = z
+  .object({
+    weekday: z.number().int().min(1).max(7).optional(),
+    start_time: z.string().regex(TIME_RE, 'Invalid start_time (HH:MM)').optional(),
+    end_time: z.string().regex(TIME_RE, 'Invalid end_time (HH:MM)').optional(),
+  })
+  .strict()
+  .refine(
+    (d) => d.start_time === undefined || d.end_time === undefined || d.start_time < d.end_time,
+    { message: 'end_time must be after start_time', path: ['end_time'] },
+  );
+
+export const availabilityIdParamSchema = z.object({
+  availId: z.string().regex(UUID_RE, 'Invalid availability id'),
+});
+
+export default { listDoctorsQuerySchema, doctorIdParamSchema, isUuid, availabilitySchema, availabilityUpdateSchema, availabilityIdParamSchema };

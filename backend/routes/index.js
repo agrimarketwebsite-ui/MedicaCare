@@ -15,6 +15,8 @@ import storyRoutes from '../modules/stories/story.routes.js';
 import contactRoutes from '../modules/contact/contact.routes.js';
 import patientRoutes from '../modules/patients/patient.routes.js';
 import appointmentRoutes from '../modules/appointments/appointment.routes.js';
+import doctorAppointmentRoutes from '../modules/appointments/doctorAppointment.routes.js';
+import recordRoutes from '../modules/records/record.routes.js';
 import ratingRoutes from '../modules/ratings/rating.routes.js';
 
 const router = Router();
@@ -57,6 +59,12 @@ router.use('/contact', contactRoutes);
 router.use('/patients', patientRoutes);
 router.use('/appointments', appointmentRoutes);
 router.use('/ratings', ratingRoutes);
+
+// Phase 5 — doctor portal (lahat ay requireAuth + requireRole('doctor') sa
+// loob ng bawat module router; ang BOLA scoping ay nasa service layer via
+// resolveDoctorId: JWT.sub = doctor_accounts.id → doctors.id).
+router.use('/doctor/appointments', doctorAppointmentRoutes);
+router.use('/records', recordRoutes);
 
 export default router;
 
