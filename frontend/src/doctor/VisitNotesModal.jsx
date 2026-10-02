@@ -96,7 +96,13 @@ function VisitNotesModal({ open, onClose, appointmentId, onAmended }) {
       }
     >
       {loading ? (
-        <p className="t-muted" style={{ fontSize: 13.5 }}>Loading visit notes…</p>
+        <div
+          role="status"
+          aria-label="Loading"
+          style={{ minHeight: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+        >
+          <div className="spinner" />
+        </div>
       ) : error && !detail ? (
         <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)' }}>
           {error}
