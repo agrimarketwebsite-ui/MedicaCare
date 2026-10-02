@@ -278,6 +278,82 @@ export const cancelAppointment = (id) =>
 export const submitRating = (body) =>
   api('/ratings', { method: 'POST', body }).then((d) => d.rating);
 
+// ---------------------------------------------------------------------------
+// Doctor portal (Phase 5) — lahat ay requireRole('doctor') sa backend; ang
+// BOLA scoping (sariling schedule/pasyente lang) ay via resolveDoctorId.
+// ---------------------------------------------------------------------------
+
+/** GET /api/doctors/me/profile → sariling doctor profile (+ rating). */
+export const getDoctorProfile = () => api('/doctors/me/profile').then((d) => d.doctor);
+
+/** GET /api/doctors/me/availability → sariling weekly availability. */
+export const getDoctorAvailability = () => api('/doctors/me/availability').then((d) => d.availability || []);
+
+/** POST /api/doctors/me/availability → 201 { entry }; 409 kapag duplicate. */
+export const createDoctorAvailability = (body) =>
+  api('/doctors/me/availability', { method: 'POST', body }).then((d) => d.entry);
+
+/** PUT /api/doctors/me/availability/:id → 200 { entry }. */
+export const updateDoctorAvailability = (id, body) =>
+  api(`/doctors/me/availability/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.entry);
+
+/** DELETE /api/doctors/me/availability/:id → 204. */
+export const deleteDoctorAvailability = (id) =>
+  api(`/doctors/me/availability/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/doctor/appointments/today → { date, appointments }. */
+export const getDoctorToday = () => api('/doctor/appointments/today');
+
+/** GET /api/doctor/appointments/patients → { patients } (sariling pasyente lang). */
+export const getDoctorPatients = () => api('/doctor/appointments/patients').then((d) => d.patients || []);
+
+/** GET /api/doctor/appointments/week?start= → { week_start, week_end, appointments }. */
+export const getDoctorWeek = (start) =>
+  api(`/doctor/appointments/week${start ? `?start=${encodeURIComponent(start)}` : ''}`);
+
+/** GET /api/doctor/appointments/:id → { appointment } (BOLA: sariling appointment lang). */
+export const getDoctorAppointment = (id) =>
+  api(`/doctor/appointments/${encodeURIComponent(id)}`).then((d) => d.appointment);
+
+/** POST /api/doctor/appointments/:id/complete → { appointment, medical_record }. */
+export const completeVisit = (id, body) =>
+  api(`/doctor/appointments/${encodeURIComponent(id)}/complete`, { method: 'POST', body });
+
+/** POST /api/doctor/appointments/:id/no-show → { appointment }. */
+export const markNoShow = (id) =>
+  api(`/doctor/appointments/${encodeURIComponent(id)}/no-show`, { method: 'POST' }).then((d) => d.appointment);
+
+/** GET /api/records/medical?patient_id= → medical records ng pasyente. */
+export const getMedicalRecords = (patientId) =>
+  api(`/records/medical?patient_id=${encodeURIComponent(patientId)}`).then((d) => d.records || []);
+
+/** POST /api/records/medical → 201 { record }. */
+export const createMedicalRecord = (body) =>
+  api('/records/medical', { method: 'POST', body }).then((d) => d.record);
+
+/** PUT /api/records/medical/:id → 200 { record } (amend — sariling record lang). */
+export const updateMedicalRecord = (id, body) =>
+  api(`/records/medical/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.record);
+
+/** GET /api/records/lab?patient_id= → lab results ng pasyente. */
+export const getLabResults = (patientId) =>
+  api(`/records/lab?patient_id=${encodeURIComponent(patientId)}`).then((d) => d.lab_results || []);
+
+/** POST /api/records/lab → 201 { lab_result }. */
+export const createLabResult = (body) =>
+  api('/records/lab', { method: 'POST', body }).then((d) => d.lab_result);
+
+/** GET /api/records/medications?patient_id= → medications ng pasyente. */
+export const getMedications = (patientId) =>
+  api(`/records/medications?patient_id=${encodeURIComponent(patientId)}`).then((d) => d.medications || []);
+
+/** POST /api/records/medications → 201 { medication }. */
+export const createMedication = (body) =>
+  api('/records/medications', { method: 'POST', body }).then((d) => d.medication);
+
+/** GET /api/ratings/doctor → { ratings, avg_rating, rating_count }. */
+export const getDoctorFeedback = () => api('/ratings/doctor');
+
 export { API_BASE_URL };
 export default {
   api, apiOptional, apiWithMeta, silentRefresh, bootstrapSession,
@@ -286,6 +362,12 @@ export default {
   getProfile, updateProfile, listFamily, createFamily, updateFamily, deleteFamily,
   getSlots, bookAppointment, getAppointments, getAppointment,
   rescheduleAppointment, cancelAppointment, submitRating,
+  getDoctorProfile, getDoctorAvailability, createDoctorAvailability,
+  updateDoctorAvailability, deleteDoctorAvailability,
+  getDoctorToday, getDoctorWeek, getDoctorAppointment, getDoctorPatients, completeVisit, markNoShow,
+  getMedicalRecords, createMedicalRecord, updateMedicalRecord,
+  getLabResults, createLabResult, getMedications, createMedication,
+  getDoctorFeedback,
 };
 
 

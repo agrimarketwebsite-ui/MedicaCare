@@ -1,219 +1,183 @@
-// DoctorDashboard — doctor portal (split from screens-doctor.jsx)
+// DoctorDashboard — doctor (Phase 5)
+// Today's schedule (Manila): bawat appointment ay may Complete visit /
+// No-show actions (pending/confirmed lang), at View notes para sa completed.
+// Ang data ay galing sa API — hindi sa seed store.
 import { useEffect, useState } from 'react';
-import { AppShell, ConfirmModal, DoctorStatusBadge, EmptyState, Icon, navigate, PageHeader, PatientAvatar, StatusBadge, useStore } from '../shared/components.jsx';
-import { formatDate, formatDateLong, formatDayRange, timeValue } from '../shared/data.js';
-import { localToday, markNoShow, useDoctor } from './helpers.js';
+import { AppShell, ConfirmModal, EmptyState, ErrorState, Icon, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
+import { getDoctorToday, markNoShow, ApiError } from '../shared/api.js';
+import { fmtDateLong, fmtTime12, localToday } from './helpers.js';
 import { CompleteVisitModal } from './CompleteVisitModal.jsx';
-
-import { PatientHistoryModal } from './PatientHistoryModal.jsx';
 import { VisitNotesModal } from './VisitNotesModal.jsx';
 
-// ---------- Doctor Dashboard — today's schedule ----------
+const MUTABLE = new Set(['pending', 'confirmed']);
+
 function DoctorDashboard() {
   const store = useStore();
-  const me = useDoctor();
-  // Live record from store.doctors — the Admin console edits this same list
-  // (profile, status, weekly availability), so staff changes show up here
-  const liveDoc = store.doctors.find(d => d.id === me.id) || me;
-  const clinicDays = Array.isArray(liveDoc.avail) && liveDoc.avail.length ? formatDayRange(liveDoc.avail) : null;
-  // Simulated fetch — skeleton page while "loading", same 600ms pattern as
-  // the other portals
+  const doctorName = store.doctorSession?.name || store.doctorSession?.email || 'Doctor';
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
+  const [error, setError] = useState('');
+  const [date, setDate] = useState(localToday());
+  const [appointments, setAppointments] = useState([]);
+  const [completeTarget, setCompleteTarget] = useState(null);
+  const [notesTargetId, setNotesTargetId] = useState(null);
+  const [noShowTarget, setNoShowTarget] = useState(null);
+  const [acting, setActing] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
-  const today = localToday();
-  const mine = store.appointments.filter(a => a.doctorId === me.id);
-  const todayAppts = mine.filter(a => a.date === today).sort((a, b) => timeValue(a.time) - timeValue(b.time));
-  const upcoming = mine
-    .filter(a => a.date > today && (a.status === 'pending' || a.status === 'confirmed'))
-    .sort((a, b) => a.date.localeCompare(b.date) || timeValue(a.time) - timeValue(b.time));
-  const doneToday = todayAppts.filter(a => a.status === 'completed').length;
-  const [completeAppt, setCompleteAppt] = useState(null);
-  const [historyPatient, setHistoryPatient] = useState(null);
-  const [notesAppt, setNotesAppt] = useState(null);
-  // No-show is consequential (marks the record and frees the slot), so it
-  // gets a confirmation instead of firing straight from the row (§5/§50.4)
-  const [confirmNoShow, setConfirmNoShow] = useState(null);
+  const load = () => {
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+    getDoctorToday()
+      .then((d) => {
+        if (cancelled) return;
+        setDate(d.date || localToday());
+        setAppointments(d.appointments || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err.message || 'Could not load today\'s schedule.');
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  };
 
-  const stats = [
-    // Distinct icon per stat — three identical calendar icons read as template
-    // filler, not as three different numbers
-    { icon: 'calendar-days', label: "Today's appointments", value: todayAppts.length, context: formatDateLong(today) },
-    { icon: 'check-circle-2', label: 'Completed today', value: doneToday, context: `${todayAppts.length - doneToday} still to see` },
-    { icon: 'calendar-clock', label: 'Upcoming', value: upcoming.length, context: 'Pending & confirmed visits ahead' },
-  ];
+  useEffect(load, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const doNoShow = async () => {
+    if (!noShowTarget) return;
+    setActing(true);
+    try {
+      const updated = await markNoShow(noShowTarget.id);
+      setAppointments(list => list.map(a => (a.id === updated.id ? { ...a, status: updated.status } : a)));
+      store.pushToast({ title: 'Marked as no-show', msg: 'The time slot is now free for other patients.' });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Could not mark as no-show', msg: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setActing(false);
+      setNoShowTarget(null);
+    }
+  };
+
+  const onCompleted = (result) => {
+    const updated = result.appointment;
+    setAppointments(list => list.map(a => (a.id === updated.id ? { ...a, ...updated } : a)));
+  };
+
+  const upcoming = appointments.filter(a => MUTABLE.has(a.status));
+  const done = appointments.filter(a => !MUTABLE.has(a.status));
 
   return (
     <AppShell current="d-dashboard">
       <div className="page">
         <PageHeader
-          title={loading
-            ? /* Skeleton for the doctor's name — the live record loads from
-                 the store alongside the rest of the page (same 600ms window) */
-              <span className="skel" aria-hidden="true" style={{ display: 'inline-block', width: 280, maxWidth: '100%', height: 24, verticalAlign: 'middle' }} />
-            : me.name}
-          subtitle={loading
-            ? <span className="skel" aria-hidden="true" style={{ width: 260, maxWidth: '100%', height: 14 }} />
-            : (
-              // Status + clinic days come from the record the Admin console
-              // maintains — read-only here, always in sync with staff edits
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span>{me.specialty} · {me.room}</span>
-                {clinicDays && <span>Clinic days: {clinicDays}</span>}
-                <DoctorStatusBadge status={liveDoc.status} />
-              </span>
-            )}
-          breadcrumbs={[{ label: 'Doctor portal' }]}
-          actions={<button className="btn btn-secondary" onClick={() => navigate('/doctor/patients')}>All my patients <Icon name="arrow-right" size={13} /></button>}
+          title={`Good day, ${doctorName}`}
+          subtitle={`Today's schedule — ${fmtDateLong(date)}`}
+          breadcrumbs={[{ label: 'Home', to: '/doctor' }, { label: "Today's schedule" }]}
         />
 
-        <div className="stat-grid three" style={{ marginBottom: 20 }}>
-          {stats.map((s, i) => (
-            <div key={i} className="card stat-card">
-              {loading ? (
-                <>
-                  <span className="skel" style={{ height: 12, width: '70%' }} />
-                  <span className="skel" style={{ height: 26, width: '30%' }} />
-                  <span className="skel" style={{ height: 10, width: '55%' }} />
-                </>
-              ) : (
-                <>
-                  <div className="stat-label"><Icon name={s.icon} size={14} /> {s.label}</div>
-                  <div className="stat-value">{s.value}</div>
-                  <div className="stat-delta">{s.context}</div>
-                </>
-              )}
+        <div className="stat-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12, marginBottom: 16 }}>
+          {[
+            { label: 'Appointments today', value: appointments.length, icon: 'calendar-days' },
+            { label: 'Up next', value: upcoming.length, icon: 'clock' },
+            { label: 'Completed', value: done.filter(a => a.status === 'completed').length, icon: 'check-circle' },
+          ].map(s => (
+            <div key={s.label} className="card">
+              <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Icon name={s.icon} size={22} style={{ color: 'var(--primary)' }} />
+                <div>
+                  <div style={{ fontSize: 22, fontWeight: 800 }}>{s.value}</div>
+                  <div className="t-muted" style={{ fontSize: 12.5 }}>{s.label}</div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-header">
-            <h2 className="h-section">Today's schedule</h2>
-            <span className="t-muted" style={{ fontSize: 12 }}>{formatDateLong(today)}</span>
-          </div>
-          <div>
-            {loading ? (
-              [0, 1, 2].map(i => (
-                <div key={i} className="list-item" aria-hidden="true">
-                  <span className="skel" style={{ width: 64, height: 12, flexShrink: 0 }} />
-                  <span className="skel" style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0 }} />
-                  <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span className="skel" style={{ height: 11, width: '45%' }} />
-                    <span className="skel" style={{ height: 10, width: '70%' }} />
-                  </div>
-                  <span className="skel" style={{ width: 84, height: 28, flexShrink: 0 }} />
-                </div>
-              ))
-            ) : todayAppts.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState icon="calendar-check" title="No appointments today" message="Your schedule is clear. Enjoy the breather." />
-              </div>
-            ) : todayAppts.map(a => {
-              const p = window.findPatient(a.patientId);
-              const canComplete = a.status === 'pending' || a.status === 'confirmed';
-              return (
-                <div key={a.id} className="list-item">
-                  <span className="t-mono" style={{ fontSize: 13, fontWeight: 600, width: 72, flexShrink: 0 }}>{a.time}</span>
-                  <PatientAvatar person={p} size={32} />
-                  <div className="list-item-body">
-                    <div className="list-item-title">
-                      {/* Patient name opens the shared-chart history (all past
-                          visits + doctors' notes for this patient) */}
-                      <button type="button" className="link-btn" onClick={() => setHistoryPatient(p || { id: a.patientId, name: 'Unknown patient' })}>
-                        {p ? p.name : 'Unknown patient'}
-                      </button>
-                      {a.bookedFor && p && a.bookedFor !== p.name && (
-                        <span className="t-muted" style={{ fontWeight: 400 }}> · booking for {a.bookedFor}</span>
-                      )}
-                    </div>
-                    <div className="list-item-sub">{a.reason}</div>
-                  </div>
-                  <StatusBadge status={a.status} />
-                  {canComplete && (
-                    <>
-                      {/* Quiet ghost action — the old red icon read as delete;
-                          no-show is a status report, not a destructive act */}
-                      <button className="btn btn-ghost sm" title="Patient did not arrive" onClick={() => setConfirmNoShow(a)}>
-                        <Icon name="user-x" size={13} /> No-show
-                      </button>
-                      <button className="btn btn-primary sm" onClick={() => setCompleteAppt(a)}>Complete visit</button>
-                    </>
-                  )}
-                  {a.status === 'completed' && (
-                    <button className="btn btn-ghost sm" onClick={() => setNotesAppt(a)}>Notes</button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* This week (Mon–Sun grid) and Patient feedback now live on their
-            own pages — /doctor/week and /doctor/feedback, both reachable
-            from the sidebar */}
-
         <div className="card">
-          <div className="card-header">
-            <h2 className="h-section">Coming up</h2>
-            <button className="btn btn-ghost sm" onClick={() => navigate('/doctor/patients')}>See all <Icon name="arrow-right" size={13} /></button>
-          </div>
-          <div>
+          <div className="card-header"><h2 className="h-section">Today's appointments</h2></div>
+          <div className="card-body">
             {loading ? (
-              [0, 1].map(i => (
-                <div key={i} className="list-item" aria-hidden="true">
-                  <span className="skel" style={{ width: 130, height: 12, flexShrink: 0 }} />
-                  <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span className="skel" style={{ height: 11, width: '40%' }} />
-                    <span className="skel" style={{ height: 10, width: '60%' }} />
-                  </div>
-                </div>
-              ))
-            ) : upcoming.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState icon="calendar" title="Nothing scheduled ahead" message="New bookings from the portal will appear here." />
+              <p className="t-muted" style={{ fontSize: 13.5 }}>Loading schedule…</p>
+            ) : error ? (
+              <ErrorState title="Could not load schedule" message={error} onRetry={() => setRetryKey(k => k + 1)} />
+            ) : appointments.length === 0 ? (
+              <EmptyState icon="calendar-check" title="No appointments today" message="Enjoy the quiet day — new bookings will appear here." />
+            ) : (
+              <div className="stack md">
+                {appointments
+                  .slice()
+                  .sort((a, b) => String(a.start_time).localeCompare(String(b.start_time)))
+                  .map(a => {
+                    const patientName = a.patient?.full_name || a.booked_for || 'Patient';
+                    const actionable = MUTABLE.has(a.status);
+                    return (
+                      <div key={a.id} className="card" style={{ background: 'var(--surface)' }}>
+                        <div className="card-body" style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div style={{ minWidth: 92 }}>
+                            <div style={{ fontWeight: 800, fontSize: 15 }}>{fmtTime12(a.start_time)}</div>
+                            <div className="t-muted" style={{ fontSize: 12 }}>to {fmtTime12(a.end_time)}</div>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 180 }}>
+                            <div style={{ fontWeight: 700 }}>{patientName}</div>
+                            <div className="t-muted" style={{ fontSize: 12.5 }}>
+                              {a.booked_for ? `Booked for ${a.booked_for} · ` : ''}{a.reason || '—'}
+                            </div>
+                            <div className="t-muted" style={{ fontSize: 12 }}>Ref {a.reference_code}</div>
+                          </div>
+                          <StatusBadge status={a.status} />
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            {actionable ? (
+                              <>
+                                <button className="btn btn-primary sm" onClick={() => setCompleteTarget(a)}>
+                                  <Icon name="clipboard-check" size={14} /> Complete visit
+                                </button>
+                                <button className="btn btn-ghost sm" onClick={() => setNoShowTarget(a)}>
+                                  No-show
+                                </button>
+                              </>
+                            ) : a.status === 'completed' ? (
+                              <button className="btn btn-secondary sm" onClick={() => setNotesTargetId(a.id)}>
+                                <Icon name="file-text" size={14} /> View notes
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
-            ) : upcoming.slice(0, 4).map(a => {
-              const p = window.findPatient(a.patientId);
-              return (
-                <div key={a.id} className="list-item">
-                  <span className="t-mono" style={{ fontSize: 12.5, color: 'var(--text-muted)', width: 130, flexShrink: 0 }}>
-                    {formatDate(a.date)} · {a.time}
-                  </span>
-                  <div className="list-item-body">
-                    <div className="list-item-title">
-                      <button type="button" className="link-btn" onClick={() => setHistoryPatient(p || { id: a.patientId, name: 'Unknown patient' })}>
-                        {p ? p.name : 'Unknown patient'}
-                      </button>
-                      {a.bookedFor && p && a.bookedFor !== p.name && (
-                        <span className="t-muted" style={{ fontWeight: 400 }}> · booking for {a.bookedFor}</span>
-                      )}
-                    </div>
-                    <div className="list-item-sub">{a.reason}</div>
-                  </div>
-                  <StatusBadge status={a.status} />
-                </div>
-              );
-            })}
+            )}
           </div>
         </div>
       </div>
 
-      <CompleteVisitModal appointment={completeAppt} onClose={() => setCompleteAppt(null)} />
-      <PatientHistoryModal patient={historyPatient} onClose={() => setHistoryPatient(null)} />
-      <VisitNotesModal appointment={notesAppt} onClose={() => setNotesAppt(null)} />
+      <CompleteVisitModal
+        open={!!completeTarget}
+        onClose={() => setCompleteTarget(null)}
+        appointment={completeTarget}
+        onCompleted={onCompleted}
+      />
+
+      <VisitNotesModal
+        open={!!notesTargetId}
+        onClose={() => setNotesTargetId(null)}
+        appointmentId={notesTargetId}
+      />
 
       <ConfirmModal
-        open={!!confirmNoShow}
-        onClose={() => setConfirmNoShow(null)}
-        onConfirm={() => { markNoShow(store, confirmNoShow); setConfirmNoShow(null); }}
+        open={!!noShowTarget}
+        onClose={() => setNoShowTarget(null)}
         title="Mark as no-show?"
-        message={confirmNoShow ? `${(window.findPatient(confirmNoShow.patientId) || {}).name || 'This patient'} will be marked as a no-show for ${formatDate(confirmNoShow.date)} at ${confirmNoShow.time}, and the time slot will be freed for rebooking.` : ''}
+        message={`Mark ${noShowTarget?.patient?.full_name || 'this patient'} as no-show? The time slot will be freed for other patients.`}
         confirmLabel="Mark no-show"
-        kind="danger"
+        onConfirm={doNoShow}
+        loading={acting}
       />
     </AppShell>
   );
 }
 
 export { DoctorDashboard };
+export default DoctorDashboard;

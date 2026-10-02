@@ -1,92 +1,101 @@
-// CompleteVisitModal — doctor portal (split from screens-doctor.jsx)
+// CompleteVisitModal — doctor (Phase 5)
+// Iko-complete ang visit: required ang visit notes (10–500 chars, [ENC] sa
+// backend). Ang pag-complete ay gumagawa rin ng medical_records row
+// (record_type 'Consultation') — makikita ito ng patient sa Medical Records.
 import { useEffect, useState } from 'react';
-import { Field, Modal, TextArea, useStore } from '../shared/components.jsx';
-import { formatDate } from '../shared/data.js';
-import { focusFirstError } from './helpers.js';
+import { Field, Icon, Modal, TextArea, useStore } from '../shared/components.jsx';
+import { completeVisit, ApiError } from '../shared/api.js';
+import { fmtTime12 } from './helpers.js';
 
-// ---------- Complete visit — the doctor writes their own notes ----------
-function CompleteVisitModal({ appointment, onClose }) {
+const MIN_NOTES = 10;
+const MAX_NOTES = 500;
+
+function CompleteVisitModal({ open, onClose, appointment, onCompleted }) {
   const store = useStore();
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
-  useEffect(() => { if (appointment) { setNotes(''); setError(''); } }, [appointment]);
-  if (!appointment) return null;
-  const patient = window.findPatient(appointment.patientId);
-  // Clinical context — completed visits this patient already had with THIS
-  // doctor (first-time vs returning), from the shared store
-  const priorVisits = store.appointments.filter(a =>
-    a.patientId === appointment.patientId && a.doctorId === appointment.doctorId &&
-    a.id !== appointment.id && a.status === 'completed').length;
-  const allergies = patient && patient.allergies && patient.allergies !== 'None'
-    ? patient.allergies : null;
+  const [saving, setSaving] = useState(false);
 
-  const save = () => {
-    const n = notes.trim();
-    if (n.length < 10) {
-      setError('Please write the visit summary (10+ characters).');
-      focusFirstError();
+  useEffect(() => {
+    if (open) {
+      setNotes('');
+      setError('');
+      setSaving(false);
+    }
+  }, [open, appointment?.id]);
+
+  if (!appointment) return null;
+  const patientName = appointment.patient?.full_name || appointment.booked_for || 'Patient';
+
+  const doComplete = async () => {
+    const trimmed = notes.trim();
+    if (trimmed.length < MIN_NOTES) {
+      setError(`Visit notes must be at least ${MIN_NOTES} characters.`);
       return;
     }
-    store.setAppointments(store.appointments.map(a => a.id === appointment.id ? { ...a, status: 'completed', notes: n } : a));
-    store.pushActivity((store.doctorSession || {}).name || 'Doctor', 'Completed visit', patient ? patient.name : 'Patient');
-    store.pushToast({ title: 'Visit completed', msg: "Your notes were saved to the patient's medical records." });
-    onClose();
+    setSaving(true);
+    setError('');
+    try {
+      const result = await completeVisit(appointment.id, { notes: trimmed });
+      store.pushToast({ title: 'Visit completed', msg: `A consultation record was saved for ${patientName}.` });
+      onCompleted?.(result);
+      onClose();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not complete the visit. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <Modal
-      open
+      open={open}
       onClose={onClose}
       title="Complete visit"
-      subtitle={patient ? `${patient.name} · ${window.formatDate(appointment.date)} at ${appointment.time}` : ''}
-      icon="stethoscope"
-      iconKind="info"
-      footer={<>
-        <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={save}>Save &amp; complete visit</button>
-      </>}
+      subtitle={`${patientName} · ${appointment.appointment_date} at ${fmtTime12(appointment.start_time)}`}
+      icon="clipboard-check"
+      footer={
+        <>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button
+            className={`btn btn-primary ${saving ? 'btn-loading' : ''}`}
+            disabled={saving || notes.trim().length < MIN_NOTES}
+            onClick={doComplete}
+          >
+            Complete visit
+          </button>
+        </>
+      }
     >
-      {/* Clinical context — read live from the patient's shared record
-          (Profile page + visit history). Doctors write notes with the full
-          picture: allergies are flagged red when present. */}
-      {patient && (
-        <div className="ctx-row">
-          <span className="ctx-chip">
-            {patient.gender === 'M' ? 'Male' : patient.gender === 'F' ? 'Female' : '—'}{patient.age ? ` · ${patient.age} yrs` : ''}
-          </span>
-          <span className="ctx-chip">Blood type {patient.bloodType || '—'}</span>
-          <span className={'ctx-chip' + (allergies ? ' alert' : '')}>
-            Allergies: {allergies || 'None'}
-          </span>
-          <span className="ctx-chip">
-            {priorVisits === 0 ? 'First visit' : `Returning · ${priorVisits} prior visit${priorVisits === 1 ? '' : 's'}`}
-          </span>
+      <div className="stack md">
+        {error && (
+          <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)' }}>
+            {error}
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '10px 14px', borderRadius: 8, background: 'var(--surface-muted)', fontSize: 13.5, color: 'var(--text-secondary)' }}>
+          <Icon name="info" size={16} style={{ marginTop: 2, flexShrink: 0 }} />
+          <span>Completing this visit sets the appointment to <strong>completed</strong> and creates a consultation record the patient can see. The patient will then be able to rate this visit.</span>
         </div>
-      )}
-      {/* Booking-time note from the patient (booking form "Additional notes")
-          — the context the patient flagged for the doctor before the visit */}
-      {appointment.additionalNotes && (
-        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--text-muted)', marginTop: 10 }}>
-          <strong style={{ color: 'var(--text)' }}>Patient's booking note:</strong> {appointment.additionalNotes}
-        </div>
-      )}
-      <Field
-        label="Doctor's notes / visit summary"
-        required
-        error={error}
-        help="You write these yourself. They are attributed to you and saved to the patient's medical records in their portal."
-      >
-        <TextArea
-          rows={4}
-          placeholder="e.g., Blood pressure well controlled on current medication. Continue lifestyle changes; repeat ECG in 6 months."
-          value={notes}
-          onChange={e => { setNotes(e.target.value); if (error) setError(''); }}
-          error={error}
-          maxLength={500}
-        />
-      </Field>
+        <Field
+          label="Visit notes"
+          required
+          error={notes.trim().length > 0 && notes.trim().length < MIN_NOTES ? `At least ${MIN_NOTES} characters` : null}
+          help="Diagnosis, findings, and plan. Encrypted at rest."
+        >
+          <TextArea
+            placeholder="e.g., Upper respiratory tract infection. Advised rest and increased fluid intake for one week…"
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            maxLength={MAX_NOTES}
+            rows={5}
+          />
+          <div className="t-help" style={{ textAlign: 'right', marginTop: -4 }}>{notes.trim().length}/{MAX_NOTES}</div>
+        </Field>
+      </div>
     </Modal>
   );
 }
 
 export { CompleteVisitModal };
+export default CompleteVisitModal;
