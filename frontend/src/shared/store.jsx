@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import brandLogo from '../assets/brand_logo.png';
 import AnimatedContent from './reactbits/AnimatedContent.jsx';
-import { onUnauthorized, bootstrapSession, setNotify, api, apiOptional, clearAccessToken } from './api.js';
+import { onUnauthorized, bootstrapSession, setNotify, api, apiOptional, clearAccessToken, getProfile, listFamily } from './api.js';
 
 // ---------- App-wide store (kept simple, in-memory + localStorage for appointments/role) ----------
 const StoreCtx = createContext(null);
@@ -176,14 +176,30 @@ function StoreProvider({ children }) {
     return { emailNewAppointments: true, remindPatients: true, autoConfirm: false, slotInterval: '30' };
   });
   // Family members (proxy booking) — the patient can book appointments on
-  // their behalf from the booking form; managed on the Profile page. Persisted.
-  const [familyMembers, setFamilyMembers] = useState(() => {
+  // their behalf from the booking form; managed on the Profile page.
+  // Phase 4: ang database (GET /api/patients/me/family) ang source of truth —
+  // hindi na ito pini-persist sa localStorage.
+  const [familyMembers, setFamilyMembers] = useState([]);
+  // Phase 4 — patient profile (GET /api/patients/me). Best-effort hydration
+  // tulad ng public data: tahimik kapag offline, at hindi nakakasira sa
+  // public hydration o sa window.DOCTORS/SPECIALTIES sync.
+  const [profile, setProfile] = useState(null);
+  const refreshProfile = useCallback(async () => {
     try {
-      const saved = JSON.parse(localStorage.getItem('nmc.family'));
-      if (Array.isArray(saved)) return saved;
-    } catch { /* fall through */ }
-    return [];
-  });
+      const p = await getProfile();
+      setProfile(p || null);
+      return p || null;
+    } catch {
+      return null;
+    }
+  }, []);
+  useEffect(() => {
+    if (!patientSession) { setProfile(null); setFamilyMembers([]); return; }
+    let cancelled = false;
+    getProfile().then((p) => { if (!cancelled && p) setProfile(p); }).catch(() => {});
+    listFamily().then((f) => { if (!cancelled && Array.isArray(f)) setFamilyMembers(f); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [patientSession]);
   // Support tickets — portal "Message the clinic" submissions that land on
   // the admin console's Patient messages page; persisted like appointments.
   // `thread` carries the conversation AFTER the first message (staff replies
@@ -335,7 +351,6 @@ function StoreProvider({ children }) {
   useEffect(() => {
     try { localStorage.setItem('nmc.prefs', JSON.stringify(prefs)); } catch { /* private mode */ }
   }, [prefs]);
-  useEffect(() => { localStorage.setItem('nmc.family', JSON.stringify(familyMembers)); }, [familyMembers]);
   useEffect(() => { localStorage.setItem('nmc.tickets', JSON.stringify(tickets)); }, [tickets]);
   useEffect(() => { localStorage.setItem('nmc.labs', JSON.stringify(labs)); }, [labs]);
   useEffect(() => { localStorage.setItem('nmc.meds', JSON.stringify(meds)); }, [meds]);
@@ -410,6 +425,7 @@ function StoreProvider({ children }) {
     clinic, setClinic,
     prefs, setPrefs,
     familyMembers, setFamilyMembers,
+    profile, refreshProfile,
     tickets, setTickets,
     labs, setLabs, meds, setMeds,
     patientPrefs, setPatientPrefs,
@@ -420,4 +436,5 @@ function StoreProvider({ children }) {
 }
 
 export { StoreCtx, useStore, migratedEmail, StoreProvider };
+
 

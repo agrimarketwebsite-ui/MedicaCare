@@ -158,7 +158,7 @@ function DoctorListing() {
                 </div>
                 <div className="doctor-card-meta">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <DoctorRatingPill ratings={store.ratings} doctorId={d.id} />
+                    <DoctorRatingPill avg={d.rating} count={d.ratingCount} />
                     <span>· {d.exp} yrs</span>
                   </div>
                   <DoctorStatusBadge status={d.status} />
@@ -183,9 +183,9 @@ function DoctorListing() {
             </div>
 
             {/* Honesty labels: portraits are placeholders; ratings are real
-                patient feedback (completed visits, one per appointment) */}
+                patient feedback averages (v_doctor_rating_averages) */}
             <p className="t-muted" style={{ fontSize: 12.5, marginTop: 14 }}>
-              Doctor photos are sample placeholder portraits (randomuser.me), not real staff photos. Ratings shown are prototype demo data; ratings you submit from completed visits are added to them.
+              Doctor photos are sample placeholder portraits (randomuser.me), not real staff photos. Ratings are averages of real patient feedback from completed visits.
             </p>
 
             {isMobile && (
@@ -230,7 +230,7 @@ function DoctorListing() {
             <div className="detail-list">
               <div className="detail-row"><div className="label">Consultation fee</div><div className="value">₱{profileDoc.fee.toLocaleString()}</div></div>
               <div className="detail-row"><div className="label">Experience</div><div className="value">{profileDoc.exp} years</div></div>
-              <div className="detail-row"><div className="label">Rating</div><div className="value"><DoctorRatingPill ratings={store.ratings} doctorId={profileDoc.id} /></div></div>
+              <div className="detail-row"><div className="label">Rating</div><div className="value"><DoctorRatingPill avg={profileDoc.rating} count={profileDoc.ratingCount} /></div></div>
               <div className="detail-row"><div className="label">Room</div><div className="value">{profileDoc.room}</div></div>
               <div className="detail-row"><div className="label">Consultation length</div><div className="value">30 minutes</div></div>
             </div>
@@ -242,3 +242,4 @@ function DoctorListing() {
 }
 
 export { MOBILE_DOCTOR_QUERY, MOBILE_DOCTOR_PAGE_SIZE, DoctorListing };
+

@@ -64,7 +64,9 @@ function toICSStamp(dateStr, timeStr, addMinutes = 0) {
 }
 
 // .ics (iCalendar) content so the appointment can be imported into any calendar app
-function buildICS(appt, doctor) {
+// Phase 4: optional durationMinutes (galing sa API end_time/start_time);
+// default 30 para sa legacy shape na walang duration.
+function buildICS(appt, doctor, durationMinutes = 30) {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -73,7 +75,7 @@ function buildICS(appt, doctor) {
     `UID:${appt.id}@medicacare.ph`,
     `DTSTAMP:${toICSStamp(appt.date, appt.time)}`,
     `DTSTART:${toICSStamp(appt.date, appt.time)}`,
-    `DTEND:${toICSStamp(appt.date, appt.time, 30)}`, // 30-minute consultation
+    `DTEND:${toICSStamp(appt.date, appt.time, durationMinutes)}`,
     `SUMMARY:${doctor.name} (${doctor.specialty})`,
     `LOCATION:${doctor.room}, MedicaCare`,
     `DESCRIPTION:Appointment ${appt.id.toUpperCase()}: ${String(appt.reason).replace(/\r?\n/g, ' ')}`,
@@ -111,6 +113,76 @@ function localToday() {
   const n = new Date();
   const pad = (x) => String(x).padStart(2, '0');
   return `${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`;
+}
+
+// ============================================================
+// Phase 4 — API-shape helpers (patient portal ↔ backend contract)
+// ============================================================
+
+// "HH:MM:SS" (24h, galing sa API) → "HH:MM" para sa POST bodies
+function time24(hhmmss) {
+  return String(hhmmss || '').slice(0, 5);
+}
+
+// "HH:MM:SS" (24h) → "h:mm AM/PM" para sa display (tugma sa dating UI copy)
+function fmtTime12(hhmmss) {
+  const m = String(hhmmss || '').match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return String(hhmmss || '—');
+  let h = parseInt(m[1], 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m[2]} ${ampm}`;
+}
+
+// Next N days bilang YYYY-MM-DD (local), para sa date pickers
+function nextDays(n) {
+  const out = [];
+  const d = new Date();
+  const pad = (x) => String(x).padStart(2, '0');
+  for (let i = 0; i < n; i++) {
+    out.push(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`);
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
+
+// GET /api/appointments(:id) shape → frontend shape na ginagamit ng mga
+// patient page. Ang API ay nagbabalik ng appointment_date/start_time
+// ("HH:MM:SS")/reference_code/booked_for at nested doctor
+// { id, full_name, specialty_name }.
+function toFrontendAppt(a) {
+  if (!a) return null;
+  return {
+    id: a.id,
+    reference: a.reference_code,
+    doctorId: a.doctor?.id,
+    doctorName: a.doctor?.full_name || 'Unknown doctor',
+    specialty: a.doctor?.specialty_name || '—',
+    doctorRoom: a.doctor?.room,
+    doctorFee: a.doctor?.consultation_fee,
+    date: a.appointment_date,
+    time: time24(a.start_time),
+    timeDisplay: fmtTime12(a.start_time),
+    endTime: a.end_time ? time24(a.end_time) : '',
+    duration: a.duration_minutes,
+    status: a.status,
+    reason: a.reason,
+    bookedFor: a.booked_for,
+    contact: a.contact_number,
+    additionalNotes: a.additional_notes,
+    isFirstVisit: a.is_first_visit,
+    familyMemberId: a.family_member_id,
+    createdAt: a.created_at,
+    statusHistory: a.status_history || [],
+  };
+}
+
+// Numeric minutes para sa "HH:MM" slot strings — ang timeValue() sa data.js
+// ay para sa "h:mm AM/PM" format, hindi 24h
+function time24Value(t) {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(t || ''));
+  if (!m) return 0;
+  return Number(m[1]) * 60 + Number(m[2]);
 }
 
 // Printable full medical summary (visit records + medications + lab results +
@@ -179,4 +251,5 @@ function buildRecordsHTML(patient, records, meds, labs, bills) {
 // Patient screens
 // ============================================================
 
-export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, buildRecordsHTML };
+export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, buildRecordsHTML, time24, fmtTime12, nextDays, toFrontendAppt, time24Value };
+
