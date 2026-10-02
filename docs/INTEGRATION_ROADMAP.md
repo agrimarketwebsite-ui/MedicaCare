@@ -415,6 +415,45 @@ inaaktibo ang [ENC] PHI fields at ang slot logic.
 > (6) BookAppointment — ibinalik ang original full form (doctor/date/time
 > sa loob ng page, API slots; draft ay pre-fill lang). Susunod: Phase 5 —
 > HUWAG simulan nang walang explicit na go ni IVAN.
+>
+> **✅ PHASE 1–4 REGRESSION SWEEP — kumpleto at sarado 2026-10-02 (IVAN).**
+> Pagkatapos ng sign-off sa itaas, ni-re-test ni IVAN ang buong Phase 1–4
+> sa bagong account; lahat ng natagpuang isyu ay naayos, na-push, at
+> na-verify niya sa browser + `npm test` **134/134 passed, 0 failed** sa
+> user machine laban sa tunay na Supabase:
+> 1. Silent-refresh logout + nawawalang sidebar name sa F5 — inayos
+>    (`refreshLimiter` 120/15min hiwalay sa `authLimiter`; refresh profile
+>    ay nagno-normalize ng `name` mula sa `full_name`); VERIFIED — paulit-ulit
+>    na F5 ay hindi na nagla-logout at nananatili ang pangalan.
+> 2. Password-reset backend — manual POST `/api/auth/reset-password` gamit
+>    ang DEV-ONLY token → 200 \"Password has been reset\"; ang single-use,
+>    invalid-token 400, login-gamit-bagong-password 200, at lumang-password
+>    401 ay covered ng integration tests (pumasa). Ang reset form/email-link
+>    UI ay Phase 8 scope.
+> 3. Family-member modal focus bug (nawawalan ng focus kada keystroke) —
+>    inayos (`onCloseRef`; focus effect ay `[open]` lang); VERIFIED.
+> 4. Family-member delete na may upcoming appointment — BLOCKED (desisyon ni
+>    IVAN): 409 \"Cannot delete <name> — they still have N upcoming
+>    appointment(s). Cancel or reschedule the appointments first...\" (English);
+>    pagkatapos i-cancel lahat → 204 + \"Family member removed\"; VERIFIED sa
+>    browser + integration test. Tandaan: ang guard ay name-snapshot based
+>    (walang `family_member_id` FK sa `appointments`) — ang rename-then-delete
+>    bypass ay tinanggap bilang limitasyon ng schema (walang migration).
+> 5. Past same-day slots — hindi na dini-display sa Availability / Book form /
+>    reschedule picker (`isPastSlot` UI filter + backend `getSlots` ay
+>    nagmamarka ng past slots bilang `is_available: false`, Manila time);
+>    ang booking guard (`assertNotPastToday` → 400) ay nananatiling final
+>    protection; VERIFIED sa browser.
+> 6. \"View status timeline\" na nagbubukas ng maling appointment — inayos
+>    (`/patient/status/:id` deep link; BOLA-safe — ibang pasyente/maling ID →
+>    \"Appointment not found\"); ang generic `/patient/status` (Dashboard
+>    \"Check status\") ay nananatili: unang upcoming, kung wala ay pinakabago
+>    (cancelled → Booked → Cancelled timeline); VERIFIED sa browser.
+> 7. Flaky `encryptRow` unit test (`'O+'` na random lumilitaw sa base64) —
+>    hinigpitan ang assertion (test-only change).
+> 8. Rate limit — 11× maling login → 429 \"too many requests\" (10/15min
+>    window); VERIFIED.
+> **Phase 4 ay ganap nang TAPOS — regression sweep sarado. IVAN: go na ang Phase 5.**
 
 ---
 
@@ -700,6 +739,19 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 ---
 
 ## Changelog
+- **2026-10-02 — Phase 1–4 regression sweep SARADO + Phase 4 ganap na TAPOS:**
+  ni-re-test ni IVAN ang buong Phase 1–4 sa bagong account; 8 isyu natagpuan
+  at lahat naayos/na-push/na-verify: (1) F5 silent-refresh logout + sidebar
+  name (`refreshLimiter` 120/15min, `name` normalize); (2) password-reset
+  endpoint manual 200 + integration-covered single-use/reuse-400/new-pw-200/
+  old-pw-401; (3) family modal focus loss (`onCloseRef`); (4) family delete
+  BLOCKED kapag may upcoming appointment (409 English message; 204 pagka-cancel
+  lahat; name-snapshot based — walang migration); (5) past same-day slots
+  hindi na dini-display (UI filter + backend `getSlots` marks unavailable,
+  Manila time); (6) \"View status timeline\" deep link `/patient/status/:id`
+  (BOLA-safe 404; generic fallback unchanged); (7) flaky `encryptRow`
+  assertion hinigpitan; (8) login rate limit 429 verified. `npm test`
+  **134/134 passed, 0 failed** sa user machine. IVAN: go na ang Phase 5.
 - **2026-10-02 — Phase 4 LIVE VERIFIED + formal sign-off:** `npm test`
   **131/131** sa user machine (tunay na Supabase); browser acceptance ni
   IVAN green: profile CRUD + [ENC] ciphertext-at-rest, family CRUD,
@@ -760,6 +812,7 @@ manual walkthrough ng acceptance criteria → i-update ang Changelog sa ibaba.
 | 2026-10-01 | Phase 0 ✅ — boot chain live, health 200 (db:ok), secrets sa `.env`, lint clean. Roadmap nilikha. |
 | 2026-10-02 | Phase 2 ✅ — auth module: `tokens.js`/`passwords.js`, `auth.validation/repository/service/middleware/controller/routes` (bcrypt cost 12, JWT iss/aud/exp, rotate + reuse detection, generic errors, authLimiter sa credential endpoints, activity_log audit), `002_password_resets.sql` migration, `cookie-parser` dep, `npm test` script fix. Frontend: Login/Register/AdminLogin/DoctorLogin/ForgotPassword → API, OTP modal tinanggal, store logout → server revoke. Unit 15/15 pass, lint clean, route wiring verified; integration tests graceful-skip nang walang .env (user-side tatakbo). FIX 2026-10-02: ang rate-limiter 429 handler ay nagbabalik ng 500 (`next(string)` bug sa Phase 0 `rateLimiter.js` — ginawang `next(ApiError.tooManyRequests())`); + `auth.test.js` harness fix (hindi pwedeng lagyan ng properties ang frozen module namespace — ginawang local `state`). |
 | 2026-10-01 | Phase 1 ✅ — shared plumbing: `001_refresh_tokens.sql` migration + README, `crypto.js` (AES-256-GCM/HMAC, 13 tests pass), `validate.js` (zod, 6 tests pass), `api.js` (fetch wrapper + memory-only token + silent refresh, 9 mock-server tests pass), `store.jsx` session adapter. Backend lint clean. ✅ Live verified: migration applied, /api/health 200 (db:ok), frontend :5173 + CORS ok. |
+
 
 
 
