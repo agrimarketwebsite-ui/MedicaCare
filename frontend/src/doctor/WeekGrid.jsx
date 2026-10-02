@@ -9,6 +9,15 @@ function statusLabel(status) {
   return { pending: 'Pending', confirmed: 'Confirmed', completed: 'Completed', cancelled: 'Cancelled', 'no-show': 'No-show' }[status] || status;
 }
 
+// Tugma sa DoctorDashboard — status rail ng bawat appointment chip.
+const STATUS_ACCENT = {
+  pending: '#d97706',
+  confirmed: 'var(--primary)',
+  completed: '#059669',
+  cancelled: '#9ca3af',
+  'no-show': '#dc2626',
+};
+
 function WeekGrid({ weekStart, weekEnd, appointments, selectedId, onSelect, today }) {
   const days = weekStart ? weekDays(weekStart) : [];
   const byDate = {};
@@ -34,18 +43,18 @@ function WeekGrid({ weekStart, weekEnd, appointments, selectedId, onSelect, toda
               key={date}
               className="card"
               style={{
-                minHeight: 180,
+                minHeight: 108,
                 borderColor: isToday ? 'var(--primary)' : undefined,
                 borderWidth: isToday ? 2 : undefined,
               }}
             >
-              <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border)', fontSize: 12.5, fontWeight: 700 }}>
+              <div style={{ padding: '8px 10px', borderBottom: '1px solid var(--border)', fontSize: 12.5, fontWeight: 700 }}>
                 <div>{fmtDayShort(date)}</div>
                 {isToday && <span className="t-help" style={{ fontWeight: 600, color: 'var(--primary)' }}>Today</span>}
               </div>
-              <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ padding: 6, display: 'flex', flexDirection: 'column', gap: 5 }}>
                 {list.length === 0 ? (
-                  <span className="t-muted" style={{ fontSize: 12 }}>—</span>
+                  <span className="t-muted" style={{ fontSize: 11.5, padding: '2px 4px' }}>—</span>
                 ) : (
                   list.map((a) => (
                     <button
@@ -56,8 +65,9 @@ function WeekGrid({ weekStart, weekEnd, appointments, selectedId, onSelect, toda
                       style={{
                         textAlign: 'left',
                         border: '1px solid var(--border)',
+                        borderLeft: `3px solid ${STATUS_ACCENT[a.status] || '#9ca3af'}`,
                         borderRadius: 8,
-                        padding: '6px 8px',
+                        padding: '5px 7px',
                         background: selectedId === a.id ? 'var(--primary-soft)' : 'var(--surface)',
                         cursor: 'pointer',
                         fontSize: 12,
