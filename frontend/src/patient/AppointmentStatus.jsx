@@ -24,11 +24,19 @@ function AppointmentStatus() {
     (async () => {
       try {
         const list = await getAppointments();
-        const upcoming = (list || [])
-          .map(toFrontendAppt)
-          .filter(a => a && (a.status === 'pending' || a.status === 'confirmed'))
+        const mapped = (list || []).map(toFrontendAppt).filter(Boolean);
+        const upcoming = mapped
+          .filter(a => a.status === 'pending' || a.status === 'confirmed')
           .sort((a, b) => a.date.localeCompare(b.date) || time24Value(a.time) - time24Value(b.time));
-        const next = upcoming[0] || null;
+        // Fallback (original page behavior): kapag walang upcoming, ipakita
+        // ang PINAKABAGONG appointment kahit cancelled/completed/no-show —
+        // ang "No appointments yet" ay para lang sa talagang walang
+        // appointment. Kung hindi ito fallback, ang cancelled booking ay
+        // magmumukhang walang history.
+        const fallback = mapped
+          .slice()
+          .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))[0] || null;
+        const next = upcoming[0] || fallback;
         if (next) {
           // Enrich with the real status history for the timeline
           try {
@@ -157,12 +165,27 @@ function AppointmentStatus() {
   const bookedAt = appt.createdAt ? formatDateTime(appt.createdAt) : '';
   const confirmedAt = histAt('confirmed') ? formatDateTime(histAt('confirmed')) : '';
   const completedAt = histAt('completed') ? formatDateTime(histAt('completed')) : '';
-  const steps = [
-    { label: 'Booked',    sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
-    { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : `Confirmed${confirmedAt ? ` · ${confirmedAt}` : ''}`, done: appt.status !== 'pending', active: appt.status === 'pending' },
-    { label: 'Confirmed', sub: appt.status === 'confirmed' || appt.status === 'completed' ? 'Ready to visit' : 'Waiting', done: appt.status === 'confirmed' || appt.status === 'completed', active: appt.status === 'confirmed' },
-    { label: 'Visit completed', sub: appt.status === 'completed' ? `Completed${completedAt ? ` · ${completedAt}` : ''}` : 'After your visit', done: appt.status === 'completed', active: false },
-  ];
+  const cancelledAt = histAt('cancelled') ? formatDateTime(histAt('cancelled')) : '';
+  const noShowAt = histAt('no-show') ? formatDateTime(histAt('no-show')) : '';
+  // Terminal statuses: ang timeline ay nagtatapos sa aktwal na nangyari
+  // (hindi sa "Visit completed" na hindi na mangyayari).
+  const steps = appt.status === 'cancelled'
+    ? [
+      { label: 'Booked', sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
+      { label: 'Cancelled', sub: `This appointment was cancelled${cancelledAt ? ` · ${cancelledAt}` : ''}`, done: true, active: false },
+    ]
+    : appt.status === 'no-show'
+      ? [
+        { label: 'Booked', sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
+        { label: 'Confirmed', sub: `Confirmed${confirmedAt ? ` · ${confirmedAt}` : ''}`, done: true, active: false },
+        { label: 'No-show', sub: `Marked as no-show${noShowAt ? ` · ${noShowAt}` : ''}`, done: true, active: false },
+      ]
+      : [
+        { label: 'Booked',    sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
+        { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : `Confirmed${confirmedAt ? ` · ${confirmedAt}` : ''}`, done: appt.status !== 'pending', active: appt.status === 'pending' },
+        { label: 'Confirmed', sub: appt.status === 'confirmed' || appt.status === 'completed' ? 'Ready to visit' : 'Waiting', done: appt.status === 'confirmed' || appt.status === 'completed', active: appt.status === 'confirmed' },
+        { label: 'Visit completed', sub: appt.status === 'completed' ? `Completed${completedAt ? ` · ${completedAt}` : ''}` : 'After your visit', done: appt.status === 'completed', active: false },
+      ];
 
   return (
     <AppShell current="dashboard">
