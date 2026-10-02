@@ -144,13 +144,22 @@ async function requestRaw(path, { method = 'GET', body, headers = {}, auth = tru
   }
 
   // 401 → tahimik na refresh → isang retry. Kapag nabigo pa rin → logout.
+  // Ang logout ay PARA LANG sa tunay na expired/invalid session (401 mula sa
+  // refresh). Ang 429 (rate limit) o network error ay HINDI logout-worthy —
+  // dati ay naglo-logout din sa mga ito, kaya ang page reloads sa gitna ng
+  // rate-limited window ay nagiging spurious logout.
   if (res.status === 401 && auth && retry) {
     try {
       await silentRefresh();
-    } catch {
+    } catch (err) {
       clearAccessToken();
-      try { unauthorizedHandler?.(); } catch { /* logout handler ay best-effort */ }
-      throw new ApiError(401, 'Nag-expire ang session — pakilog-in muli', 'SESSION_EXPIRED');
+      if (err instanceof ApiError && err.status === 401) {
+        try { unauthorizedHandler?.(); } catch { /* logout handler ay best-effort */ }
+        throw new ApiError(401, 'Nag-expire ang session — pakilog-in muli', 'SESSION_EXPIRED');
+      }
+      throw err instanceof ApiError
+        ? err
+        : new ApiError(0, 'Hindi na-refresh ang session. Pakisubukang muli.', 'REFRESH_FAILED');
     }
     return requestRaw(path, { method, body, headers, auth, retry: false, quiet });
   }

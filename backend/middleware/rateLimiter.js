@@ -33,6 +33,20 @@ export const authLimiter = rateLimit({
   handler,
 });
 
+// Session refresh endpoint: HINDI ito credential endpoint (bearer-token
+// rotation, hindi password guessing) — kaya HINDI ito dapat sumasama sa
+// authLimiter. Bawat page reload ay 1 refresh; ang 10/15min ay masyadong
+// mahigpit at nagiging sanhi ng spurious logout (429 sa /refresh → ang
+// client ay nag-iinterpret nito bilang expired session). Maluwag pero
+// may hangganan pa rin laban sa abuse.
+export const refreshLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 120,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler,
+});
+
 // Public write endpoints (spam surface): pinaka-mahigpit.
 export const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
