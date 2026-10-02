@@ -403,7 +403,13 @@ function StoreProvider({ children }) {
     else if (role === 'doctor') setDoctorSession({ ...profile, at: Date.now() });
     else {
       setPatientSession({ ...profile, at: Date.now() });
-      setCurrentPatient(profile);
+      // Ang API profile ay may full_name, pero ang sidebar (layout.jsx) ay
+      // umaasa sa `name` — katulad ng ginagawa ng Login.jsx (name:
+      // profile.full_name). Kung hindi ito i-normalize dito, pagkatapos ng
+      // F5 (silent refresh) ay mawawala ang pangalan sa sidebar kahit
+      // naka-login pa rin. Ang spread ay pinapanatili ang full_name para sa
+      // ibang gumagamit nito.
+      setCurrentPatient({ ...profile, name: profile.name || profile.full_name || '' });
     }
   }, []);
 
