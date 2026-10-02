@@ -40,4 +40,28 @@ export async function createRating({ appointment_id, patient_id, doctor_id, star
   return data;
 }
 
-export default { getAppointmentForRating, createRating };
+/** Ratings ng sariling visits ng doctor (bagong feedback muna). */
+export async function listRatingsByDoctor(doctorId) {
+  const { data, error } = await supabase
+    .from('visit_ratings')
+    .select(
+      'id, appointment_id, patient_id, stars, comment, created_at, appointments(appointment_date), patients(full_name)',
+    )
+    .eq('doctor_id', doctorId)
+    .order('created_at', { ascending: false });
+  return must({ data, error }, 'listRatingsByDoctor');
+}
+
+/** Average + count mula sa v_doctor_rating_averages (tulad ng Phase 3 directory). */
+export async function getAverageForDoctor(doctorId) {
+  const { data, error } = await supabase
+    .from('v_doctor_rating_averages')
+    .select('doctor_id, avg_rating, rating_count')
+    .eq('doctor_id', doctorId)
+    .maybeSingle();
+  const row = must({ data, error }, 'getAverageForDoctor');
+  if (!row) return { avg_rating: null, rating_count: 0 };
+  return { avg_rating: Number(row.avg_rating), rating_count: Number(row.rating_count) };
+}
+
+export default { getAppointmentForRating, createRating, listRatingsByDoctor, getAverageForDoctor };

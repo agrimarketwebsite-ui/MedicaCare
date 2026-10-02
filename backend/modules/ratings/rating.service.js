@@ -8,6 +8,7 @@
 //     ang final arbiter; ang 23505 ay nagiging 409, hindi 500.
 
 import ApiError from '../../shared/utils/ApiError.js';
+import { resolveDoctorId } from '../doctors/doctor.service.js';
 import * as repo from './rating.repository.js';
 
 export async function submitRating(patientId, { appointment_id, stars, comment }) {
@@ -36,4 +37,32 @@ export async function submitRating(patientId, { appointment_id, stars, comment }
   return rating;
 }
 
-export default { submitRating };
+// ------------------------------------------------------------
+// Phase 5 — doctor view: visit_ratings ng sariling visits +
+// average/count mula sa v_doctor_rating_averages.
+// ------------------------------------------------------------
+
+/**
+ * Feedback para sa sariling doctor: bawat rating (stars, comment, patient
+ * name, visit date) + aggregate average. Ang doctor ay nakikita lang ang
+ * SARILING ratings (BOLA via resolveDoctorId).
+ */
+export async function getDoctorFeedback(accountId) {
+  const doctorId = await resolveDoctorId(accountId);
+  const [rows, average] = await Promise.all([
+    repo.listRatingsByDoctor(doctorId),
+    repo.getAverageForDoctor(doctorId),
+  ]);
+  const ratings = rows.map((r) => ({
+    id: r.id,
+    appointment_id: r.appointment_id,
+    stars: r.stars,
+    comment: r.comment,
+    created_at: r.created_at,
+    patient_name: r.patients?.full_name ?? null,
+    visit_date: r.appointments?.appointment_date ?? null,
+  }));
+  return { ratings, ...average };
+}
+
+export default { submitRating, getDoctorFeedback };
