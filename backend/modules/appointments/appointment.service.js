@@ -65,13 +65,27 @@ function toDoctorDTO(row) {
  * contact_number / notes (details view lang); ang reason ay decrypted para
  * sa owner (sariling data niya).
  */
-export function toAppointmentDTO(row, { detail = false, statusHistory = null } = {}) {
+export function toAppointmentDTO(row, { detail = false, statusHistory = null, rated = false } = {}) {
   const rest = { ...row };
   delete rest.doctors; // ang embed ay pinalitan ng flattened na `doctor` DTO sa ibaba
   const out = decryptRow(rest, detail ? APPT_READ_ENC_FIELDS : ['reason']);
   out.doctor = toDoctorDTO(row);
+  // May visit_ratings row na ba ang appointment na ito? Kailangan ng UI
+  // para itago ang "Rate your visit" (ang localStorage record ay per-device
+  // lang — ang DB ang source of truth). Ang caller ang nagko-compute via
+  // ratedIdSet() (isang query, walang N+1); default false (hal. bagong
+  // booking — hindi pa pwedeng ma-rate).
+  out.rated = Boolean(rated);
   if (detail && statusHistory) out.status_history = statusHistory;
   return out;
+}
+
+/** Set ng appointment ids (mula sa rows) na may rating na — isang query. */
+async function ratedIdSet(patientId, rows) {
+  const ids = rows.map((r) => r.id);
+  if (!ids.length) return new Set();
+  const rated = await repo.getRatedAppointmentIds(patientId, ids);
+  return new Set(rated.map((r) => r.appointment_id));
 }
 
 // ---- Slots ----
@@ -164,14 +178,16 @@ export async function createAppointment(patientId, input) {
 
 export async function listAppointments(patientId, { status } = {}) {
   const rows = await repo.listAppointments(patientId, { status });
-  return rows.map((r) => toAppointmentDTO(r));
+  const rated = await ratedIdSet(patientId, rows);
+  return rows.map((r) => toAppointmentDTO(r, { rated: rated.has(r.id) }));
 }
 
 export async function getAppointment(patientId, id) {
   const row = await repo.getAppointmentById(id, patientId);
   if (!row) throw ApiError.notFound('Appointment not found');
   const history = await repo.getStatusHistory(id);
-  return toAppointmentDTO(row, { detail: true, statusHistory: history });
+  const rated = await ratedIdSet(patientId, [row]);
+  return toAppointmentDTO(row, { detail: true, statusHistory: history, rated: rated.has(row.id) });
 }
 
 export async function rescheduleAppointment(patientId, id, { appointment_date, start_time, duration_minutes }) {

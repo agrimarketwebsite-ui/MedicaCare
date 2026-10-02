@@ -93,6 +93,21 @@ export async function getStatusHistory(appointmentId) {
   return must({ data, error }, 'getStatusHistory');
 }
 
+/**
+ * Aling appointment ids (ng pasyenteng ito) ang may visit_ratings row na —
+ * ISANG query para sa buong listahan (walang N+1). Ginagamit ng service
+ * para sa `rated` flag ng DTO (Issue: hindi alam ng UI kung na-rate na).
+ */
+export async function getRatedAppointmentIds(patientId, appointmentIds) {
+  if (!appointmentIds.length) return [];
+  const { data, error } = await supabase
+    .from('visit_ratings')
+    .select('appointment_id')
+    .eq('patient_id', patientId)
+    .in('appointment_id', appointmentIds);
+  return must({ data, error }, 'getRatedAppointmentIds');
+}
+
 export default {
   getSlots,
   listAppointments,
@@ -100,4 +115,5 @@ export default {
   createAppointment,
   updateAppointment,
   getStatusHistory,
+  getRatedAppointmentIds,
 };

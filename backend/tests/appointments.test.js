@@ -330,6 +330,17 @@ describe('appointments integration — Phase 4 patient portal core', { skip: !H 
     assert.equal(r1.status, 201);
     assert.equal(r1.json.data.rating.stars, 5);
 
+    // rated flag: pagkatapos ma-rate, ang detail + list DTO ay rated=true
+    // (ito ang ginagamit ng UI para itago ang "Rate your visit"); ang hindi
+    // pa na-rate (apptA2) ay rated=false.
+    const det = await apiA('GET', `/appointments/${comp.id}`);
+    assert.equal(det.status, 200);
+    assert.equal(det.json.data.appointment.rated, true, 'detail: rated=true pagkatapos mag-rate');
+    const lst = await apiA('GET', '/appointments');
+    assert.equal(lst.status, 200);
+    assert.equal(lst.json.data.appointments.find((a) => a.id === comp.id)?.rated, true, 'list: rated=true');
+    assert.equal(lst.json.data.appointments.find((a) => a.id === state.apptA2)?.rated, false, 'list: unrated → false');
+
     const r2 = await apiA('POST', '/ratings', { body: { appointment_id: comp.id, stars: 4 } });
     assert.equal(r2.status, 409, 'one-rating-per-appointment');
 

@@ -182,6 +182,44 @@ describe('appointment.service — status transition matrix', () => {
   });
 });
 
+describe('appointment.service — toAppointmentDTO rated flag', () => {
+  const row = () => ({
+    id: UUID,
+    reference_code: 'AP-000123',
+    doctor_id: UUID,
+    patient_id: UUID,
+    appointment_date: '2026-10-05',
+    start_time: '09:00:00',
+    end_time: '09:30:00',
+    reason: 'Checkup',
+    booked_for: null,
+    is_first_visit: true,
+    status: 'completed',
+    created_at: '2026-10-01T08:00:00.000Z',
+    doctors: { id: UUID, full_name: 'Dr. Test', specialties: { name: 'Cardiology' } },
+  });
+  it('rated: true kapag sinabi ng caller (may visit_ratings row)', () => {
+    const dto = appointmentService.toAppointmentDTO(row(), { rated: true });
+    assert.equal(dto.rated, true);
+  });
+  it('rated: false kapag walang rating / hindi ipinasa (default)', () => {
+    assert.equal(appointmentService.toAppointmentDTO(row(), { rated: false }).rated, false);
+    assert.equal(appointmentService.toAppointmentDTO(row()).rated, false);
+  });
+  it('detail DTO: rated + status_history sabay; ang doctors embed ay flattened', () => {
+    const dto = appointmentService.toAppointmentDTO(row(), {
+      detail: true,
+      rated: true,
+      statusHistory: [{ from_status: null, to_status: 'completed', created_at: '2026-10-01T09:30:00.000Z' }],
+    });
+    assert.equal(dto.rated, true);
+    assert.equal(dto.status_history.length, 1);
+    assert.equal(dto.doctor.full_name, 'Dr. Test');
+    assert.equal(dto.doctor.specialty_name, 'Cardiology');
+    assert.ok(!('doctors' in dto), 'walang raw embed sa DTO');
+  });
+});
+
 describe('patient.service — encryptRow/decryptRow (PHI roundtrip)', () => {
   const row = {
     full_name: 'Juan Dela Cruz', // hindi [ENC] — hindi gagalawin
