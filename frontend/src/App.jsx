@@ -153,7 +153,7 @@ function App() {
       else if (sub === 'availability') screen = <DoctorAvailability doctorId={arg} />;
       else if (sub === 'book') screen = <BookAppointment />;
       else if (sub === 'confirmation') screen = <BookingConfirmation />;
-      else if (sub === 'status') screen = <AppointmentStatus />;
+      else if (sub === 'status') screen = <AppointmentStatus apptId={arg} />;
       else if (sub === 'history') screen = <AppointmentHistory />;
       else if (sub === 'appointment') screen = <AppointmentDetails apptId={arg} />;
       else if (sub === 'profile') screen = <Profile />;
@@ -217,4 +217,5 @@ function App() {
 }
 
 export default App;
+
 

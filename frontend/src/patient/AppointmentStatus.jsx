@@ -1,6 +1,9 @@
 // AppointmentStatus — patient (Phase 4: wired to the backend API)
-// Shows the next upcoming appointment (pending/confirmed) with a progress
-// timeline enriched by the real status_history from GET /api/appointments/:id.
+// Optional apptId (galing sa "View status timeline" ng AppointmentDetails o sa
+// BookingConfirmation): ipinapakita ang timeline ng TINUKOY na appointment.
+// Kung walang apptId (dashboard "Check status"), ang next upcoming appointment
+// (pending/confirmed) ang ipinapakita, enriched by the real status_history
+// from GET /api/appointments/:id.
 import { useEffect, useState } from 'react';
 import { AppShell, DoctorAvatar, EmptyState, ErrorState, Icon, navigate, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
 import { getAppointment, getAppointments } from '../shared/api.js';
@@ -13,15 +16,35 @@ function formatDateTime(iso) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function AppointmentStatus() {
+function AppointmentStatus({ apptId }) {
   const store = useStore();
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [notFound, setNotFound] = useState(false);
   const [appt, setAppt] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setLoadError('');
+    setNotFound(false);
     (async () => {
+      // Deep link: ipakita ang timeline ng tinukoy na appointment (BOLA-safe —
+      // ang GET /api/appointments/:id ay 404 para sa appointment ng iba).
+      if (apptId) {
+        try {
+          const detail = await getAppointment(apptId);
+          if (!cancelled) setAppt(toFrontendAppt(detail));
+        } catch (err) {
+          if (!cancelled) {
+            if (err && err.status === 404) setNotFound(true);
+            else setLoadError(err.message || 'Hindi ma-load ang appointment.');
+          }
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+        return;
+      }
       try {
         const list = await getAppointments();
         const mapped = (list || []).map(toFrontendAppt).filter(Boolean);
@@ -56,7 +79,7 @@ function AppointmentStatus() {
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [apptId]);
 
   // Skeleton mirrors the real layout (header card + facts + timeline) so there
   // is no layout shift when the data lands; placed before the !appt early
@@ -123,6 +146,17 @@ function AppointmentStatus() {
               </div>
             </div>
           </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <AppShell current="dashboard">
+        <div className="page">
+          <PageHeader title="Appointment status" breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Status' }]} />
+          <div className="card"><ErrorState title="Appointment not found" message="This appointment may have been removed." onRetry={() => navigate('/patient/history')} /></div>
         </div>
       </AppShell>
     );

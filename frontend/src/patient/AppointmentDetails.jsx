@@ -323,7 +323,7 @@ function AppointmentDetails({ apptId }) {
               <div className="card-body stack md">
                 <button className="btn btn-secondary block" onClick={downloadReceipt}><Icon name="download" size={14} /> Download receipt</button>
                 <button className="btn btn-secondary block" onClick={addToCalendar}><Icon name="calendar" size={14} /> Add to calendar</button>
-                <button className="btn btn-secondary block" onClick={() => navigate('/patient/status')}><Icon name="activity" size={14} /> View status timeline</button>
+                <button className="btn btn-secondary block" onClick={() => navigate('/patient/status/' + appt.id)}><Icon name="activity" size={14} /> View status timeline</button>
                 {cancellable && <button className="btn btn-secondary block" onClick={openReschedule}><Icon name="calendar-clock" size={14} /> Reschedule appointment</button>}
                 {cancellable && <button className="btn btn-danger-outline block" onClick={() => setConfirmCancel(true)}><Icon name="x" size={14} /> Cancel appointment</button>}
               </div>
