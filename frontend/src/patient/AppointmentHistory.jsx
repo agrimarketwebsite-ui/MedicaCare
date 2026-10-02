@@ -1,19 +1,20 @@
-// AppointmentHistory — patient (split from screens-patient.jsx)
+// AppointmentHistory — patient (Phase 4: wired to the backend API)
+// GET /api/appointments → table with status filter, search, sorting, at
+// pagination. Cancel via POST /api/appointments/:id/cancel; "Rate your visit"
+// opens the shared RatingModal for completed visits not yet rated.
 import { useEffect, useState } from 'react';
-import { AppShell, ConfirmModal, DoctorAvatar, EmptyState, Icon, navigate, PageHeader, Pagination, SelectInput, SkeletonRows, SortableTh, StatusBadge, useHashRoute, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, findDoctor, formatDate, timeValue } from '../shared/data.js';
+import { AppShell, ConfirmModal, DoctorAvatar, EmptyState, ErrorState, Icon, navigate, PageHeader, Pagination, SelectInput, SortableTh, StatusBadge, useHashRoute, useStore } from '../shared/components.jsx';
+import { cancelAppointment, getAppointments } from '../shared/api.js';
+import { time24Value, toFrontendAppt } from './helpers.js';
 
-import { RateVisitModal } from './AppointmentDetails.jsx';
+import { RatingModal } from './RatingModal.jsx';
 import { syncListParams } from './helpers.js';
 
-// ---------- Appointment History ----------
 function AppointmentHistory() {
   const store = useStore();
-  const me = store.currentPatient || window.CURRENT_PATIENT;
-  // Simulated fetch — skeleton table while "loading", same 600ms pattern as
-  // the admin list pages
+  const [appts, setAppts] = useState([]);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
+  const [loadError, setLoadError] = useState('');
   // §50 URL state: status / q / page are reflected in the URL so a filtered
   // history view survives a refresh and can be deep-linked (same pattern as
   // the admin Appointments ?status= link from the dashboard)
@@ -41,21 +42,43 @@ function AppointmentHistory() {
   }, [status, query, page]);
   const [confirmCancel, setConfirmCancel] = useState(null);
   const [cancelLoading, setCancelLoading] = useState(false);
-  // Rate-your-visit modal (Option B): completed appointments only, one rating
-  // per appointment (the action is hidden once a rating exists)
+  // Rate-your-visit modal: completed appointments only, one rating per
+  // appointment (the action is hidden once a rating exists — tracked locally
+  // after a successful POST, enforced server-side with 409)
   const [rateAppt, setRateAppt] = useState(null);
-  const hasRated = (apptId) => store.ratings.some(r => r.appointmentId === apptId);
+  const hasRated = (apptId) => (store.ratings || []).some(r => r.appointmentId === apptId);
   // Column sorting (guideline 18) — default stays newest-first by date
   const [sortKey, setSortKey] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
   const PAGE = 4;
 
-  const all = store.appointments.filter(a => a.patientId === me.id);
-  const filtered = all.filter(a => {
+  const load = async () => {
+    setLoading(true);
+    setLoadError('');
+    try {
+      const list = await getAppointments();
+      setAppts((list || []).map(toFrontendAppt).filter(Boolean));
+    } catch (err) {
+      setLoadError(err.message || 'Hindi ma-load ang appointments.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    getAppointments()
+      .then((list) => { if (!cancelled) setAppts((list || []).map(toFrontendAppt).filter(Boolean)); })
+      .catch((err) => { if (!cancelled) setLoadError(err.message || 'Hindi ma-load ang appointments.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const filtered = appts.filter(a => {
     if (status !== 'all' && a.status !== status) return false;
     if (query) {
-      const d = window.findDoctor(a.doctorId) || { name: '', specialty: '' };
-      const hay = (d.name + ' ' + d.specialty + ' ' + a.reason).toLowerCase();
+      const hay = (a.doctorName + ' ' + a.specialty + ' ' + (a.reason || '')).toLowerCase();
       if (!hay.includes(query.toLowerCase())) return false;
     }
     return true;
@@ -67,9 +90,9 @@ function AppointmentHistory() {
   };
   const sortVal = (a) => {
     switch (sortKey) {
-      case 'doctor': return ((window.findDoctor(a.doctorId) || {}).name || '').toLowerCase();
-      case 'specialty': return ((window.findDoctor(a.doctorId) || {}).specialty || '').toLowerCase();
-      case 'time': return a.time;
+      case 'doctor': return (a.doctorName || '').toLowerCase();
+      case 'specialty': return (a.specialty || '').toLowerCase();
+      case 'time': return time24Value(a.time);
       case 'status': return a.status;
       default: return a.date;
     }
@@ -79,7 +102,7 @@ function AppointmentHistory() {
     const va = sortVal(a), vb = sortVal(b);
     if (va !== vb) return (va < vb ? -1 : 1) * dir;
     // Tie-breaker: equal values keep newest-first date order, then true time order
-    return b.date.localeCompare(a.date) || timeValue(a.time) - timeValue(b.time);
+    return b.date.localeCompare(a.date) || time24Value(a.time) - time24Value(b.time);
   });
 
   const paged = sorted.slice((page - 1) * PAGE, page * PAGE);
@@ -89,16 +112,20 @@ function AppointmentHistory() {
   useEffect(() => {
     const last = Math.max(1, Math.ceil(filtered.length / PAGE));
     if (page > last) setPage(last);
-  }, [filtered.length]);
+  }, [filtered.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const doCancel = () => {
+  const doCancel = async () => {
     setCancelLoading(true);
-    setTimeout(() => {
-      store.setAppointments(store.appointments.map(a => a.id === confirmCancel.id ? { ...a, status: 'cancelled' } : a));
-      setCancelLoading(false);
-      setConfirmCancel(null);
+    try {
+      await cancelAppointment(confirmCancel.id);
       store.pushToast({ title: 'Appointment cancelled', msg: 'Your appointment has been cancelled successfully.' });
-    }, 700);
+      setConfirmCancel(null);
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Hindi na-cancel', msg: err.message || 'Pakisubukang muli.' });
+    } finally {
+      setCancelLoading(false);
+    }
   };
 
   return (
@@ -108,11 +135,14 @@ function AppointmentHistory() {
           title="My appointments"
           subtitle={loading
             ? <span className="skel" aria-hidden="true" style={{ width: 200, maxWidth: '100%', height: 14 }} />
-            : `${all.length} appointments in total`}
+            : `${appts.length} appointment${appts.length === 1 ? '' : 's'} in total`}
           breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Appointments' }]}
           actions={<button className="btn btn-primary" onClick={() => navigate('/patient/book')}><Icon name="calendar-plus" size={14} /> Book appointment</button>}
         />
 
+        {loadError ? (
+          <div className="card"><ErrorState title="Hindi ma-load ang appointments" message={loadError} onRetry={load} /></div>
+        ) : (
         <div className="card">
           <div className="table-toolbar">
             <div className="input-group search">
@@ -135,9 +165,11 @@ function AppointmentHistory() {
           </div>
 
           {filtered.length === 0 ? (
-            <EmptyState icon="calendar-search" title="No appointments match your filters"
-              message="Try changing your filters or search terms."
-              actions={<button className="btn btn-secondary" onClick={() => { setQuery(''); setStatus('all'); }}>Clear filters</button>} />
+            <EmptyState icon="calendar-search" title={appts.length === 0 ? 'No appointments yet' : 'No appointments match your filters'}
+              message={appts.length === 0 ? 'Book your first appointment with one of our specialists.' : 'Try changing your filters or search terms.'}
+              actions={appts.length === 0
+                ? <button className="btn btn-primary" onClick={() => navigate('/patient/doctors')}><Icon name="stethoscope" size={14} /> Find a doctor</button>
+                : <button className="btn btn-secondary" onClick={() => { setQuery(''); setStatus('all'); }}>Clear filters</button>} />
           ) : (
             <>
               <div className="table-wrap">
@@ -182,7 +214,7 @@ function AppointmentHistory() {
                         </tr>
                       ))
                     ) : paged.map(a => {
-                      const d = window.findDoctor(a.doctorId) || { name: 'Unknown doctor', specialty: '—' };
+                      const d = (store.doctors || []).find(x => x.id === a.doctorId) || { name: a.doctorName, specialty: a.specialty };
                       const cancellable = a.status === 'pending' || a.status === 'confirmed';
                       return (
                         <tr key={a.id}>
@@ -190,14 +222,14 @@ function AppointmentHistory() {
                             <div className="cell-with-avatar">
                               <DoctorAvatar doctor={d} size={28} />
                               <div>
-                                <div className="cell-primary cell-primary-truncate">{d.name}</div>
-                                <div className="cell-secondary">Ref {a.id.toUpperCase()}</div>
+                                <div className="cell-primary cell-primary-truncate">{a.doctorName}</div>
+                                <div className="cell-secondary">Ref {a.reference}</div>
                               </div>
                             </div>
                           </td>
-                          <td data-label="Specialty">{d.specialty}</td>
+                          <td data-label="Specialty">{a.specialty}</td>
                           <td data-label="Date">{window.formatDate(a.date)}</td>
-                          <td data-label="Time">{a.time}</td>
+                          <td data-label="Time">{a.timeDisplay}</td>
                           <td data-label="Status"><StatusBadge status={a.status} /></td>
                           <td className="col-actions" data-label="Actions">
                             <div className="appt-actions">
@@ -222,9 +254,10 @@ function AppointmentHistory() {
             </>
           )}
         </div>
+        )}
       </div>
 
-      <RateVisitModal open={!!rateAppt} appointment={rateAppt} onClose={() => setRateAppt(null)} />
+      <RatingModal open={!!rateAppt} appointment={rateAppt} onClose={() => setRateAppt(null)} />
 
       <ConfirmModal
         open={!!confirmCancel}
@@ -232,7 +265,7 @@ function AppointmentHistory() {
         onConfirm={doCancel}
         loading={cancelLoading}
         title="Cancel this appointment?"
-        message={confirmCancel ? `${window.findDoctor(confirmCancel.doctorId).name} on ${window.formatDate(confirmCancel.date)} at ${confirmCancel.time}. This action cannot be undone.` : ''}
+        message={confirmCancel ? `${confirmCancel.doctorName} on ${window.formatDate(confirmCancel.date)} at ${confirmCancel.timeDisplay}. This action cannot be undone.` : ''}
         confirmLabel="Yes, cancel it"
         kind="danger"
       />

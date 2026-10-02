@@ -1,21 +1,54 @@
-// AppointmentStatus — patient (split from screens-patient.jsx)
+// AppointmentStatus — patient (Phase 4: wired to the backend API)
+// Shows the next upcoming appointment (pending/confirmed) with a progress
+// timeline enriched by the real status_history from GET /api/appointments/:id.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, EmptyState, Icon, navigate, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, findDoctor, formatDate, formatDateLong, timeValue } from '../shared/data.js';
+import { AppShell, DoctorAvatar, EmptyState, ErrorState, Icon, navigate, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
+import { getAppointment, getAppointments } from '../shared/api.js';
+import { time24Value, toFrontendAppt } from './helpers.js';
 
-// ---------- Appointment Status ----------
+function formatDateTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 function AppointmentStatus() {
   const store = useStore();
-  const me = store.currentPatient || window.CURRENT_PATIENT;
-  // Simulated fetch — skeleton page while "loading", same 600ms pattern as the
-  // other patient pages
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
-  const active = store.appointments
-    .filter(a => a.patientId === me.id && (a.status === 'pending' || a.status === 'confirmed'))
-    .sort((a, b) => a.date.localeCompare(b.date) || timeValue(a.time) - timeValue(b.time));
+  const [loadError, setLoadError] = useState('');
+  const [appt, setAppt] = useState(null);
 
-  const appt = active[0] || store.appointments.find(a => a.patientId === me.id);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const list = await getAppointments();
+        const upcoming = (list || [])
+          .map(toFrontendAppt)
+          .filter(a => a && (a.status === 'pending' || a.status === 'confirmed'))
+          .sort((a, b) => a.date.localeCompare(b.date) || time24Value(a.time) - time24Value(b.time));
+        const next = upcoming[0] || null;
+        if (next) {
+          // Enrich with the real status history for the timeline
+          try {
+            const detail = await getAppointment(next.id);
+            if (!cancelled) setAppt(toFrontendAppt(detail));
+            return;
+          } catch {
+            // Detail fetch failed — fall back to the list row
+          }
+        }
+        if (!cancelled) setAppt(next);
+      } catch (err) {
+        if (!cancelled) setLoadError(err.message || 'Hindi ma-load ang appointments.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Skeleton mirrors the real layout (header card + facts + timeline) so there
   // is no layout shift when the data lands; placed before the !appt early
@@ -87,6 +120,17 @@ function AppointmentStatus() {
     );
   }
 
+  if (loadError) {
+    return (
+      <AppShell current="dashboard">
+        <div className="page">
+          <PageHeader title="Appointment status" breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Status' }]} />
+          <div className="card"><ErrorState title="Hindi ma-load ang status" message={loadError} onRetry={() => window.location.reload()} /></div>
+        </div>
+      </AppShell>
+    );
+  }
+
   if (!appt) {
     return (
       <AppShell current="dashboard">
@@ -99,13 +143,25 @@ function AppointmentStatus() {
     );
   }
 
-  // Fallback keeps the page rendering if this doctor was removed in the admin console
-  const doctor = window.findDoctor(appt.doctorId) || { name: 'Unknown doctor', specialty: '—', room: '—' };
+  // Doctor display: API fields + directory fallback (avatar/fee/room)
+  const dirDoctor = (store.doctors || []).find(d => d.id === appt.doctorId) || window.findDoctor(appt.doctorId);
+  const doctor = {
+    name: appt.doctorName,
+    specialty: appt.specialty,
+    room: appt.doctorRoom || dirDoctor?.room || 'MedicaCare',
+    fee: appt.doctorFee ?? dirDoctor?.fee ?? 0,
+    photo: dirDoctor?.photo,
+  };
+  // Timeline sub-labels from the real status history when present
+  const histAt = (to) => (appt.statusHistory || []).find(h => h.to_status === to)?.created_at;
+  const bookedAt = appt.createdAt ? formatDateTime(appt.createdAt) : '';
+  const confirmedAt = histAt('confirmed') ? formatDateTime(histAt('confirmed')) : '';
+  const completedAt = histAt('completed') ? formatDateTime(histAt('completed')) : '';
   const steps = [
-    { label: 'Booked',    sub: `Request submitted · ${window.formatDate(appt.createdAt || appt.date)}`, done: true, active: false },
-    { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : 'Confirmed', done: appt.status !== 'pending', active: appt.status === 'pending' },
+    { label: 'Booked',    sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
+    { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : `Confirmed${confirmedAt ? ` · ${confirmedAt}` : ''}`, done: appt.status !== 'pending', active: appt.status === 'pending' },
     { label: 'Confirmed', sub: appt.status === 'confirmed' || appt.status === 'completed' ? 'Ready to visit' : 'Waiting', done: appt.status === 'confirmed' || appt.status === 'completed', active: appt.status === 'confirmed' },
-    { label: 'Visit completed', sub: appt.status === 'completed' ? 'Doctor notes available in records' : 'After your visit', done: appt.status === 'completed', active: false },
+    { label: 'Visit completed', sub: appt.status === 'completed' ? `Completed${completedAt ? ` · ${completedAt}` : ''}` : 'After your visit', done: appt.status === 'completed', active: false },
   ];
 
   return (
@@ -128,7 +184,7 @@ function AppointmentStatus() {
               </div>
               <div className="appt-head-status">
                 <StatusBadge status={appt.status} />
-                <div className="t-muted" style={{ fontSize: 13, marginTop: 6 }}>Ref # <span className="t-mono">{appt.id.toUpperCase()}</span></div>
+                <div className="t-muted" style={{ fontSize: 13, marginTop: 6 }}>Ref # <span className="t-mono">{appt.reference}</span></div>
               </div>
             </div>
             <div className="divider" />
@@ -139,11 +195,11 @@ function AppointmentStatus() {
               </div>
               <div className="appt-fact">
                 <div className="t-help">Time</div>
-                <div style={{ fontSize: 15, fontWeight: 500 }}>{appt.time}</div>
+                <div style={{ fontSize: 15, fontWeight: 500 }}>{appt.timeDisplay}</div>
               </div>
               <div className="appt-fact">
                 <div className="t-help">Fee</div>
-                <div style={{ fontSize: 15, fontWeight: 500 }}>₱{doctor.fee.toLocaleString()}</div>
+                <div style={{ fontSize: 15, fontWeight: 500 }}>₱{Number(doctor.fee).toLocaleString()}</div>
               </div>
             </div>
           </div>

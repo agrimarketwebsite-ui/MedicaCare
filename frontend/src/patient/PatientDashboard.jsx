@@ -1,7 +1,11 @@
-// PatientDashboard — patient (split from screens-patient.jsx)
+// PatientDashboard — patient (Phase 4: appointments wired to the backend API)
+// The upcoming-appointment banner, stats, and recent activity come from
+// GET /api/appointments (best-effort — a graceful empty state shows when the
+// API is unreachable instead of dummy data).
 import { useEffect, useState } from 'react';
 import { AppShell, DoctorAvatar, EmptyState, Icon, navigate, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, findDoctor, formatDate, timeValue } from '../shared/data.js';
+import { getAppointments } from '../shared/api.js';
+import { time24Value, toFrontendAppt } from './helpers.js';
 
 import { activateOnKey } from './helpers.js';
 
@@ -10,49 +14,59 @@ import { activateOnKey } from './helpers.js';
 // reflect this patient's actual schedule (no generic template copy).
 function PatientDashboard() {
   const store = useStore();
-  const me = store.currentPatient || window.CURRENT_PATIENT;
-  // Simulated fetch — skeleton placeholders while "loading", same 600ms pattern
-  // as the admin dashboard and list pages
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
-  const myAppts = store.appointments.filter(a => a.patientId === me.id);
-  const upcoming = myAppts
+  const [appts, setAppts] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getAppointments()
+      .then((list) => { if (!cancelled) setAppts((list || []).map(toFrontendAppt).filter(Boolean)); })
+      .catch(() => { if (!cancelled) setAppts([]); }) // graceful empty state kapag offline
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const upcoming = appts
     .filter(a => a.status === 'confirmed' || a.status === 'pending')
-    .sort((a, b) => a.date.localeCompare(b.date) || timeValue(a.time) - timeValue(b.time));
+    .sort((a, b) => a.date.localeCompare(b.date) || time24Value(a.time) - time24Value(b.time));
   const next = upcoming[0];
   // Fallback keeps the banner rendering if this doctor was removed in the admin console
-  const nextDoctor = next ? (window.findDoctor(next.doctorId) || { name: 'Unknown doctor', specialty: '—', room: '—' }) : null;
+  const dirDoctor = (id) => (store.doctors || []).find(d => d.id === id) || window.findDoctor(id);
+  const nextDoctor = next ? (dirDoctor(next.doctorId) || { name: next.doctorName, specialty: next.specialty, room: next.doctorRoom || '—' }) : null;
   const nextDate = next ? new Date(next.date + 'T00:00:00') : null;
 
   // Completed visits in the last 12 months — computed to match the label honestly
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
   const yearAgoISO = `${yearAgo.getFullYear()}-${String(yearAgo.getMonth() + 1).padStart(2, '0')}-${String(yearAgo.getDate()).padStart(2, '0')}`;
-  const completed12mo = myAppts.filter(a => a.status === 'completed' && a.date >= yearAgoISO);
+  const completed12mo = appts.filter(a => a.status === 'completed' && a.date >= yearAgoISO);
   // Most recent completed visit — more useful to a patient than a lifetime cancelled count
-  const lastVisit = myAppts.filter(a => a.status === 'completed').sort((a, b) => b.date.localeCompare(a.date))[0] || null;
-  const lastVisitDoctor = lastVisit ? (window.findDoctor(lastVisit.doctorId) || { name: 'Unknown doctor' }) : null;
+  const lastVisit = appts.filter(a => a.status === 'completed').sort((a, b) => b.date.localeCompare(a.date))[0] || null;
+  const lastVisitDoctor = lastVisit ? (dirDoctor(lastVisit.doctorId) || { name: lastVisit.doctorName }) : null;
   const lastVisitShort = lastVisit
     ? new Date(lastVisit.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     : '—';
 
+  const doctorCount = new Set(completed12mo.map(a => a.doctorId)).size;
   const stats = [
     { label: 'Upcoming', value: upcoming.length, context: next ? `Next on ${window.formatDate(next.date)}` : 'No appointments booked', icon: 'calendar-days' },
-    { label: 'Completed visits', value: completed12mo.length, context: completed12mo.length ? `Across ${new Set(completed12mo.map(a => a.doctorId)).size} doctor${new Set(completed12mo.map(a => a.doctorId)).size === 1 ? '' : 's'}` : 'No visits in the last 12 months', icon: 'check-circle-2' },
+    { label: 'Completed visits', value: completed12mo.length, context: completed12mo.length ? `Across ${doctorCount} doctor${doctorCount === 1 ? '' : 's'}` : 'No visits in the last 12 months', icon: 'check-circle-2' },
     { label: 'Last visit', value: lastVisitShort, context: lastVisitDoctor ? `With ${lastVisitDoctor.name}` : 'No past visits yet', icon: 'clock' },
   ];
 
   // Personal, state-aware subtitle instead of a static tagline
   const subtitle = next
-    ? `You have ${upcoming.length} upcoming appointment${upcoming.length === 1 ? '' : 's'}. Your next visit is on ${window.formatDate(next.date)} at ${next.time}.`
+    ? `You have ${upcoming.length} upcoming appointment${upcoming.length === 1 ? '' : 's'}. Your next visit is on ${window.formatDate(next.date)} at ${next.timeDisplay}.`
     : 'No upcoming appointments. Your schedule is clear.';
+
+  const recent = appts.slice().sort((a, b) => b.date.localeCompare(a.date) || time24Value(b.time) - time24Value(a.time)).slice(0, 4);
 
   return (
     <AppShell current="dashboard">
       <div className="page">
-        {/* Subtitle skeletoned during the same 600ms loading window as the
-            banner/stats below so every row of the page fades in together;
-            the title is static ("Dashboard") so it stays */}
+        {/* Subtitle skeletoned during the loading window so every row of the
+            page fades in together; the title is static ("Dashboard") so it stays */}
         <PageHeader
           title="Dashboard"
           subtitle={loading
@@ -100,7 +114,7 @@ function PatientDashboard() {
               <div className="doctor">{nextDoctor.name}</div>
               <div className="meta">
                 <span><Icon name="stethoscope" size={13} /> {nextDoctor.specialty}</span>
-                <span><Icon name="clock" size={13} /> {next.time}</span>
+                <span><Icon name="clock" size={13} /> {next.timeDisplay}</span>
                 <span><Icon name="map-pin" size={13} /> {nextDoctor.room}</span>
               </div>
             </div>
@@ -136,7 +150,7 @@ function PatientDashboard() {
                   <div className="quick-action-icon"><Icon name="calendar-clock" size={18} /></div>
                   <div className="quick-action-body">
                     <div className="quick-action-title">Reschedule next visit</div>
-                    <div className="quick-action-sub">Currently {window.formatDate(next.date)}, {next.time}</div>
+                    <div className="quick-action-sub">Currently {window.formatDate(next.date)}, {next.timeDisplay}</div>
                   </div>
                   <Icon name="chevron-right" size={16} className="quick-action-arrow" />
                 </button>
@@ -215,7 +229,7 @@ function PatientDashboard() {
           <div>
             {loading ? (
               // Skeleton rows mirroring the real list-item layout (avatar + 2
-              // text lines + status badge), same 600ms window as the stats
+              // text lines + status badge), same loading window as the stats
               [0, 1, 2].map(i => (
                 <div key={i} className="list-item" aria-hidden="true">
                   <span className="skel" style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0 }} />
@@ -226,14 +240,14 @@ function PatientDashboard() {
                   <span className="skel" style={{ width: 70, height: 18 }} />
                 </div>
               ))
-            ) : myAppts.length === 0 ? (
+            ) : recent.length === 0 ? (
               <EmptyState
                 icon="activity"
                 title="No activity yet"
                 message="Your bookings, visits, and updates will appear here."
               />
-            ) : myAppts.slice(0, 4).map(a => {
-              const d = window.findDoctor(a.doctorId);
+            ) : recent.map(a => {
+              const d = dirDoctor(a.doctorId) || { name: a.doctorName, specialty: a.specialty };
               return (
                 // role="button" makes this clickable row keyboard-operable
                 // (guidelines 20 & 36); Enter/Space handled by activateOnKey
@@ -250,7 +264,7 @@ function PatientDashboard() {
                   <DoctorAvatar doctor={d} size={32} />
                   <div className="list-item-body">
                     <div className="list-item-title">{d.name} · <span className="t-muted" style={{ fontWeight: 400 }}>{d.specialty}</span></div>
-                    <div className="list-item-sub">{window.formatDate(a.date)} · {a.time}</div>
+                    <div className="list-item-sub">{window.formatDate(a.date)} · {a.timeDisplay}</div>
                   </div>
                   <StatusBadge status={a.status} />
                   <Icon name="chevron-right" size={16} style={{ color: 'var(--text-subtle)' }} />

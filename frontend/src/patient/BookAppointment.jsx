@@ -1,95 +1,124 @@
-// BookAppointment — patient (split from screens-patient.jsx)
+// BookAppointment — patient (Phase 4: wired to the backend API)
+// Slot comes from DoctorAvailability via store.pendingBooking
+// ({ doctorId, date, time "HH:MM", duration }). POST /api/appointments →
+// 201 navigates to the confirmation with the reference_code; 409 (slot taken)
+// shows a friendly message with a back-to-slots action.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, Field, Icon, navigate, PageHeader, PageSpinner, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
-import { AVAILABILITY_TEMPLATE, CURRENT_PATIENT, findDoctor, formatDate, formatDateLong, getSlotsFor, isClinicDay, isSlotTaken, slotFitsInterval } from '../shared/data.js';
+import { AppShell, DoctorAvatar, EmptyState, Field, Icon, navigate, PageHeader, PageSpinner, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
+import { bookAppointment, ApiError } from '../shared/api.js';
+import { fmtTime12, focusFirstError } from './helpers.js';
 
-import { focusFirstError } from './helpers.js';
-
-import { Profile } from './Profile.jsx';
-
-// ---------- Book Appointment (form) ----------
 function BookAppointment() {
   const store = useStore();
   const pending = store.pendingBooking;
-  const me = store.currentPatient || window.CURRENT_PATIENT;
-  // Simulated fetch — centered circle spinner while "loading", same 600ms
-  // pattern as the other patient pages
-  const [pageLoading, setPageLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setPageLoading(false), 600); return () => clearTimeout(t); }, []);
+  const me = store.profile;
+  const doctorsReady = (store.doctors || []).length > 0;
+  const doctor = pending ? ((store.doctors || []).find(d => d.id === pending.doctorId) || window.findDoctor(pending.doctorId)) : null;
+  // Race guard: hintayin ang doctor directory hydration bago mag-empty state
+  const [dirWaited, setDirWaited] = useState(false);
+  useEffect(() => {
+    if (doctorsReady) return;
+    const t = setTimeout(() => setDirWaited(true), 2500);
+    return () => clearTimeout(t);
+  }, [doctorsReady]);
+
   const [form, setForm] = useState({
-    doctorId: pending?.doctorId || '',
-    date: pending?.date || '',
-    time: pending?.time || '',
     reason: '',
     notes: '',
-    contact: me.phone,
+    contact: me?.phone || '',
     isFirstVisit: 'yes',
     forWhom: 'self',
   });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(''); // 409 / network / validation mula sa server
+  const [slotTaken, setSlotTaken] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Ang profile ay async na hina-hydrate — i-prefill ang contact kapag dumating
+  // (huwag i-overwrite kapag may tinayp na ang user)
+  useEffect(() => {
+    if (me?.phone) setForm(f => (f.contact ? f : { ...f, contact: me.phone }));
+  }, [me?.phone]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const doctor = form.doctorId ? window.findDoctor(form.doctorId) : null;
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); };
 
-  const submit = (evt) => {
-    evt.preventDefault();
-    const e = {};
-    if (!form.doctorId) e.doctorId = 'Please select a doctor';
-    if (!form.date) e.date = 'Please pick a date';
-    if (!form.time) e.time = 'Please pick a time slot';
-    if (!form.reason.trim()) e.reason = 'Please tell us the reason for your visit';
-    else if (form.reason.trim().length < 10) e.reason = 'Please provide a bit more detail (10+ characters)';
-    if (!form.contact.trim()) e.contact = 'Contact number is required';
-    // Duplicate-booking guard: one active appointment per doctor+date+time
-    if (!e.doctorId && !e.date && !e.time && isSlotTaken(form.doctorId, form.date, form.time, store.appointments)) {
-      e.time = 'That slot has already been booked. Please pick a different date or time.';
-    }
-    setErrors(e);
-    if (Object.keys(e).length) { focusFirstError(); return; }
-
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      const id = 'ap' + Date.now();
-      // Admin "Auto-confirm" preference drives the initial status — when on,
-      // bookings skip the pending review queue entirely
-      const status = (store.prefs && store.prefs.autoConfirm) ? 'confirmed' : 'pending';
-      const newAppt = {
-        id,
-        patientId: me.id,
-        doctorId: form.doctorId,
-        date: form.date,
-        time: form.time,
-        reason: form.reason.trim(),
-        status,
-        // Booking-form details the schema stores (contact_number /
-        // additional_notes / is_first_visit) — dati ay kinokolekta lang
-        // ng form pero hindi sina-save sa appointment
-        contact: form.contact.trim(),
-        additionalNotes: form.notes.trim() || undefined,
-        isFirstVisit: form.isFirstVisit === 'yes',
-        createdAt: new Date().toISOString().slice(0, 10),
-        // Proxy booking: who the visit is actually for (account owner or a
-        // family member saved on the Profile page)
-        bookedFor: form.forWhom === 'self' ? me.name : form.forWhom,
-      };
-      store.setAppointments([newAppt, ...store.appointments]);
-      store.pushActivity(me.name, 'Booked appointment',
-        `${doctor ? doctor.name : 'A doctor'} · ${window.formatDate(form.date)} at ${form.time}`);
-      store.setLastBookingId(id);
-      store.setPendingBooking(null);
-      navigate('/patient/confirmation');
-    }, 1200);
-  };
-
-  if (pageLoading) {
+  if (!doctorsReady && !dirWaited && pending) {
     return (
       <AppShell current="book">
         <div className="page"><PageSpinner /></div>
       </AppShell>
     );
   }
+
+  if (!pending || !doctor) {
+    return (
+      <AppShell current="book">
+        <div className="page">
+          <PageHeader
+            title="Book an appointment"
+            breadcrumbs={[
+              { label: 'Home', to: '/patient/dashboard' },
+              { label: 'Find a doctor', to: '/patient/doctors' },
+              { label: 'Book appointment' },
+            ]}
+          />
+          <div className="card">
+            <EmptyState
+              icon="calendar-search"
+              title="No time slot selected"
+              message="Pick a doctor and choose an available time slot first — then you'll land back here to finish booking."
+              actions={<button className="btn btn-primary" onClick={() => navigate('/patient/doctors')}><Icon name="stethoscope" size={14} /> Find a doctor</button>}
+            />
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  const submit = async (evt) => {
+    evt.preventDefault();
+    const e = {};
+    if (!form.reason.trim()) e.reason = 'Please tell us the reason for your visit';
+    else if (form.reason.trim().length < 10) e.reason = 'Please provide a bit more detail (10+ characters)';
+    if (!form.contact.trim()) e.contact = 'Contact number is required';
+    setErrors(e);
+    setSubmitError('');
+    setSlotTaken(false);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setLoading(true);
+    try {
+      const appt = await bookAppointment({
+        doctor_id: pending.doctorId,
+        appointment_date: pending.date,
+        start_time: pending.time, // "HH:MM"
+        duration_minutes: pending.duration || 30,
+        reason: form.reason.trim(),
+        ...(form.notes.trim() ? { additional_notes: form.notes.trim() } : {}),
+        contact_number: form.contact.trim(),
+        is_first_visit: form.isFirstVisit === 'yes',
+        ...(form.forWhom !== 'self' ? { family_member_id: form.forWhom } : {}),
+      });
+      store.setPendingBooking(null);
+      store.pushToast({ title: 'Appointment booked', msg: `Reference ${appt.reference_code} — see you on ${pending.date}.` });
+      navigate('/patient/confirmation?ref=' + encodeURIComponent(appt.reference_code));
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        // Slot taken (o invalid sa server) — huwag iwan ang user sa ere:
+        // malinaw na mensahe + balik sa slots
+        setSlotTaken(true);
+        setSubmitError(err.message || 'That slot has just been taken. Please pick a different date or time.');
+      } else {
+        setSubmitError(err.message || 'Hindi na-book ang appointment. Pakisubukang muli.');
+      }
+      window.scrollTo(0, 0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forWhomName = form.forWhom === 'self'
+    ? (me?.full_name || 'Myself')
+    : ((store.familyMembers || []).find(f => f.id === form.forWhom)?.full_name || '');
 
   return (
     <AppShell current="book">
@@ -104,65 +133,40 @@ function BookAppointment() {
           ]}
         />
 
+        {submitError && (
+          <div className="card" style={{ marginBottom: 16, borderColor: 'var(--error-border)', background: 'var(--error-soft)' }}>
+            <div style={{ padding: 16, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <Icon name="alert-triangle" size={18} style={{ color: 'var(--error)', marginTop: 2, flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, color: 'var(--error-text)', marginBottom: 4 }}>
+                  {slotTaken ? 'That slot was just taken' : 'Booking failed'}
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{submitError}</div>
+                {slotTaken && (
+                  <button className="btn btn-secondary sm" style={{ marginTop: 10 }}
+                    onClick={() => navigate('/patient/availability/' + pending.doctorId)}>
+                    <Icon name="arrow-left" size={13} /> Back to available slots
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="two-col">
           <form onSubmit={submit} noValidate>
             <div className="card">
               <div className="card-header"><h2 className="h-section">Appointment details</h2></div>
               <div className="card-body">
                 <div className="stack lg">
-                  <Field label="Doctor" required error={errors.doctorId}>
-                    <SelectInput value={form.doctorId} onChange={e => {
-                      const prev = form.doctorId;
-                      update('doctorId', e.target.value);
-                      // Switching doctors invalidates the previously chosen slot
-                      if (e.target.value !== prev) setForm(f => ({ ...f, date: '', time: '' }));
-                    }} error={errors.doctorId}>
-                      <option value="">Select a doctor…</option>
-                      {/* On-leave doctors are hidden here too so the dropdown
-                          can't bypass the availability page's on-leave guard */}
-                      {store.doctors.filter(d => d.status !== 'on-leave').map(d => (
-                        <option key={d.id} value={d.id}>{d.name} ({d.specialty})</option>
-                      ))}
-                    </SelectInput>
-                  </Field>
                   <Field label="Who is this visit for?" help="Book for yourself or a family member saved on your Profile page.">
                     <SelectInput value={form.forWhom} onChange={e => update('forWhom', e.target.value)}>
-                      <option value="self">Myself ({me.name})</option>
+                      <option value="self">Myself{me?.full_name ? ` (${me.full_name})` : ''}</option>
                       {(store.familyMembers || []).map(f => (
-                        <option key={f.id} value={f.name}>{f.name} ({f.relation})</option>
+                        <option key={f.id} value={f.id}>{f.full_name} ({f.relation})</option>
                       ))}
                     </SelectInput>
                   </Field>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <Field label="Date" required error={errors.date}>
-                      <SelectInput value={form.date} onChange={e => {
-                        const prev = form.date;
-                        update('date', e.target.value);
-                        // Changing dates invalidates the previously chosen time slot
-                        if (e.target.value !== prev) setForm(f => ({ ...f, time: '' }));
-                      }} error={errors.date}>
-                        <option value="">Choose a date…</option>
-                        {Object.keys(window.AVAILABILITY_TEMPLATE).map(d => {
-                          const clinicDay = !form.doctorId || isClinicDay(form.doctorId, d);
-                          return (
-                            <option key={d} value={d}>
-                              {window.formatDateLong(d)}{clinicDay ? '' : ' (not a clinic day)'}
-                            </option>
-                          );
-                        })}
-                      </SelectInput>
-                    </Field>
-                    <Field label="Time slot" required error={errors.time}>
-                      <SelectInput value={form.time} onChange={e => update('time', e.target.value)} error={errors.time}>
-                        <option value="">Choose a time…</option>
-                        {getSlotsFor(form.doctorId, form.date, store.appointments)
-                          .filter(s => s[1] && slotFitsInterval(s[0], (store.prefs || {}).slotInterval || '30'))
-                          .map(([t]) => (
-                            <option key={t} value={t}>{t}</option>
-                          ))}
-                      </SelectInput>
-                    </Field>
-                  </div>
 
                   <Field label="Reason for visit" required error={errors.reason}
                     help={!errors.reason && "Briefly describe your symptoms or reason. This helps the doctor prepare."}>
@@ -195,8 +199,8 @@ function BookAppointment() {
                 </div>
               </div>
               <div className="card-footer">
-                <button type="button" className="btn btn-ghost" onClick={() => navigate('/patient/doctors')}>Cancel</button>
-                <button type="submit" className={`btn btn-primary ${loading ? 'btn-loading' : ''}`}>
+                <button type="button" className="btn btn-ghost" onClick={() => navigate('/patient/availability/' + pending.doctorId)}>Back to slots</button>
+                <button type="submit" className={`btn btn-primary ${loading ? 'btn-loading' : ''}`} disabled={loading}>
                   Confirm booking
                 </button>
               </div>
@@ -207,29 +211,24 @@ function BookAppointment() {
             <div className="card">
               <div className="card-header"><h2 className="h-section">Summary</h2></div>
               <div className="card-body">
-                {doctor ? (
-                  <>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                      <DoctorAvatar doctor={doctor} size={44} />
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{doctor.name}</div>
-                        <div className="t-muted" style={{ fontSize: 13 }}>{doctor.specialty}</div>
-                      </div>
-                    </div>
-                    <div className="detail-list">
-                      {/* Compact stacked rows: this card sits in the narrow 1fr
-                          side column — the side-by-side label/value grid leaves
-                          too little room for values like long dates (same
-                          pattern as the other narrow side cards) */}
-                      <div className="detail-row compact"><div className="label">Date</div><div className="value">{form.date ? window.formatDateLong(form.date) : '—'}</div></div>
-                      <div className="detail-row compact"><div className="label">Time</div><div className="value">{form.time || '—'}</div></div>
-                      <div className="detail-row compact"><div className="label">Location</div><div className="value">{doctor.room}</div></div>
-                      <div className="detail-row compact"><div className="label">Consultation fee</div><div className="value">₱{doctor.fee.toLocaleString()}</div></div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="t-muted" style={{ padding: '12px 0' }}>Select a doctor to see summary.</div>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <DoctorAvatar doctor={doctor} size={44} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{doctor.name}</div>
+                    <div className="t-muted" style={{ fontSize: 13 }}>{doctor.specialty}</div>
+                  </div>
+                </div>
+                <div className="detail-list">
+                  {/* Compact stacked rows: this card sits in the narrow 1fr
+                      side column — the side-by-side label/value grid leaves
+                      too little room for values like long dates (same
+                      pattern as the other narrow side cards) */}
+                  <div className="detail-row compact"><div className="label">Visit for</div><div className="value">{forWhomName}</div></div>
+                  <div className="detail-row compact"><div className="label">Date</div><div className="value">{window.formatDateLong(pending.date)}</div></div>
+                  <div className="detail-row compact"><div className="label">Time</div><div className="value">{fmtTime12(pending.time + ':00')} ({pending.duration || 30} min)</div></div>
+                  <div className="detail-row compact"><div className="label">Location</div><div className="value">{doctor.room}</div></div>
+                  <div className="detail-row compact"><div className="label">Consultation fee</div><div className="value">₱{Number(doctor.fee || 0).toLocaleString()}</div></div>
+                </div>
               </div>
             </div>
 
