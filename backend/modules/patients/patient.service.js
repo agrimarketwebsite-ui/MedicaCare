@@ -11,6 +11,7 @@
 import ApiError from '../../shared/utils/ApiError.js';
 import { decryptField, encryptField, isEncrypted } from '../../shared/utils/crypto.js';
 import * as repo from './patient.repository.js';
+import * as appointmentRepo from '../appointments/appointment.repository.js';
 
 /** [ENC] columns ng patients. */
 export const PATIENT_ENC_FIELDS = ['date_of_birth', 'blood_type', 'allergies', 'address', 'emergency_contact'];
@@ -93,6 +94,16 @@ export async function updateFamilyMember(patientId, id, patch) {
 export async function deleteFamilyMember(patientId, id) {
   const existing = await repo.getFamilyMember(id, patientId);
   if (!existing) throw ApiError.notFound('Family member not found');
+  // Guard (product decision 2026-10-02): hindi pwedeng i-delete ang member na
+  // may upcoming appointment — i-cancel/i-reschedule muna. Ang match ay sa
+  // booked_for name snapshot (walang family_member_id FK sa appointments).
+  const member = decryptRow(existing, FAMILY_ENC_FIELDS);
+  const upcoming = await appointmentRepo.countUpcomingForAttendee(patientId, member.full_name);
+  if (upcoming > 0) {
+    throw ApiError.conflict(
+      `Hindi pwedeng tanggalin si ${member.full_name} — may ${upcoming} upcoming appointment pa. I-cancel o i-reschedule muna ang appointment bago tanggalin ang family member.`,
+    );
+  }
   await repo.deleteFamilyMember(id, patientId);
 }
 

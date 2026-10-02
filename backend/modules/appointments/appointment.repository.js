@@ -5,6 +5,7 @@
 // binabasa lang dito, hindi kailanman sinusulatan nang mano-mano.
 
 import { supabase } from '../../config/db.js';
+import { manilaNowHHMM, manilaToday } from '../../shared/utils/manilaTime.js';
 
 function must(result, context) {
   if (result.error) {
@@ -137,4 +138,28 @@ export default {
   getStatusHistory,
   getRatedAppointmentIds,
   listActiveAppointmentsOnDate,
+  countUpcomingForAttendee,
 };
+
+/**
+ * Bilang ng UPCOMING appointments ng pasyente para sa isang attendee
+ * (booked_for name snapshot): status pending/confirmed AT hindi pa tapos
+ * (petsa sa hinaharap, o ngayong araw pero hindi pa tapos ang oras — kasama
+ * ang kasalukuyang nagaganap). Ginagamit ng family-member delete guard:
+ * hindi pwedeng i-delete ang member na may paparating na appointment.
+ * Tandaan: ang booked_for ay plaintext snapshot — kapag ni-rename ang member,
+ * ang lumang appointments ay hindi na mame-match (by design ng snapshot).
+ */
+export async function countUpcomingForAttendee(patientId, bookedForName) {
+  const today = manilaToday(); // YYYY-MM-DD (Asia/Manila)
+  const now = manilaNowHHMM(); // HH:MM (Asia/Manila)
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('id')
+    .eq('patient_id', patientId)
+    .eq('booked_for', bookedForName)
+    .in('status', ['pending', 'confirmed'])
+    .or(`appointment_date.gt.${today},and(appointment_date.eq.${today},end_time.gt.${now})`);
+  const rows = must({ data, error }, 'countUpcomingForAttendee');
+  return rows.length;
+}

@@ -438,4 +438,39 @@ describe('appointments integration — Phase 4 patient portal core', { skip: !H 
     // 4) Si A kay doctor1 sa kasunod na slot (back-to-back sa T) → 201
     assert.equal((await book(doctorId, Tnext)).status, 201, 'adjacent slot ay hindi overlap');
   });
+
+  it('family delete: member na may upcoming appointment → 409; pagka-cancel → 204', async () => {
+    const fm = await apiA('POST', '/patients/me/family', { body: { full_name: 'Block Test', relation: 'Sibling' } });
+    assert.equal(fm.status, 201);
+    const famId = fm.json.data.member.id;
+
+    // Ibang linggo (parehong weekday) para hindi makipag-agawan ng slot sa itaas
+    const d = new Date(`${state.date}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + 7);
+    const date2 = d.toISOString().slice(0, 10);
+    const sr = await apiA('GET', `/appointments/slots?doctor_id=${doctorId}&date=${date2}&duration=30`);
+    assert.equal(sr.status, 200);
+    const free = sr.json.data.slots.find((s) => s.is_available);
+    assert.ok(free, 'may free slot sa susunod na linggo');
+
+    const b = await apiA('POST', '/appointments', {
+      body: {
+        ...bookingBody(free.start_time.slice(0, 5)),
+        appointment_date: date2,
+        family_member_id: famId,
+      },
+    });
+    assert.equal(b.status, 201);
+    assert.equal(b.json.data.appointment.booked_for, 'Block Test');
+    const apptId = b.json.data.appointment.id;
+
+    // May upcoming appointment → 409 (hindi 204)
+    const blocked = await apiA('DELETE', `/patients/me/family/${famId}`);
+    assert.equal(blocked.status, 409);
+    assert.match(blocked.json.message, /upcoming/i);
+
+    // Pagka-cancel ng appointment → pwede nang i-delete → 204
+    assert.equal((await apiA('POST', `/appointments/${apptId}/cancel`)).status, 200);
+    assert.equal((await apiA('DELETE', `/patients/me/family/${famId}`)).status, 204);
+  });
 });
