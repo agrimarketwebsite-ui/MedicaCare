@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { AppShell, DoctorAvatar, DoctorRatingPill, DoctorStatusBadge, EmptyState, ErrorState, Icon, navigate, PageHeader, PageSpinner, useStore } from '../shared/components.jsx';
 import { getSlots } from '../shared/api.js';
-import { fmtTime12, nextDays, time24 } from './helpers.js';
+import { fmtTime12, isPastSlot, nextDays, time24 } from './helpers.js';
 
 const DURATIONS = [30, 60];
 
@@ -82,8 +82,12 @@ function DoctorAvailability({ doctorId }) {
     );
   }
 
-  const available = slots.filter(s => s.is_available);
-  const selectedSlot = slots.find(s => s.start_time === slot);
+  // Ang past slots ng kasalukuyang araw ay hindi na dini-display (nakakalito
+  // kung naka-display pa pero ire-reject lang sa booking) — ang "Booked"
+  // slots ay nananatiling naka-display bilang disabled.
+  const visibleSlots = slots.filter(s => !isPastSlot(date, s.start_time));
+  const available = visibleSlots.filter(s => s.is_available);
+  const selectedSlot = visibleSlots.find(s => s.start_time === slot);
 
   const cont = () => {
     if (!selectedSlot) return;
@@ -167,13 +171,13 @@ function DoctorAvailability({ doctorId }) {
                 ) : slotsError ? (
                   <ErrorState title="Hindi ma-load ang mga slot" message={slotsError}
                     onRetry={() => setRetryKey(k => k + 1)} />
-                ) : slots.length === 0 ? (
+                ) : visibleSlots.length === 0 ? (
                   <EmptyState icon="calendar-x" title="No slots on this date"
                     message="The doctor has no clinic hours on this date. Please pick another date." />
                 ) : (
                   <>
                     <div className="chip-group">
-                      {slots.map(s => (
+                      {visibleSlots.map(s => (
                         <button key={s.start_time} className={'chip' + (slot === s.start_time ? ' on' : '')}
                           aria-pressed={slot === s.start_time}
                           disabled={!s.is_available}

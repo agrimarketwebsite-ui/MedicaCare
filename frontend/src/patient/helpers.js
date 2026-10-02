@@ -115,6 +115,20 @@ function localToday() {
   return `${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`;
 }
 
+// True kapag ang slot ay ngayong araw (lokal) at lumipas na ang start time
+// nito — ginagamit para hindi na i-display ang past slots sa Availability,
+// Book form, at reschedule picker (nakakalito kung naka-display pa pero
+// ire-reject lang ng backend). Ang backend (assertNotPastToday, Manila time)
+// pa rin ang final guard; ito ay UI filter lang.
+function isPastSlot(dateStr, startTimeStr) {
+  if (!dateStr || !startTimeStr) return false;
+  if (dateStr !== localToday()) return false;
+  const n = new Date();
+  const pad = (x) => String(x).padStart(2, '0');
+  const now = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  return String(startTimeStr).slice(0, 8) <= now;
+}
+
 // ============================================================
 // Phase 4 — API-shape helpers (patient portal ↔ backend contract)
 // ============================================================
@@ -252,5 +266,5 @@ function buildRecordsHTML(patient, records, meds, labs, bills) {
 // Patient screens
 // ============================================================
 
-export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, buildRecordsHTML, time24, fmtTime12, nextDays, toFrontendAppt, time24Value, downloadFile };
+export { activateOnKey, focusFirstError, syncListParams, toICSStamp, buildICS, buildReceipt, localToday, isPastSlot, buildRecordsHTML, time24, fmtTime12, nextDays, toFrontendAppt, time24Value, downloadFile };
 

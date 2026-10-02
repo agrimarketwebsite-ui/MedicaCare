@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { AppShell, ConfirmModal, DoctorAvatar, ErrorState, Field, Icon, Modal, navigate, PageHeader, PageSpinner, PatientAvatar, SelectInput, StatusBadge, useStore } from '../shared/components.jsx';
 import { cancelAppointment, getAppointment, getSlots, rescheduleAppointment, ApiError } from '../shared/api.js';
-import { buildICS, buildReceipt, downloadFile, fmtTime12, nextDays, time24, time24Value, toFrontendAppt } from './helpers.js';
+import { buildICS, buildReceipt, downloadFile, fmtTime12, isPastSlot, nextDays, time24, time24Value, toFrontendAppt } from './helpers.js';
 import { RatingModal } from './RatingModal.jsx';
 
 function formatDateTime(iso) {
@@ -189,6 +189,9 @@ function AppointmentDetails({ apptId }) {
   };
 
   const dates = nextDays(30);
+  // Ang past slots ng kasalukuyang araw ay hindi na inaalok sa reschedule
+  // picker (ire-reject lang sila ng backend kung pipiliin).
+  const visibleResSlots = (resSlots || []).filter(s => !isPastSlot(resDate, s.start_time));
   // Ang sariling kasalukuyang slot ay nananatiling selectable habang
   // nagre-reschedule (ang slots API ay walang exclusion param — ito ay
   // active appointment pa rin kaya "taken" ang lalabas doon)
@@ -381,7 +384,7 @@ function AppointmentDetails({ apptId }) {
               </div>
             ) : (
               <div className="chip-group">
-                {resSlots.map(s => {
+                {visibleResSlots.map(s => {
                   const st = slotState(s);
                   return (
                     <button key={s.start_time} type="button"

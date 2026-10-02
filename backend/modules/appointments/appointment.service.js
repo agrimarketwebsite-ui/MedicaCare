@@ -139,11 +139,20 @@ async function findAvailableSlot(doctorId, date, durationMinutes, startTime, exc
 
 export async function getSlots(doctorId, date, durationMinutes) {
   const rows = await repo.getSlots(doctorId, date, durationMinutes, null);
-  return rows.map((s) => ({
-    start_time: normalizeTime(s.slot_start),
-    end_time: normalizeTime(s.slot_end),
-    is_available: Boolean(s.is_available),
-  }));
+  // Ang fn_available_slots ay hindi alam ang "ngayon" — ang past slots ng
+  // kasalukuyang araw ay minamarkahang unavailable dito para maging truthful
+  // ang API (ang booking mismo ay nire-reject na ng assertNotPastToday).
+  const isToday = date === manilaToday();
+  const nowHHMM = isToday ? manilaNowHHMM() : null;
+  return rows.map((s) => {
+    const start = normalizeTime(s.slot_start);
+    const past = isToday && start <= `${nowHHMM}:00`;
+    return {
+      start_time: start,
+      end_time: normalizeTime(s.slot_end),
+      is_available: Boolean(s.is_available) && !past,
+    };
+  });
 }
 
 // ---- Booking ----

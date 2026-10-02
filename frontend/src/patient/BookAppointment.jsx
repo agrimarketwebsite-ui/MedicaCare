@@ -8,7 +8,7 @@
 import { useEffect, useState } from 'react';
 import { AppShell, DoctorAvatar, Field, Icon, navigate, PageHeader, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
 import { bookAppointment, getSlots, ApiError } from '../shared/api.js';
-import { fmtTime12, focusFirstError, nextDays, time24 } from './helpers.js';
+import { fmtTime12, focusFirstError, isPastSlot, nextDays, time24 } from './helpers.js';
 
 function BookAppointment() {
   const store = useStore();
@@ -56,7 +56,9 @@ function BookAppointment() {
   const doctor = form.doctorId
     ? ((store.doctors || []).find(d => d.id === form.doctorId) || window.findDoctor(form.doctorId))
     : null;
-  const availableSlots = slots.filter(s => s.is_available);
+  // Ang past slots ng kasalukuyang araw ay hindi inaalok sa dropdown
+  // (ire-reject lang sila ng backend kung pipiliin — nakakalito).
+  const availableSlots = slots.filter(s => s.is_available && !isPastSlot(form.date, s.start_time));
 
   const update = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); };
   // Switching doctors invalidates the previously chosen date + slot
