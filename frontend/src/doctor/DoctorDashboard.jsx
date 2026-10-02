@@ -13,7 +13,12 @@ const MUTABLE = new Set(['pending', 'confirmed']);
 
 function DoctorDashboard() {
   const store = useStore();
-  const doctorName = store.doctorSession?.name || store.doctorSession?.email || 'Doctor';
+  // Ang session name ay email (mula sa DoctorLogin) — gamitin ang directory
+  // record para sa tunay na pangalan, tulad ng sidebar (layout.jsx).
+  const doctorRec = (typeof window !== 'undefined' && window.findDoctor && store.doctorSession?.doctorId)
+    ? window.findDoctor(store.doctorSession.doctorId)
+    : null;
+  const doctorName = doctorRec?.name || store.doctorSession?.name || store.doctorSession?.email || 'Doctor';
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [date, setDate] = useState(localToday());
