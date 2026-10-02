@@ -189,7 +189,7 @@ function Profile() {
       store.pushToast({ title: 'Family member removed', msg: `${confirmRemoveFam.full_name} has been removed.` });
       setConfirmRemoveFam(null);
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Hindi natanggal', msg: err.message || 'Pakisubukang muli.' });
+      store.pushToast({ kind: 'error', title: 'Could not remove', msg: err.message || 'Please try again.' });
     } finally {
       setRemovingFam(false);
     }

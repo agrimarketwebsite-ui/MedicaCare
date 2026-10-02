@@ -100,8 +100,9 @@ export async function deleteFamilyMember(patientId, id) {
   const member = decryptRow(existing, FAMILY_ENC_FIELDS);
   const upcoming = await appointmentRepo.countUpcomingForAttendee(patientId, member.full_name);
   if (upcoming > 0) {
+    const plural = upcoming === 1 ? 'appointment' : 'appointments';
     throw ApiError.conflict(
-      `Hindi pwedeng tanggalin si ${member.full_name} — may ${upcoming} upcoming appointment pa. I-cancel o i-reschedule muna ang appointment bago tanggalin ang family member.`,
+      `Cannot delete ${member.full_name} — they still have ${upcoming} upcoming ${plural}. Cancel or reschedule ${upcoming === 1 ? 'the appointment' : 'the appointments'} first before removing the family member.`,
     );
   }
   await repo.deleteFamilyMember(id, patientId);

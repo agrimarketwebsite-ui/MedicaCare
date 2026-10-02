@@ -235,7 +235,11 @@ describe('patient.service — encryptRow/decryptRow (PHI roundtrip)', () => {
     const enc = patientService.encryptRow(row);
     for (const f of patientService.PATIENT_ENC_FIELDS) {
       assert.ok(enc[f].startsWith('v1:'), `${f} ay naka-encrypt`);
-      assert.ok(!enc[f].includes(row[f]), `${f} walang plaintext leak`);
+      // Tandaan: hindi pwedeng i-assert na hindi substring ang plaintext sa
+      // ciphertext — ang maikling plaintext (hal. 'O+') ay MAAARING random na
+      // lumitaw sa base64 output (flaky). Ang garantiya ay: naka-encrypt ang
+      // format (v1:) at nag-roundtrip ang decrypt (sinusundan na test).
+      assert.ok(enc[f] !== row[f], `${f} ay hindi plaintext`);
     }
     assert.equal(enc.full_name, row.full_name);
     assert.equal(enc.email, row.email);
