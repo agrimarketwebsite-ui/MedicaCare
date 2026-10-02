@@ -181,7 +181,9 @@ describe('records integration — Phase 5 doctor-written records', { skip: !H ||
     const raw = await H.supabase.from('lab_results').select('test_name, findings').eq('id', labId).single();
     assert.ok(raw.data.test_name.startsWith('v1:'), 'test_name ay ciphertext sa DB');
     assert.equal(typeof raw.data.findings, 'string', 'findings ay JSON string sa jsonb column');
-    assert.ok(raw.data.findings.startsWith('"v1:'), 'findings string ay ciphertext');
+    // Tandaan: ang JSON string ay na-parse na pagka-read — ang value mismo ay
+    // ang ciphertext na 'v1:...' (walang quote; ang quote ay JSON encoding lang).
+    assert.ok(raw.data.findings.startsWith('v1:'), 'findings string ay ciphertext');
 
     const g = await apiDoc(0, 'GET', `/records/lab${q(state.patientId)}`);
     assert.equal(g.status, 200);
