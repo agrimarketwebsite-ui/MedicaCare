@@ -1,3 +1,97 @@
 // backend/modules/patients/patient.service.js
-// Blueprint stub - walang code pa (tingnan ang docs/BACKEND_ARCHITECTURE.md).
-// Role: Health summary assembly (dob-derived age, blood type, allergies).
+// Phase 4 — own profile + family members.
+// [ENC] (ENCRYPTION_DESIGN §1, migration 004):
+//   - patients: date_of_birth, blood_type, allergies, address, emergency_contact
+//   - patient_family_members: full_name, relation
+//   Encrypt on write, decrypt on read — PERO para sa owner lang (ang mga
+//   route ay requireRole('patient') + JWT.sub scoping; ibang pasyente → 404).
+//   Legacy/seed rows na plaintext: ibinabalik as-is (isEncrypted check).
+//   NEVER i-log ang decrypted PHI values (ids/dates/statuses lang sa logs).
+
+import ApiError from '../../shared/utils/ApiError.js';
+import { decryptField, encryptField, isEncrypted } from '../../shared/utils/crypto.js';
+import * as repo from './patient.repository.js';
+
+/** [ENC] columns ng patients. */
+export const PATIENT_ENC_FIELDS = ['date_of_birth', 'blood_type', 'allergies', 'address', 'emergency_contact'];
+/** [ENC] columns ng patient_family_members. */
+export const FAMILY_ENC_FIELDS = ['full_name', 'relation'];
+
+/**
+ * I-encrypt ang [ENC] fields ng isang row bago i-save.
+ * null/undefined ay mananatiling null/undefined; ang ibang fields ay
+ * dumadaan lang. (Sync — ang crypto.js ay sync.)
+ */
+export function encryptRow(row, fields = PATIENT_ENC_FIELDS) {
+  const out = { ...row };
+  for (const f of fields) {
+    const v = out[f];
+    if (v === undefined || v === null) continue;
+    out[f] = encryptField(String(v));
+  }
+  return out;
+}
+
+/**
+ * I-decrypt ang [ENC] fields ng isang row para sa owner.
+ * Kapag ang value ay HINDI ciphertext (legacy/seed plaintext), ibinabalik
+ * as-is — hindi nag-throw. null/undefined ay mananatili.
+ */
+export function decryptRow(row, fields = PATIENT_ENC_FIELDS) {
+  const out = { ...row };
+  for (const f of fields) {
+    const v = out[f];
+    if (v === undefined || v === null) continue;
+    out[f] = isEncrypted(v) ? decryptField(v) : v;
+  }
+  return out;
+}
+
+export async function getProfile(patientId) {
+  const row = await repo.getPatientById(patientId);
+  if (!row) throw ApiError.notFound('Patient profile not found');
+  return decryptRow(row);
+}
+
+export async function updateProfile(patientId, patch) {
+  if (Object.keys(patch).length === 0) return getProfile(patientId); // no-op PUT
+  const row = await repo.updatePatient(patientId, encryptRow(patch));
+  return decryptRow(row);
+}
+
+export async function listFamily(patientId) {
+  const rows = await repo.listFamilyMembers(patientId);
+  return rows.map((r) => decryptRow(r, FAMILY_ENC_FIELDS));
+}
+
+export async function createFamilyMember(patientId, input) {
+  const row = await repo.createFamilyMember(patientId, encryptRow(input, FAMILY_ENC_FIELDS));
+  return decryptRow(row, FAMILY_ENC_FIELDS);
+}
+
+export async function updateFamilyMember(patientId, id, patch) {
+  const existing = await repo.getFamilyMember(id, patientId);
+  if (!existing) throw ApiError.notFound('Family member not found'); // ibang pasyente → 404, hindi 403
+  if (Object.keys(patch).length === 0) return decryptRow(existing, FAMILY_ENC_FIELDS);
+  const row = await repo.updateFamilyMember(id, patientId, encryptRow(patch, FAMILY_ENC_FIELDS));
+  return decryptRow(row, FAMILY_ENC_FIELDS);
+}
+
+export async function deleteFamilyMember(patientId, id) {
+  const existing = await repo.getFamilyMember(id, patientId);
+  if (!existing) throw ApiError.notFound('Family member not found');
+  await repo.deleteFamilyMember(id, patientId);
+}
+
+export default {
+  PATIENT_ENC_FIELDS,
+  FAMILY_ENC_FIELDS,
+  encryptRow,
+  decryptRow,
+  getProfile,
+  updateProfile,
+  listFamily,
+  createFamilyMember,
+  updateFamilyMember,
+  deleteFamilyMember,
+};

@@ -42,5 +42,17 @@ export const contactLimiter = rateLimit({
   handler,
 });
 
+// Phase 4 — booking/reschedule writes (slot-race + spam surface): mas
+// mahigpit sa general limiter, mas maluwag sa contact (ang pasyente ay
+// pwedeng mag-book ng ilang appointments nang sunod-sunod).
+export const bookingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler,
+});
+
 export default apiLimiter;
+
 

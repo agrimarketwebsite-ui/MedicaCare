@@ -13,6 +13,9 @@ import settingRoutes from '../modules/settings/setting.routes.js';
 import doctorRoutes from '../modules/doctors/doctor.routes.js';
 import storyRoutes from '../modules/stories/story.routes.js';
 import contactRoutes from '../modules/contact/contact.routes.js';
+import patientRoutes from '../modules/patients/patient.routes.js';
+import appointmentRoutes from '../modules/appointments/appointment.routes.js';
+import ratingRoutes from '../modules/ratings/rating.routes.js';
 
 const router = Router();
 
@@ -49,6 +52,13 @@ router.use('/doctors', doctorRoutes);
 router.use('/stories', storyRoutes);
 router.use('/contact', contactRoutes);
 
+// Phase 4 — patient portal core (lahat ay requireAuth + requireRole('patient')
+// sa loob ng bawat module router; ang BOLA scoping ay nasa service layer).
+router.use('/patients', patientRoutes);
+router.use('/appointments', appointmentRoutes);
+router.use('/ratings', ratingRoutes);
+
 export default router;
+
 
 
