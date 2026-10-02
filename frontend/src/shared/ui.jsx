@@ -79,6 +79,14 @@ function PatientAvatar({ person, size = 32 }) {
 // ---------- Modal ----------
 function Modal({ open, onClose, title, subtitle, icon, iconKind = 'info', size = '', children, footer }) {
   const modalRef = useRef(null);
+  // Ang onClose ay kadalasang inline arrow mula sa caller, kaya nagbabago ang
+  // identity nito sa bawat render. Kung isasama ito sa effect deps, ang focus
+  // effect ay tumatakbo ulit sa bawat keystroke: ang cleanup ay ibinabalik
+  // ang focus sa pinagmulan (prevFocus.focus()), kaya nawawala ang focus ng
+  // input sa bawat type. Sa pamamagitan ng ref, ang focus trap ay tumatakbo
+  // lang sa open/close transition, pero laging latest ang onClose na ginagamit.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   useEffect(() => {
     if (!open) return;
     const prevFocus = document.activeElement;
@@ -86,7 +94,7 @@ function Modal({ open, onClose, title, subtitle, icon, iconKind = 'info', size =
     // it opens, trap Tab inside it, and restore focus to the trigger on close
     requestAnimationFrame(() => { if (modalRef.current) modalRef.current.focus(); });
     const onKey = (e) => {
-      if (e.key === 'Escape') { onClose && onClose(); return; }
+      if (e.key === 'Escape') { const fn = onCloseRef.current; fn && fn(); return; }
       if (e.key === 'Tab' && modalRef.current) {
         const focusables = modalRef.current.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -102,7 +110,7 @@ function Modal({ open, onClose, title, subtitle, icon, iconKind = 'info', size =
       window.removeEventListener('keydown', onKey);
       if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
   if (!open) return null;
   return (
     <div className="modal-scrim" onClick={onClose}>
@@ -344,3 +352,4 @@ function generateOtp() {
 }
 
 export { Badge, StatusBadge, DoctorStatusBadge, DoctorAvatar, PatientAvatar, Modal, ToastLayer, Field, TextInput, TextArea, SelectInput, Pagination, SkeletonRows, SortableTh, PageSpinner, EmptyState, ErrorState, ConfirmModal, generateOtp };
+
