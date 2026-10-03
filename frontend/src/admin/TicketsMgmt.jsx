@@ -1,1 +1,256 @@
-Ly8gVGlja2V0c01nbXQg4oCUIHBhdGllbnQgc3VwcG9ydCBtZXNzYWdlcyAoUGhhc2UgNikuCi8vIFR3by1jYXJkIGxheW91dCByZXN0b3JlZCBmcm9tIHRoZSBwcm90b3R5cGU6ICJPcGVuIiBhbmQgIlJlc29sdmVkIi4KLy8gUmVwbHkgbW9kYWwgc2VuZHMgdGhlIHJlcGx5IEFORCByZXNvbHZlcyB0aGUgdGlja2V0IGluIG9uZSBzdGVwLgovLyBUaWNrZXQgc2hhcGU6IHsgaWQsIHN1YmplY3QsIHN0YXR1cywgcGF0aWVudF9uYW1lLCBjcmVhdGVkX2F0IH0uCi8vIFRocmVhZDogZ2V0QWRtaW5UaWNrZXQoaWQpIOKGkiB7IHRpY2tldCwgbWVzc2FnZXM6IFt7IGlkLCBzZW5kZXIsIGJvZHksIGNyZWF0ZWRfYXQgfV0gfS4KaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gJ3JlYWN0JzsKaW1wb3J0IHsKICBBcHBTaGVsbCwgQmFkZ2UsIEVtcHR5U3RhdGUsIEVycm9yU3RhdGUsIEZpZWxkLCBJY29uLCBNb2RhbCwKICBQYWdlSGVhZGVyLCBQYXRpZW50QXZhdGFyLCBUZXh0QXJlYSwgdXNlU3RvcmUsCn0gZnJvbSAnLi4vc2hhcmVkL2NvbXBvbmVudHMuanN4JzsKaW1wb3J0IHsgZm9ybWF0RGF0ZSB9IGZyb20gJy4uL3NoYXJlZC9kYXRhLmpzJzsKaW1wb3J0IHsgZ2V0QWRtaW5UaWNrZXQsIGdldEFkbWluVGlja2V0cywgcmVwbHlUaWNrZXQsIHJlc29sdmVUaWNrZXQsIEFwaUVycm9yIH0gZnJvbSAnLi4vc2hhcmVkL2FwaS5qcyc7CgovLyAtLS0tLS0tLS0tIFBhdGllbnQgbWVzc2FnZXMgKHN1cHBvcnQgdGlja2V0cykgLS0tLS0tLS0tLQovLyBQYXRpZW50cyBzZW5kIHF1ZXN0aW9ucyBmcm9tIHRoZSBwb3J0YWwncyBIZWxwICYgc3VwcG9ydCBwYWdlICgiTWVzc2FnZSB0aGUKLy8gY2xpbmljIik7IHRoZXkgbGFuZCBoZXJlIGFzIG9wZW4gdGlja2V0cy4gU3RhZmYgcmVwbHkgb25jZSDigJQgdGhlIHJlcGx5IHNob3dzCi8vIGluIHRoZSBwYXRpZW50J3MgcG9ydGFsIGFuZCB0aGUgdGlja2V0IGlzIG1hcmtlZCByZXNvbHZlZCAoc2FtZSBsb29wIGFzIHRoZQovLyBwYXRpZW50IHN0b3JpZXMgbW9kZXJhdGlvbiBmbG93KS4KZnVuY3Rpb24gVGlja2V0c01nbXQoKSB7CiAgY29uc3Qgc3RvcmUgPSB1c2VTdG9yZSgpOwogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKHRydWUpOwogIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IFt0aWNrZXRzLCBzZXRUaWNrZXRzXSA9IHVzZVN0YXRlKFtdKTsKICAvLyB0aHJlYWRzOiB7IFt0aWNrZXRJZF06IG1lc3NhZ2VzW10gfSDigJQgbG9hZGVkIGFsb25nc2lkZSB0aGUgbGlzdCBzbyByb3dzCiAgLy8gY2FuIHNob3cgdGhlIGZ1bGwgbWVzc2FnZSBhbmQgdGhlIHN0YWZmIHJlcGx5IGNhbGxvdXQKICBjb25zdCBbdGhyZWFkcywgc2V0VGhyZWFkc10gPSB1c2VTdGF0ZSh7fSk7CiAgY29uc3QgW3JldHJ5S2V5LCBzZXRSZXRyeUtleV0gPSB1c2VTdGF0ZSgwKTsKICBjb25zdCBbcmVwbHlGb3IsIHNldFJlcGx5Rm9yXSA9IHVzZVN0YXRlKG51bGwpOwogIGNvbnN0IFtyZXBseVRleHQsIHNldFJlcGx5VGV4dF0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgW3JlcGx5RXJyb3IsIHNldFJlcGx5RXJyb3JdID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IFtzZW5kaW5nLCBzZXRTZW5kaW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKCiAgY29uc3QgbG9hZCA9IGFzeW5jICgpID0+IHsKICAgIHNldExvYWRpbmcodHJ1ZSk7CiAgICBzZXRFcnJvcignJyk7CiAgICB0cnkgewogICAgICBjb25zdCBsaXN0ID0gYXdhaXQgZ2V0QWRtaW5UaWNrZXRzKCcnKTsKICAgICAgc2V0VGlja2V0cyhsaXN0KTsKICAgICAgLy8gRmV0Y2ggZWFjaCB0aWNrZXQncyB0aHJlYWQgaW4gcGFyYWxsZWw7IGEgc2luZ2xlIGZhaWx1cmUgbXVzdCBub3QKICAgICAgLy8gYnJlYWsgdGhlIHdob2xlIGxpc3QKICAgICAgY29uc3QgZW50cmllcyA9IGF3YWl0IFByb21pc2UuYWxsKGxpc3QubWFwKGFzeW5jICh0KSA9PiB7CiAgICAgICAgdHJ5IHsKICAgICAgICAgIGNvbnN0IGQgPSBhd2FpdCBnZXRBZG1pblRpY2tldCh0LmlkKTsKICAgICAgICAgIHJldHVybiBbdC5pZCwgZC5tZXNzYWdlcyB8fCBbXV07CiAgICAgICAgfSBjYXRjaCB7CiAgICAgICAgICByZXR1cm4gW3QuaWQsIG51bGxdOwogICAgICAgIH0KICAgICAgfSkpOwogICAgICBzZXRUaHJlYWRzKE9iamVjdC5mcm9tRW50cmllcyhlbnRyaWVzKSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0RXJyb3IoZXJyLm1lc3NhZ2UgfHwgJ0NvdWxkIG5vdCBsb2FkIHRpY2tldHMuJyk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRMb2FkaW5nKGZhbHNlKTsKICAgIH0KICB9OwoKICB1c2VFZmZlY3QoKCkgPT4geyBsb2FkKCk7IH0sIFtyZXRyeUtleV0pOyAvLyBlc2xpbnQtZGlzYWJsZS1saW5lIHJlYWN0LWhvb2tzL2V4aGF1c3RpdmUtZGVwcwoKICBjb25zdCBvcGVuID0gdGlja2V0cy5maWx0ZXIoKHQpID0+IHQuc3RhdHVzID09PSAnb3BlbicpOwogIGNvbnN0IHJlc29sdmVkID0gdGlja2V0cy5maWx0ZXIoKHQpID0+IHQuc3RhdHVzID09PSAncmVzb2x2ZWQnKTsKCiAgY29uc3Qgc3RhcnRSZXBseSA9ICh0KSA9PiB7IHNldFJlcGx5Rm9yKHQpOyBzZXRSZXBseVRleHQoJycpOyBzZXRSZXBseUVycm9yKCcnKTsgfTsKCiAgY29uc3Qgc2VuZFJlcGx5ID0gYXN5bmMgKCkgPT4gewogICAgY29uc3QgdGV4dCA9IHJlcGx5VGV4dC50cmltKCk7CiAgICBpZiAodGV4dC5sZW5ndGggPCAxMCkgeyBzZXRSZXBseUVycm9yKCdQbGVhc2Ugd3JpdGUgYSByZXBseSAoMTArIGNoYXJhY3RlcnMpLicpOyByZXR1cm47IH0KICAgIHNldFNlbmRpbmcodHJ1ZSk7CiAgICB0cnkgewogICAgICAvLyBUaGUgcHJvdG90eXBlIHNlbmRzIHRoZSByZXBseSBBTkQgcmVzb2x2ZXMgaW4gb25lIHN0ZXAKICAgICAgYXdhaXQgcmVwbHlUaWNrZXQocmVwbHlGb3IuaWQsIHsgYm9keTogdGV4dCB9KTsKICAgICAgYXdhaXQgcmVzb2x2ZVRpY2tldChyZXBseUZvci5pZCk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7CiAgICAgICAga2luZDogJ3N1Y2Nlc3MnLAogICAgICAgIHRpdGxlOiAnUmVwbHkgc2VudCcsCiAgICAgICAgbWVzc2FnZTogYCR7cmVwbHlGb3IucGF0aWVudF9uYW1lIHx8ICdUaGUgcGF0aWVudCd9IHdpbGwgc2VlIHlvdXIgcmVzcG9uc2UgaW4gdGhlaXIgcG9ydGFsLmAsCiAgICAgIH0pOwogICAgICBzZXRSZXBseUZvcihudWxsKTsKICAgICAgbG9hZCgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdlcnJvcicsIHRpdGxlOiAnUmVwbHkgZmFpbGVkJywgbWVzc2FnZTogZXJyIGluc3RhbmNlb2YgQXBpRXJyb3IgPyBlcnIubWVzc2FnZSA6ICdQbGVhc2UgdHJ5IGFnYWluLicgfSk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRTZW5kaW5nKGZhbHNlKTsKICAgIH0KICB9OwoKICBjb25zdCByb3dTa2VsZXRvbnMgPSAoY291bnQpID0+IEFycmF5LmZyb20oeyBsZW5ndGg6IGNvdW50IH0pLm1hcCgoXywgaSkgPT4gKAogICAgPGRpdiBrZXk9e2l9IGNsYXNzTmFtZT0ibGlzdC1pdGVtIiBhcmlhLWhpZGRlbj0idHJ1ZSI+CiAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDI4LCBoZWlnaHQ6IDI4LCBib3JkZXJSYWRpdXM6ICc1MCUnLCBmbGV4U2hyaW5rOiAwIH19IC8+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tYm9keSIgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBmbGV4RGlyZWN0aW9uOiAnY29sdW1uJywgZ2FwOiA2IH19PgogICAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgaGVpZ2h0OiAxMSwgd2lkdGg6ICc1NSUnIH19IC8+CiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJza2VsIiBzdHlsZT17eyBoZWlnaHQ6IDEwLCB3aWR0aDogJzgwJScgfX0gLz4KICAgICAgPC9kaXY+CiAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDc0LCBoZWlnaHQ6IDIyLCBib3JkZXJSYWRpdXM6ICd2YXIoLS1yLXBpbGwpJywgZmxleFNocmluazogMCB9fSAvPgogICAgPC9kaXY+CiAgKSk7CgogIGNvbnN0IFRpY2tldFJvdyA9ICh7IHQsIGFjdGlvbnMsIGNoaWxkcmVuIH0pID0+IHsKICAgIGNvbnN0IG1zZ3MgPSB0aHJlYWRzW3QuaWRdIHx8IFtdOwogICAgY29uc3QgcGF0aWVudE1zZ3MgPSBtc2dzLmZpbHRlcigobSkgPT4gbS5zZW5kZXIgPT09ICdwYXRpZW50Jyk7CiAgICBjb25zdCBzdGFmZk1zZ3MgPSBtc2dzLmZpbHRlcigobSkgPT4gbS5zZW5kZXIgPT09ICdhZG1pbicpOwogICAgY29uc3Qgb3JpZ2luYWwgPSBwYXRpZW50TXNnc1swXT8uYm9keSB8fCAnJzsKICAgIGNvbnN0IGZvbGxvd1VwcyA9IE1hdGgubWF4KDAsIHBhdGllbnRNc2dzLmxlbmd0aCAtIDEpOwogICAgY29uc3QgbGFzdFJlcGx5ID0gc3RhZmZNc2dzLmxlbmd0aCA+IDAgPyBzdGFmZk1zZ3Nbc3RhZmZNc2dzLmxlbmd0aCAtIDFdIDogbnVsbDsKICAgIGNvbnN0IG5hbWUgPSB0LnBhdGllbnRfbmFtZSB8fCAnUGF0aWVudCc7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtIiBzdHlsZT17eyBhbGlnbkl0ZW1zOiAnZmxleC1zdGFydCcgfX0+CiAgICAgICAgPFBhdGllbnRBdmF0YXIgcGVyc29uPXt7IG5hbWUgfX0gc2l6ZT17Mjh9IC8+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1ib2R5Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tdGl0bGUiPnt0LnN1YmplY3QgfHwgJ1N1cHBvcnQgdGlja2V0J308L2Rpdj4KICAgICAgICAgIHsvKiBPdmVycmlkZSB0aGUgb25lLWxpbmUgZWxsaXBzaXM6IHRoZSBtZXNzYWdlIGJvZHkgaXMgdGhlIGNvbnRlbnQgaGVyZSAqL30KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tc3ViIiBzdHlsZT17eyB3aGl0ZVNwYWNlOiAnbm9ybWFsJywgb3ZlcmZsb3c6ICd2aXNpYmxlJywgbGluZUhlaWdodDogMS41IH19PgogICAgICAgICAgICB7b3JpZ2luYWx9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIHtmb2xsb3dVcHMgPiAwICYmICgKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1zdWIiIHN0eWxlPXt7IG1hcmdpblRvcDogNCB9fT4KICAgICAgICAgICAgICB7Zm9sbG93VXBzfSBwYXRpZW50IGZvbGxvdy11cHtmb2xsb3dVcHMgPT09IDEgPyAnJyA6ICdzJ30uIFNlZSByZXBseSBoaXN0b3J5CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgKX0KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tc3ViIiBzdHlsZT17eyBtYXJnaW5Ub3A6IDQgfX0+CiAgICAgICAgICAgIHtuYW1lfSDCtyBzZW50IHtmb3JtYXREYXRlKCh0LmNyZWF0ZWRfYXQgfHwgJycpLnNsaWNlKDAsIDEwKSl9CiAgICAgICAgICAgIHtsYXN0UmVwbHkgPyBgIMK3IHJlcGxpZWQgJHtmb3JtYXREYXRlKChsYXN0UmVwbHkuY3JlYXRlZF9hdCB8fCAnJykuc2xpY2UoMCwgMTApKX1gIDogJyd9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIHtjaGlsZHJlbn0KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IHN0eWxlPXt7IGZsZXhTaHJpbms6IDAgfX0+e2FjdGlvbnN9PC9kaXY+CiAgICAgIDwvZGl2PgogICAgKTsKICB9OwoKICByZXR1cm4gKAogICAgPEFwcFNoZWxsIGN1cnJlbnQ9InRpY2tldHMiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0icGFnZSIgc3R5bGU9e3sgbWF4V2lkdGg6IDk2MCwgbWFyZ2luOiAnMCBhdXRvJyB9fT4KICAgICAgICA8UGFnZUhlYWRlcgogICAgICAgICAgdGl0bGU9IlBhdGllbnQgbWVzc2FnZXMiCiAgICAgICAgICBzdWJ0aXRsZT17bG9hZGluZwogICAgICAgICAgICA/IDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgYXJpYS1oaWRkZW49InRydWUiIHN0eWxlPXt7IHdpZHRoOiAyODAsIG1heFdpZHRoOiAnMTAwJScsIGhlaWdodDogMTQgfX0gLz4KICAgICAgICAgICAgOiBgJHtvcGVuLmxlbmd0aH0gYXdhaXRpbmcgYSByZXBseSDCtyAke3Jlc29sdmVkLmxlbmd0aH0gcmVzb2x2ZWRgfQogICAgICAgICAgYnJlYWRjcnVtYnM9e1t7IGxhYmVsOiAnSG9tZScsIHRvOiAnL2FkbWluL2Rhc2hib2FyZCcgfSwgeyBsYWJlbDogJ1BhdGllbnQgbWVzc2FnZXMnIH1dfQogICAgICAgIC8+CgogICAgICAgIHtlcnJvciA/ICgKICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIj4KICAgICAgICAgICAgPEVycm9yU3RhdGUgdGl0bGU9IkNvdWxkIG5vdCBsb2FkIHRpY2tldHMiIG1lc3NhZ2U9e2Vycm9yfSBvblJldHJ5PXsoKSA9PiBzZXRSZXRyeUtleSgoaykgPT4gayArIDEpfSAvPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgKSA6ICgKICAgICAgICAgIDw+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIiBzdHlsZT17eyBtYXJnaW5Cb3R0b206IDE2IH19PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWhlYWRlciI+PGgyIGNsYXNzTmFtZT0iaC1zZWN0aW9uIj5PcGVuPC9oMj48L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAge2xvYWRpbmcgPyByb3dTa2VsZXRvbnMoMikgOiBvcGVuLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBwYWRkaW5nOiAnOHB4IDIwcHggMTZweCcgfX0+CiAgICAgICAgICAgICAgICAgICAgPEVtcHR5U3RhdGUKICAgICAgICAgICAgICAgICAgICAgIGljb249ImluYm94IgogICAgICAgICAgICAgICAgICAgICAgdGl0bGU9Ik5vIG9wZW4gbWVzc2FnZXMiCiAgICAgICAgICAgICAgICAgICAgICBtZXNzYWdlPSJNZXNzYWdlcyBzZW50IGZyb20gdGhlIHBhdGllbnQgcG9ydGFsJ3MgSGVscCAmIHN1cHBvcnQgcGFnZSBhcHBlYXIgaGVyZS4iCiAgICAgICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApIDogb3Blbi5tYXAoKHQpID0+ICgKICAgICAgICAgICAgICAgICAgPFRpY2tldFJvdwogICAgICAgICAgICAgICAgICAgIGtleT17dC5pZH0KICAgICAgICAgICAgICAgICAgICB0PXt0fQogICAgICAgICAgICAgICAgICAgIGFjdGlvbnM9ezxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkgc20iIG9uQ2xpY2s9eygpID0+IHN0YXJ0UmVwbHkodCl9PjxJY29uIG5hbWU9InJlcGx5IiBzaXplPXsxM30gLz4gUmVwbHk8L2J1dHRvbj59CiAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZCI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQtaGVhZGVyIj48aDIgY2xhc3NOYW1lPSJoLXNlY3Rpb24iPlJlc29sdmVkPC9oMj48L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAge2xvYWRpbmcgPyByb3dTa2VsZXRvbnMoMSkgOiByZXNvbHZlZC5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgcGFkZGluZzogJzhweCAyMHB4IDE2cHgnIH19PgogICAgICAgICAgICAgICAgICAgIDxFbXB0eVN0YXRlIGljb249ImNoZWNrLWNpcmNsZS0yIiB0aXRsZT0iTm90aGluZyByZXNvbHZlZCB5ZXQiIG1lc3NhZ2U9IlJlcGxpZWQgbWVzc2FnZXMgbW92ZSBoZXJlLiIgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApIDogcmVzb2x2ZWQubWFwKCh0KSA9PiB7CiAgICAgICAgICAgICAgICAgIGNvbnN0IHN0YWZmTXNncyA9ICh0aHJlYWRzW3QuaWRdIHx8IFtdKS5maWx0ZXIoKG0pID0+IG0uc2VuZGVyID09PSAnYWRtaW4nKTsKICAgICAgICAgICAgICAgICAgY29uc3QgbGFzdFJlcGx5ID0gc3RhZmZNc2dzLmxlbmd0aCA+IDAgPyBzdGFmZk1zZ3Nbc3RhZmZNc2dzLmxlbmd0aCAtIDFdIDogbnVsbDsKICAgICAgICAgICAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgICAgICAgICA8VGlja2V0Um93CiAgICAgICAgICAgICAgICAgICAgICBrZXk9e3QuaWR9CiAgICAgICAgICAgICAgICAgICAgICB0PXt0fQogICAgICAgICAgICAgICAgICAgICAgYWN0aW9ucz17PEJhZGdlIGtpbmQ9InN1Y2Nlc3MiIGRvdD17ZmFsc2V9PlJlcGxpZWQ8L0JhZGdlPn0KICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICB7bGFzdFJlcGx5ICYmICgKICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBtYXJnaW5Ub3A6IDgsIGZvbnRTaXplOiAxMi41LCBsaW5lSGVpZ2h0OiAxLjUsIGJhY2tncm91bmQ6ICd2YXIoLS1zdWNjZXNzLXNvZnQpJywgYm9yZGVyOiAnMXB4IHNvbGlkIHZhcigtLXN1Y2Nlc3MtYm9yZGVyKScsIGJvcmRlclJhZGl1czogNiwgcGFkZGluZzogJzhweCAxMHB4JywgY29sb3I6ICd2YXIoLS1zdWNjZXNzLXRleHQpJyB9fT4KICAgICAgICAgICAgICAgICAgICAgICAgICA8c3Ryb25nPk91ciByZXBseTo8L3N0cm9uZz4ge2xhc3RSZXBseS5ib2R5fQogICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICAgICAgPC9UaWNrZXRSb3c+CiAgICAgICAgICAgICAgICAgICk7CiAgICAgICAgICAgICAgICB9KX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8Lz4KICAgICAgICApfQogICAgICA8L2Rpdj4KCiAgICAgIDxNb2RhbAogICAgICAgIG9wZW49eyEhcmVwbHlGb3J9CiAgICAgICAgb25DbG9zZT17KCkgPT4gc2V0UmVwbHlGb3IobnVsbCl9CiAgICAgICAgdGl0bGU9IlJlcGx5IHRvIHBhdGllbnQiCiAgICAgICAgc3VidGl0bGU9e3JlcGx5Rm9yID8gYCR7cmVwbHlGb3IucGF0aWVudF9uYW1lIHx8ICdQYXRpZW50J30gwrcgIiR7cmVwbHlGb3Iuc3ViamVjdCB8fCAnU3VwcG9ydCB0aWNrZXQnfSJgIDogJyd9CiAgICAgICAgaWNvbj0icmVwbHkiCiAgICAgICAgaWNvbktpbmQ9ImluZm8iCiAgICAgICAgZm9vdGVyPXs8PgogICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBvbkNsaWNrPXsoKSA9PiBzZXRSZXBseUZvcihudWxsKX0gZGlzYWJsZWQ9e3NlbmRpbmd9PkNhbmNlbDwvYnV0dG9uPgogICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9e2BidG4gYnRuLXByaW1hcnkgJHtzZW5kaW5nID8gJ2J0bi1sb2FkaW5nJyA6ICcnfWB9IG9uQ2xpY2s9e3NlbmRSZXBseX0gZGlzYWJsZWQ9e3NlbmRpbmd9PlNlbmQgcmVwbHkgJmFtcDsgcmVzb2x2ZTwvYnV0dG9uPgogICAgICAgIDwvPn0KICAgICAgPgogICAgICAgIHtyZXBseUZvciAmJiAoKCkgPT4gewogICAgICAgICAgY29uc3QgbXNncyA9IHRocmVhZHNbcmVwbHlGb3IuaWRdIHx8IFtdOwogICAgICAgICAgY29uc3QgcGF0aWVudE1zZ3MgPSBtc2dzLmZpbHRlcigobSkgPT4gbS5zZW5kZXIgPT09ICdwYXRpZW50Jyk7CiAgICAgICAgICBjb25zdCBvcmlnaW5hbCA9IHBhdGllbnRNc2dzWzBdOwogICAgICAgICAgLy8gQ29udmVyc2F0aW9uIGhpc3Rvcnk6IGV2ZXJ5dGhpbmcgZXhjZXB0IHRoZSBvcmlnaW5hbCBtZXNzYWdlLAogICAgICAgICAgLy8ga2VwdCBpbiBjaHJvbm9sb2dpY2FsIG9yZGVyCiAgICAgICAgICBjb25zdCBoaXN0b3J5ID0gb3JpZ2luYWwgPyBtc2dzLmZpbHRlcigobSkgPT4gbS5pZCAhPT0gb3JpZ2luYWwuaWQpIDogbXNnczsKICAgICAgICAgIHJldHVybiAoCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzdGFjayBtZCI+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAndmFyKC0tc3VyZmFjZS1tdXRlZCknLCBib3JkZXI6ICcxcHggc29saWQgdmFyKC0tYm9yZGVyKScsIGJvcmRlclJhZGl1czogNiwgcGFkZGluZzogJzEwcHggMTJweCcsIGZvbnRTaXplOiAxMywgbGluZUhlaWdodDogMS41NSB9fT4KICAgICAgICAgICAgICAgIHtvcmlnaW5hbD8uYm9keSB8fCAnJ30KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICB7aGlzdG9yeS5tYXAoKG0pID0+ICgKICAgICAgICAgICAgICAgIDxkaXYga2V5PXttLmlkfSBzdHlsZT17ewogICAgICAgICAgICAgICAgICBib3JkZXJSYWRpdXM6IDYsIHBhZGRpbmc6ICc4cHggMTBweCcsIGZvbnRTaXplOiAxMi41LCBsaW5lSGVpZ2h0OiAxLjU1LAogICAgICAgICAgICAgICAgICBib3JkZXI6ICcxcHggc29saWQgJyArIChtLnNlbmRlciA9PT0gJ2FkbWluJyA/ICd2YXIoLS1zdWNjZXNzLWJvcmRlciknIDogJ3ZhcigtLWJvcmRlciknKSwKICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZDogbS5zZW5kZXIgPT09ICdhZG1pbicgPyAndmFyKC0tc3VjY2Vzcy1zb2Z0KScgOiAndmFyKC0tc3VyZmFjZS1tdXRlZCknLAogICAgICAgICAgICAgICAgICBjb2xvcjogbS5zZW5kZXIgPT09ICdhZG1pbicgPyAndmFyKC0tc3VjY2Vzcy10ZXh0KScgOiAndmFyKC0tdGV4dC1zZWNvbmRhcnkpJywKICAgICAgICAgICAgICAgIH19PgogICAgICAgICAgICAgICAgICA8c3Ryb25nPnttLnNlbmRlciA9PT0gJ2FkbWluJyA/ICdQcmV2aW91cyBzdGFmZiByZXBseScgOiAnUGF0aWVudCBmb2xsb3ctdXAnfTo8L3N0cm9uZz4ge20uYm9keX0KICAgICAgICAgICAgICAgICAge20uY3JlYXRlZF9hdCAmJiA8ZGl2IGNsYXNzTmFtZT0idC1oZWxwIiBzdHlsZT17eyBtYXJnaW5Ub3A6IDIgfX0+e2Zvcm1hdERhdGUobS5jcmVhdGVkX2F0LnNsaWNlKDAsIDEwKSl9PC9kaXY+fQogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgPEZpZWxkCiAgICAgICAgICAgICAgICBsYWJlbD0iWW91ciByZXBseSIKICAgICAgICAgICAgICAgIHJlcXVpcmVkCiAgICAgICAgICAgICAgICBlcnJvcj17cmVwbHlFcnJvcn0KICAgICAgICAgICAgICAgIGhlbHA9IlRoZSBwYXRpZW50IHNlZXMgdGhpcyBpbiB0aGVpciBwb3J0YWw7IHNlbmRpbmcgYWxzbyBtYXJrcyB0aGUgbWVzc2FnZSByZXNvbHZlZC4iCiAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgPFRleHRBcmVhCiAgICAgICAgICAgICAgICAgIHJvd3M9ezR9CiAgICAgICAgICAgICAgICAgIHZhbHVlPXtyZXBseVRleHR9CiAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4geyBzZXRSZXBseVRleHQoZS50YXJnZXQudmFsdWUpOyBpZiAocmVwbHlFcnJvcikgc2V0UmVwbHlFcnJvcignJyk7IH19CiAgICAgICAgICAgICAgICAgIGVycm9yPXtyZXBseUVycm9yfQogICAgICAgICAgICAgICAgICBtYXhMZW5ndGg9ezUwMH0KICAgICAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9ImUuZy4sIFlvdXIgSE1PIGNvdmVycyB0aGUgYW5udWFsIHBoeXNpY2FsIGV4YW0uIEp1c3QgcHJlc2VudCB5b3VyIGNhcmQgYXQgdGhlIGNvdW50ZXIuIgogICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICk7CiAgICAgICAgfSkoKX0KICAgICAgPC9Nb2RhbD4KICAgIDwvQXBwU2hlbGw+CiAgKTsKfQoKZXhwb3J0IHsgVGlja2V0c01nbXQgfTsK
+// TicketsMgmt — patient support messages (Phase 6).
+// Two-card layout restored from the prototype: "Open" and "Resolved".
+// Reply modal sends the reply AND resolves the ticket in one step.
+// Ticket shape: { id, subject, status, patient_name, created_at }.
+// Thread: getAdminTicket(id) → { ticket, messages: [{ id, sender, body, created_at }] }.
+import { useEffect, useState } from 'react';
+import {
+  AppShell, Badge, EmptyState, ErrorState, Field, Icon, Modal,
+  PageHeader, PatientAvatar, TextArea, useStore,
+} from '../shared/components.jsx';
+import { formatDate } from '../shared/data.js';
+import { getAdminTicket, getAdminTickets, replyTicket, resolveTicket, ApiError } from '../shared/api.js';
+
+// ---------- Patient messages (support tickets) ----------
+// Patients send questions from the portal's Help & support page ("Message the
+// clinic"); they land here as open tickets. Staff reply once — the reply shows
+// in the patient's portal and the ticket is marked resolved (same loop as the
+// patient stories moderation flow).
+function TicketsMgmt() {
+  const store = useStore();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [tickets, setTickets] = useState([]);
+  // threads: { [ticketId]: messages[] } — loaded alongside the list so rows
+  // can show the full message and the staff reply callout
+  const [threads, setThreads] = useState({});
+  const [retryKey, setRetryKey] = useState(0);
+  const [replyFor, setReplyFor] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [replyError, setReplyError] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const list = await getAdminTickets('');
+      setTickets(list);
+      // Fetch each ticket's thread in parallel; a single failure must not
+      // break the whole list
+      const entries = await Promise.all(list.map(async (t) => {
+        try {
+          const d = await getAdminTicket(t.id);
+          return [t.id, d.messages || []];
+        } catch {
+          return [t.id, null];
+        }
+      }));
+      setThreads(Object.fromEntries(entries));
+    } catch (err) {
+      setError(err.message || 'Could not load tickets.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const open = tickets.filter((t) => t.status === 'open');
+  const resolved = tickets.filter((t) => t.status === 'resolved');
+
+  const startReply = (t) => { setReplyFor(t); setReplyText(''); setReplyError(''); };
+
+  const sendReply = async () => {
+    const text = replyText.trim();
+    if (text.length < 10) { setReplyError('Please write a reply (10+ characters).'); return; }
+    setSending(true);
+    try {
+      // The prototype sends the reply AND resolves in one step
+      await replyTicket(replyFor.id, { body: text });
+      await resolveTicket(replyFor.id);
+      store.pushToast({
+        kind: 'success',
+        title: 'Reply sent',
+        message: `${replyFor.patient_name || 'The patient'} will see your response in their portal.`,
+      });
+      setReplyFor(null);
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Reply failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const rowSkeletons = (count) => Array.from({ length: count }).map((_, i) => (
+    <div key={i} className="list-item" aria-hidden="true">
+      <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
+      <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <span className="skel" style={{ height: 11, width: '55%' }} />
+        <span className="skel" style={{ height: 10, width: '80%' }} />
+      </div>
+      <span className="skel" style={{ width: 74, height: 22, borderRadius: 'var(--r-pill)', flexShrink: 0 }} />
+    </div>
+  ));
+
+  const TicketRow = ({ t, actions, children }) => {
+    const msgs = threads[t.id] || [];
+    const patientMsgs = msgs.filter((m) => m.sender === 'patient');
+    const staffMsgs = msgs.filter((m) => m.sender === 'admin');
+    const original = patientMsgs[0]?.body || '';
+    const followUps = Math.max(0, patientMsgs.length - 1);
+    const lastReply = staffMsgs.length > 0 ? staffMsgs[staffMsgs.length - 1] : null;
+    const name = t.patient_name || 'Patient';
+    return (
+      <div className="list-item" style={{ alignItems: 'flex-start' }}>
+        <PatientAvatar person={{ name }} size={28} />
+        <div className="list-item-body">
+          <div className="list-item-title">{t.subject || 'Support ticket'}</div>
+          {/* Override the one-line ellipsis: the message body is the content here */}
+          <div className="list-item-sub" style={{ whiteSpace: 'normal', overflow: 'visible', lineHeight: 1.5 }}>
+            {original}
+          </div>
+          {followUps > 0 && (
+            <div className="list-item-sub" style={{ marginTop: 4 }}>
+              {followUps} patient follow-up{followUps === 1 ? '' : 's'}. See reply history
+            </div>
+          )}
+          <div className="list-item-sub" style={{ marginTop: 4 }}>
+            {name} · sent {formatDate((t.created_at || '').slice(0, 10))}
+            {lastReply ? ` · replied ${formatDate((lastReply.created_at || '').slice(0, 10))}` : ''}
+          </div>
+          {children}
+        </div>
+        <div style={{ flexShrink: 0 }}>{actions}</div>
+      </div>
+    );
+  };
+
+  return (
+    <AppShell current="tickets">
+      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+        <PageHeader
+          title="Patient messages"
+          subtitle={loading
+            ? <span className="skel" aria-hidden="true" style={{ width: 280, maxWidth: '100%', height: 14 }} />
+            : `${open.length} awaiting a reply · ${resolved.length} resolved`}
+          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Patient messages' }]}
+        />
+
+        {error ? (
+          <div className="card">
+            <ErrorState title="Could not load tickets" message={error} onRetry={() => setRetryKey((k) => k + 1)} />
+          </div>
+        ) : (
+          <>
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-header"><h2 className="h-section">Open</h2></div>
+              <div>
+                {loading ? rowSkeletons(2) : open.length === 0 ? (
+                  <div style={{ padding: '8px 20px 16px' }}>
+                    <EmptyState
+                      icon="inbox"
+                      title="No open messages"
+                      message="Messages sent from the patient portal's Help & support page appear here."
+                    />
+                  </div>
+                ) : open.map((t) => (
+                  <TicketRow
+                    key={t.id}
+                    t={t}
+                    actions={<button className="btn btn-primary sm" onClick={() => startReply(t)}><Icon name="reply" size={13} /> Reply</button>}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-header"><h2 className="h-section">Resolved</h2></div>
+              <div>
+                {loading ? rowSkeletons(1) : resolved.length === 0 ? (
+                  <div style={{ padding: '8px 20px 16px' }}>
+                    <EmptyState icon="check-circle-2" title="Nothing resolved yet" message="Replied messages move here." />
+                  </div>
+                ) : resolved.map((t) => {
+                  const staffMsgs = (threads[t.id] || []).filter((m) => m.sender === 'admin');
+                  const lastReply = staffMsgs.length > 0 ? staffMsgs[staffMsgs.length - 1] : null;
+                  return (
+                    <TicketRow
+                      key={t.id}
+                      t={t}
+                      actions={<Badge kind="success" dot={false}>Replied</Badge>}
+                    >
+                      {lastReply && (
+                        <div style={{ marginTop: 8, fontSize: 12.5, lineHeight: 1.5, background: 'var(--success-soft)', border: '1px solid var(--success-border)', borderRadius: 6, padding: '8px 10px', color: 'var(--success-text)' }}>
+                          <strong>Our reply:</strong> {lastReply.body}
+                        </div>
+                      )}
+                    </TicketRow>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <Modal
+        open={!!replyFor}
+        onClose={() => setReplyFor(null)}
+        title="Reply to patient"
+        subtitle={replyFor ? `${replyFor.patient_name || 'Patient'} · "${replyFor.subject || 'Support ticket'}"` : ''}
+        icon="reply"
+        iconKind="info"
+        footer={<>
+          <button className="btn btn-secondary" onClick={() => setReplyFor(null)} disabled={sending}>Cancel</button>
+          <button className={`btn btn-primary ${sending ? 'btn-loading' : ''}`} onClick={sendReply} disabled={sending}>Send reply &amp; resolve</button>
+        </>}
+      >
+        {replyFor && (() => {
+          const msgs = threads[replyFor.id] || [];
+          const patientMsgs = msgs.filter((m) => m.sender === 'patient');
+          const original = patientMsgs[0];
+          // Conversation history: everything except the original message,
+          // kept in chronological order
+          const history = original ? msgs.filter((m) => m.id !== original.id) : msgs;
+          return (
+            <div className="stack md">
+              <div style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: 6, padding: '10px 12px', fontSize: 13, lineHeight: 1.55 }}>
+                {original?.body || ''}
+              </div>
+              {history.map((m) => (
+                <div key={m.id} style={{
+                  borderRadius: 6, padding: '8px 10px', fontSize: 12.5, lineHeight: 1.55,
+                  border: '1px solid ' + (m.sender === 'admin' ? 'var(--success-border)' : 'var(--border)'),
+                  background: m.sender === 'admin' ? 'var(--success-soft)' : 'var(--surface-muted)',
+                  color: m.sender === 'admin' ? 'var(--success-text)' : 'var(--text-secondary)',
+                }}>
+                  <strong>{m.sender === 'admin' ? 'Previous staff reply' : 'Patient follow-up'}:</strong> {m.body}
+                  {m.created_at && <div className="t-help" style={{ marginTop: 2 }}>{formatDate(m.created_at.slice(0, 10))}</div>}
+                </div>
+              ))}
+              <Field
+                label="Your reply"
+                required
+                error={replyError}
+                help="The patient sees this in their portal; sending also marks the message resolved."
+              >
+                <TextArea
+                  rows={4}
+                  value={replyText}
+                  onChange={(e) => { setReplyText(e.target.value); if (replyError) setReplyError(''); }}
+                  error={replyError}
+                  maxLength={500}
+                  placeholder="e.g., Your HMO covers the annual physical exam. Just present your card at the counter."
+                />
+              </Field>
+            </div>
+          );
+        })()}
+      </Modal>
+    </AppShell>
+  );
+}
+
+export { TicketsMgmt };

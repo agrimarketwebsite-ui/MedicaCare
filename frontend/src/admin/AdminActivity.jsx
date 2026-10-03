@@ -1,1 +1,154 @@
-Ly8gQWRtaW5BY3Rpdml0eSDigJQgYXVkaXQgdHJhaWwgKFBoYXNlIDYpLgovLyBQcm90b3R5cGUgVUkgcmVzdG9yZWQ6IHNlYXJjaCArIHJvbGUtY2hpcCB0b29sYmFyLCBhdmF0YXIgbGlzdCByb3dzIHdpdGgKLy8gaHVtYW4tcmVhZGFibGUgYWN0aW9ucywgNi1wZXItcGFnZSBjbGllbnQgcGFnaW5hdGlvbi4KLy8gUmVhbCBBUEk6IGdldEFkbWluQWN0aXZpdHkgKGZldGNoZWQgb25jZSBhdCBsaW1pdCAxMDAsIGZpbHRlcmVkIGFuZAovLyBwYWdpbmF0ZWQgY2xpZW50LXNpZGUpLgovLyBFbnRyeSBzaGFwZTogeyBpZCwgYWN0b3JfbmFtZSwgYWN0b3Jfcm9sZSwgYWN0aW9uLCBlbnRpdHlfdHlwZSwgZW50aXR5X2lkLAovLyAgIGRldGFpbHMsIGNyZWF0ZWRfYXQgfS4KaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gJ3JlYWN0JzsKaW1wb3J0IHsKICBBcHBTaGVsbCwgRW1wdHlTdGF0ZSwgRXJyb3JTdGF0ZSwgSWNvbiwgUGFnZUhlYWRlciwgUGFnaW5hdGlvbiwKfSBmcm9tICcuLi9zaGFyZWQvY29tcG9uZW50cy5qc3gnOwppbXBvcnQgeyBnZXRBZG1pbkFjdGl2aXR5IH0gZnJvbSAnLi4vc2hhcmVkL2FwaS5qcyc7CmltcG9ydCB7IGxvY2FsVG9kYXkgfSBmcm9tICcuL2hlbHBlcnMuanMnOwoKY29uc3QgUEFHRSA9IDY7CgovLyBzbmFrZV9jYXNlIGFjdGlvbiBjb2RlcyDihpIgaHVtYW4gcmVhZGFibGUsIGUuZy4gJ3BhdGllbnQuY3JlYXRlZCcg4oaSCi8vICdQYXRpZW50IGNyZWF0ZWQnLCAnZG9jdG9yLmFjY2Vzcy5ncmFudGVkJyDihpIgJ0RvY3RvciBhY2Nlc3MgZ3JhbnRlZCcuCmNvbnN0IGh1bWFuQWN0aW9uID0gKGFjdGlvbikgPT4KICBTdHJpbmcoYWN0aW9uIHx8ICcnKS5yZXBsYWNlKC9bLl9dL2csICcgJykucmVwbGFjZSgvXlx3LywgKGMpID0+IGMudG9VcHBlckNhc2UoKSk7CgpmdW5jdGlvbiBBZG1pbkFjdGl2aXR5KCkgewogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKHRydWUpOwogIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IFtlbnRyaWVzLCBzZXRFbnRyaWVzXSA9IHVzZVN0YXRlKFtdKTsKICBjb25zdCBbcXVlcnksIHNldFF1ZXJ5XSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbd2hvLCBzZXRXaG9dID0gdXNlU3RhdGUoJ2FsbCcpOwogIGNvbnN0IFtwYWdlLCBzZXRQYWdlXSA9IHVzZVN0YXRlKDEpOwogIGNvbnN0IHRvZGF5SVNPID0gbG9jYWxUb2RheSgpOwoKICBjb25zdCBsb2FkID0gYXN5bmMgKCkgPT4gewogICAgc2V0TG9hZGluZyh0cnVlKTsKICAgIHNldEVycm9yKCcnKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IHIgPSBhd2FpdCBnZXRBZG1pbkFjdGl2aXR5KHsgbGltaXQ6IDEwMCB9KTsKICAgICAgc2V0RW50cmllcyhyLmVudHJpZXMgfHwgW10pOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldEVycm9yKGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgbG9hZCBhY3Rpdml0eSBsb2cuJyk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRMb2FkaW5nKGZhbHNlKTsKICAgIH0KICB9OwoKICB1c2VFZmZlY3QoKCkgPT4geyBsb2FkKCk7IH0sIFtdKTsgLy8gZXNsaW50LWRpc2FibGUtbGluZSByZWFjdC1ob29rcy9leGhhdXN0aXZlLWRlcHMKCiAgLy8gRmlsdGVyczogdGV4dCBzZWFyY2ggKGFjdGlvbi9kZXRhaWwvYWN0b3IpICsgIndobyBkaWQgaXQiIGNoaXBzLgogIGNvbnN0IGZpbHRlcmVkID0gZW50cmllcy5maWx0ZXIoKGUpID0+IHsKICAgIGlmICh3aG8gIT09ICdhbGwnICYmIChlLmFjdG9yX3JvbGUgfHwgJycpICE9PSB3aG8pIHJldHVybiBmYWxzZTsKICAgIGlmICghcXVlcnkpIHJldHVybiB0cnVlOwogICAgY29uc3QgaGF5ID0gYCR7ZS5hY3Rpb24gfHwgJyd9ICR7ZS5kZXRhaWxzIHx8ICcnfSAke2UuYWN0b3JfbmFtZSB8fCAnJ31gLnRvTG93ZXJDYXNlKCk7CiAgICByZXR1cm4gaGF5LmluY2x1ZGVzKHF1ZXJ5LnRyaW0oKS50b0xvd2VyQ2FzZSgpKTsKICB9KTsKICBjb25zdCBmaWx0ZXJzQWN0aXZlID0gd2hvICE9PSAnYWxsJyB8fCBxdWVyeS50cmltKCkgIT09ICcnOwogIGNvbnN0IHdob0ZpbHRlcnMgPSBbCiAgICBbJ2FsbCcsICdBbGwnXSwKICAgIFsnYWRtaW4nLCAnU3RhZmYnXSwKICAgIFsnZG9jdG9yJywgJ0RvY3RvcnMnXSwKICAgIFsncGF0aWVudCcsICdQYXRpZW50cyddLAogIF07CgogIC8vIEEgc2VhcmNoL2ZpbHRlciBjaGFuZ2UgY2FuIG1vdmUgdGhlIGN1cnJlbnQgcGFnZSBvdXQgb2YgcmFuZ2UKICB1c2VFZmZlY3QoKCkgPT4geyBzZXRQYWdlKDEpOyB9LCBbcXVlcnksIHdob10pOwogIGNvbnN0IHBhZ2VkID0gZmlsdGVyZWQuc2xpY2UoKHBhZ2UgLSAxKSAqIFBBR0UsIHBhZ2UgKiBQQUdFKTsKCiAgcmV0dXJuICgKICAgIDxBcHBTaGVsbCBjdXJyZW50PSJhLWFjdGl2aXR5Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9InBhZ2UiIHN0eWxlPXt7IG1heFdpZHRoOiA4NjAsIG1hcmdpbjogJzAgYXV0bycgfX0+CiAgICAgICAgPFBhZ2VIZWFkZXIKICAgICAgICAgIHRpdGxlPSJBY3Rpdml0eSBsb2ciCiAgICAgICAgICBzdWJ0aXRsZT17bG9hZGluZwogICAgICAgICAgICA/IDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgYXJpYS1oaWRkZW49InRydWUiIHN0eWxlPXt7IHdpZHRoOiAyMjAsIG1heFdpZHRoOiAnMTAwJScsIGhlaWdodDogMTQgfX0gLz4KICAgICAgICAgICAgOiAoZmlsdGVyc0FjdGl2ZQogICAgICAgICAgICAgID8gYCR7ZmlsdGVyZWQubGVuZ3RofSBvZiAke2VudHJpZXMubGVuZ3RofSBhY3Rpb25zIHNob3duIMK3IG5ld2VzdCBmaXJzdGAKICAgICAgICAgICAgICA6IGAke2VudHJpZXMubGVuZ3RofSBhY3Rpb24ke2VudHJpZXMubGVuZ3RoID09PSAxID8gJycgOiAncyd9IMK3IG5ld2VzdCBmaXJzdGApfQogICAgICAgICAgYnJlYWRjcnVtYnM9e1t7IGxhYmVsOiAnSG9tZScsIHRvOiAnL2FkbWluL2Rhc2hib2FyZCcgfSwgeyBsYWJlbDogJ0FjdGl2aXR5IGxvZycgfV19CiAgICAgICAgLz4KCiAgICAgICAgey8qIFNlYXJjaCArIHdoby1kaWQtaXQgZmlsdGVyIGNoaXBzICovfQogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIiBzdHlsZT17eyBtYXJnaW5Cb3R0b206IDE2IH19PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRhYmxlLXRvb2xiYXIiPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaW5wdXQtZ3JvdXAgc2VhcmNoIj4KICAgICAgICAgICAgICA8SWNvbiBuYW1lPSJzZWFyY2giIHNpemU9ezE2fSBjbGFzc05hbWU9ImlucHV0LWljb24iIC8+CiAgICAgICAgICAgICAgPGlucHV0IGNsYXNzTmFtZT0iaW5wdXQiIHN0eWxlPXt7IHBhZGRpbmdMZWZ0OiAzOCB9fSBwbGFjZWhvbGRlcj0iU2VhcmNoIGFjdGlvbiwgbmFtZSwgb3IgZGV0YWls4oCmIiBhcmlhLWxhYmVsPSJTZWFyY2ggYWN0aXZpdHkgYnkgYWN0aW9uLCBuYW1lLCBvciBkZXRhaWwiIHZhbHVlPXtxdWVyeX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRRdWVyeShlLnRhcmdldC52YWx1ZSl9IC8+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZ2FwOiA2LCBmbGV4V3JhcDogJ3dyYXAnIH19PgogICAgICAgICAgICAgIHt3aG9GaWx0ZXJzLm1hcCgoW2tleSwgbGFiZWxdKSA9PiAoCiAgICAgICAgICAgICAgICA8YnV0dG9uIGtleT17a2V5fSB0eXBlPSJidXR0b24iIGNsYXNzTmFtZT17J2NoaXAgZmlsdGVyJyArICh3aG8gPT09IGtleSA/ICcgb24nIDogJycpfSBvbkNsaWNrPXsoKSA9PiBzZXRXaG8oa2V5KX0+e2xhYmVsfTwvYnV0dG9uPgogICAgICAgICAgICAgICkpfQogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBtYXJnaW5MZWZ0OiAnYXV0bycsIGZvbnRTaXplOiAxMywgY29sb3I6ICd2YXIoLS10ZXh0LW11dGVkKScgfX0+CiAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT17eyBjb2xvcjogJ3ZhcigtLXRleHQpJyB9fT57ZmlsdGVyZWQubGVuZ3RofTwvc3Ryb25nPiBvZiB7ZW50cmllcy5sZW5ndGh9IG1hdGNoaW5nCiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHtlcnJvciA/ICgKICAgICAgICAgIDxFcnJvclN0YXRlIHRpdGxlPSJDb3VsZCBub3QgbG9hZCBhY3Rpdml0eSBsb2ciIG1lc3NhZ2U9e2Vycm9yfSBvblJldHJ5PXtsb2FkfSAvPgogICAgICAgICkgOiAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZCI+CiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgICAgICAgICBbMCwgMSwgMiwgMywgNF0ubWFwKChpKSA9PiAoCiAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXtpfSBjbGFzc05hbWU9Imxpc3QtaXRlbSIgYXJpYS1oaWRkZW49InRydWUiPgogICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDI4LCBoZWlnaHQ6IDI4LCBib3JkZXJSYWRpdXM6ICc1MCUnLCBmbGV4U2hyaW5rOiAwIH19IC8+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1ib2R5IiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGZsZXhEaXJlY3Rpb246ICdjb2x1bW4nLCBnYXA6IDYgfX0+CiAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IGhlaWdodDogMTAsIHdpZHRoOiAnMzUlJyB9fSAvPgogICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJza2VsIiBzdHlsZT17eyBoZWlnaHQ6IDEwLCB3aWR0aDogJzY1JScgfX0gLz4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiA2NCwgaGVpZ2h0OiAxMSwgZmxleFNocmluazogMCB9fSAvPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICkpCiAgICAgICAgICAgICAgKSA6IGVudHJpZXMubGVuZ3RoID09PSAwID8gKAogICAgICAgICAgICAgICAgPEVtcHR5U3RhdGUgaWNvbj0iYWN0aXZpdHkiIHRpdGxlPSJObyBhY3Rpdml0eSB5ZXQiIG1lc3NhZ2U9IkFjdGlvbnMgZnJvbSB0aGUgY29uc29sZSwgZG9jdG9yIHBvcnRhbCwgYW5kIHBhdGllbnQgYm9va2luZ3Mgd2lsbCBhcHBlYXIgaGVyZS4iIC8+CiAgICAgICAgICAgICAgKSA6IGZpbHRlcmVkLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICAgIDxFbXB0eVN0YXRlIGljb249ImZpbHRlciIgdGl0bGU9Ik5vIGFjdGlvbnMgbWF0Y2ggeW91ciBmaWx0ZXJzIgogICAgICAgICAgICAgICAgICBtZXNzYWdlPSJUcnkgYSBkaWZmZXJlbnQgc2VhcmNoIHRlcm0gb3IgZmlsdGVyLiIKICAgICAgICAgICAgICAgICAgYWN0aW9ucz17PGJ1dHRvbiB0eXBlPSJidXR0b24iIGNsYXNzTmFtZT0iYnRuIGJ0bi1zZWNvbmRhcnkiIG9uQ2xpY2s9eygpID0+IHsgc2V0UXVlcnkoJycpOyBzZXRXaG8oJ2FsbCcpOyB9fT5DbGVhciBmaWx0ZXJzPC9idXR0b24+fSAvPgogICAgICAgICAgICAgICkgOiBwYWdlZC5tYXAoKGUpID0+IHsKICAgICAgICAgICAgICAgIGNvbnN0IGQgPSBuZXcgRGF0ZShlLmNyZWF0ZWRfYXQpOwogICAgICAgICAgICAgICAgY29uc3QgcGFkID0gKHgpID0+IFN0cmluZyh4KS5wYWRTdGFydCgyLCAnMCcpOwogICAgICAgICAgICAgICAgY29uc3QgZGF5SVNPID0gYCR7ZC5nZXRGdWxsWWVhcigpfS0ke3BhZChkLmdldE1vbnRoKCkgKyAxKX0tJHtwYWQoZC5nZXREYXRlKCkpfWA7CiAgICAgICAgICAgICAgICBjb25zdCB0aW1lID0gZC50b0xvY2FsZVRpbWVTdHJpbmcoJ2VuLVVTJywgeyBob3VyOiAnbnVtZXJpYycsIG1pbnV0ZTogJzItZGlnaXQnIH0pOwogICAgICAgICAgICAgICAgLy8gVG9kYXkncyBlbnRyaWVzIHNob3cganVzdCB0aGUgdGltZTsgb2xkZXIgb25lcyBnZXQgdGhlIGRhdGUgdG9vCiAgICAgICAgICAgICAgICBjb25zdCBsYWJlbCA9IGRheUlTTyA9PT0gdG9kYXlJU08gPyB0aW1lIDogYCR7d2luZG93LmZvcm1hdERhdGUoZGF5SVNPKX0gwrcgJHt0aW1lfWA7CiAgICAgICAgICAgICAgICBjb25zdCBhY3RvciA9IGUuYWN0b3JfbmFtZSB8fCAnU3lzdGVtJzsKICAgICAgICAgICAgICAgIGNvbnN0IGRldGFpbCA9IGUuZGV0YWlscyB8fCAoZS5lbnRpdHlfdHlwZSA/IGAke2UuZW50aXR5X3R5cGV9JHtlLmVudGl0eV9pZCA/IGAgwrcgJHtlLmVudGl0eV9pZH1gIDogJyd9YCA6ICcnKTsKICAgICAgICAgICAgICAgIHJldHVybiAoCiAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXtlLmlkfSBjbGFzc05hbWU9Imxpc3QtaXRlbSI+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImF2YXRhciI+e3dpbmRvdy5pbml0aWFscyhhY3Rvcil9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1ib2R5Ij4KICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tdGl0bGUiPntodW1hbkFjdGlvbihlLmFjdGlvbil9PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtLXN1YiI+e2RldGFpbCA/IGAke2RldGFpbH0gwrcgYCA6ICcnfXthY3Rvcn08L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InQtbW9ubyIgc3R5bGU9e3sgZm9udFNpemU6IDExLCBjb2xvcjogJ3ZhcigtLXRleHQtbXV0ZWQpJywgZmxleFNocmluazogMCB9fT57bGFiZWx9PC9zcGFuPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICk7CiAgICAgICAgICAgICAgfSl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KCiAgICAgICAgeyFsb2FkaW5nICYmICFlcnJvciAmJiBmaWx0ZXJlZC5sZW5ndGggPiAwICYmICgKICAgICAgICAgIDxQYWdpbmF0aW9uIHBhZ2U9e3BhZ2V9IHNldFBhZ2U9e3NldFBhZ2V9IHRvdGFsPXtmaWx0ZXJlZC5sZW5ndGh9IHBhZ2VTaXplPXtQQUdFfSBsYWJlbD0iYWN0aW9ucyIgLz4KICAgICAgICApfQoKICAgICAgICA8cCBjbGFzc05hbWU9InQtbXV0ZWQiIHN0eWxlPXt7IGZvbnRTaXplOiAxMiwgbWFyZ2luVG9wOiAxMiB9fT4KICAgICAgICAgIEV2ZXJ5IGFjdGlvbiB0YWtlbiBpbiB0aGUgYWRtaW4gY29uc29sZSBpcyByZWNvcmRlZCBoZXJlLCBuZXdlc3QgZmlyc3QuCiAgICAgICAgPC9wPgogICAgICA8L2Rpdj4KICAgIDwvQXBwU2hlbGw+CiAgKTsKfQoKZXhwb3J0IHsgQWRtaW5BY3Rpdml0eSB9Owo=
+// AdminActivity — audit trail (Phase 6).
+// Prototype UI restored: search + role-chip toolbar, avatar list rows with
+// human-readable actions, 6-per-page client pagination.
+// Real API: getAdminActivity (fetched once at limit 100, filtered and
+// paginated client-side).
+// Entry shape: { id, actor_name, actor_role, action, entity_type, entity_id,
+//   details, created_at }.
+import { useEffect, useState } from 'react';
+import {
+  AppShell, EmptyState, ErrorState, Icon, PageHeader, Pagination,
+} from '../shared/components.jsx';
+import { getAdminActivity } from '../shared/api.js';
+import { localToday } from './helpers.js';
+
+const PAGE = 6;
+
+// snake_case action codes → human readable, e.g. 'patient.created' →
+// 'Patient created', 'doctor.access.granted' → 'Doctor access granted'.
+const humanAction = (action) =>
+  String(action || '').replace(/[._]/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+
+function AdminActivity() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [entries, setEntries] = useState([]);
+  const [query, setQuery] = useState('');
+  const [who, setWho] = useState('all');
+  const [page, setPage] = useState(1);
+  const todayISO = localToday();
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const r = await getAdminActivity({ limit: 100 });
+      setEntries(r.entries || []);
+    } catch (err) {
+      setError(err.message || 'Could not load activity log.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Filters: text search (action/detail/actor) + "who did it" chips.
+  const filtered = entries.filter((e) => {
+    if (who !== 'all' && (e.actor_role || '') !== who) return false;
+    if (!query) return true;
+    const hay = `${e.action || ''} ${e.details || ''} ${e.actor_name || ''}`.toLowerCase();
+    return hay.includes(query.trim().toLowerCase());
+  });
+  const filtersActive = who !== 'all' || query.trim() !== '';
+  const whoFilters = [
+    ['all', 'All'],
+    ['admin', 'Staff'],
+    ['doctor', 'Doctors'],
+    ['patient', 'Patients'],
+  ];
+
+  // A search/filter change can move the current page out of range
+  useEffect(() => { setPage(1); }, [query, who]);
+  const paged = filtered.slice((page - 1) * PAGE, page * PAGE);
+
+  return (
+    <AppShell current="a-activity">
+      <div className="page" style={{ maxWidth: 860, margin: '0 auto' }}>
+        <PageHeader
+          title="Activity log"
+          subtitle={loading
+            ? <span className="skel" aria-hidden="true" style={{ width: 220, maxWidth: '100%', height: 14 }} />
+            : (filtersActive
+              ? `${filtered.length} of ${entries.length} actions shown · newest first`
+              : `${entries.length} action${entries.length === 1 ? '' : 's'} · newest first`)}
+          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Activity log' }]}
+        />
+
+        {/* Search + who-did-it filter chips */}
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div className="table-toolbar">
+            <div className="input-group search">
+              <Icon name="search" size={16} className="input-icon" />
+              <input className="input" style={{ paddingLeft: 38 }} placeholder="Search action, name, or detail…" aria-label="Search activity by action, name, or detail" value={query} onChange={(e) => setQuery(e.target.value)} />
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {whoFilters.map(([key, label]) => (
+                <button key={key} type="button" className={'chip filter' + (who === key ? ' on' : '')} onClick={() => setWho(key)}>{label}</button>
+              ))}
+            </div>
+            <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
+              <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> of {entries.length} matching
+            </div>
+          </div>
+        </div>
+
+        {error ? (
+          <ErrorState title="Could not load activity log" message={error} onRetry={load} />
+        ) : (
+          <div className="card">
+            <div>
+              {loading ? (
+                [0, 1, 2, 3, 4].map((i) => (
+                  <div key={i} className="list-item" aria-hidden="true">
+                    <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
+                    <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span className="skel" style={{ height: 10, width: '35%' }} />
+                      <span className="skel" style={{ height: 10, width: '65%' }} />
+                    </div>
+                    <span className="skel" style={{ width: 64, height: 11, flexShrink: 0 }} />
+                  </div>
+                ))
+              ) : entries.length === 0 ? (
+                <EmptyState icon="activity" title="No activity yet" message="Actions from the console, doctor portal, and patient bookings will appear here." />
+              ) : filtered.length === 0 ? (
+                <EmptyState icon="filter" title="No actions match your filters"
+                  message="Try a different search term or filter."
+                  actions={<button type="button" className="btn btn-secondary" onClick={() => { setQuery(''); setWho('all'); }}>Clear filters</button>} />
+              ) : paged.map((e) => {
+                const d = new Date(e.created_at);
+                const pad = (x) => String(x).padStart(2, '0');
+                const dayISO = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                // Today's entries show just the time; older ones get the date too
+                const label = dayISO === todayISO ? time : `${window.formatDate(dayISO)} · ${time}`;
+                const actor = e.actor_name || 'System';
+                const detail = e.details || (e.entity_type ? `${e.entity_type}${e.entity_id ? ` · ${e.entity_id}` : ''}` : '');
+                return (
+                  <div key={e.id} className="list-item">
+                    <div className="avatar">{window.initials(actor)}</div>
+                    <div className="list-item-body">
+                      <div className="list-item-title">{humanAction(e.action)}</div>
+                      <div className="list-item-sub">{detail ? `${detail} · ` : ''}{actor}</div>
+                    </div>
+                    <span className="t-mono" style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && filtered.length > 0 && (
+          <Pagination page={page} setPage={setPage} total={filtered.length} pageSize={PAGE} label="actions" />
+        )}
+
+        <p className="t-muted" style={{ fontSize: 12, marginTop: 12 }}>
+          Every action taken in the admin console is recorded here, newest first.
+        </p>
+      </div>
+    </AppShell>
+  );
+}
+
+export { AdminActivity };

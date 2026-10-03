@@ -1,1 +1,207 @@
-Ly8gQWRtaW5TZXR0aW5ncyDigJQgY2xpbmljIGluZm8gKyBhcHBvaW50bWVudCBwcmVmZXJlbmNlcyAoUGhhc2UgNikuCi8vIFByb3RvdHlwZSBVSSByZXN0b3JlZDogIkNsaW5pYyBpbmZvcm1hdGlvbiIgYW5kICJBcHBvaW50bWVudCBwcmVmZXJlbmNlcyIKLy8gY2FyZHMgd2l0aCBjYXJkLWhlYWRlci9oLXNlY3Rpb24gaGVhZGluZ3MgYW5kIGNhcmQtZm9vdGVyIHNhdmUgYnV0dG9ucy4KLy8gUmVhbCBBUEk6IGdldENsaW5pY0luZm8vdXBkYXRlQ2xpbmljSW5mbywgZ2V0QXBwU2V0dGluZ3MvdXBkYXRlQXBwU2V0dGluZ3MuCi8vIFRoZSB0d28gZW1haWwtbm90aWZpY2F0aW9uIGNoZWNrYm94ZXMgaGF2ZSBubyBiYWNrZW5kIGZpZWxkcyB5ZXQg4oCUIHRoZXkKLy8gcmVuZGVyIGRpc2FibGVkIHdpdGggYSAiQ29taW5nIHNvb24iIG5vdGUuCmltcG9ydCB7IHVzZUVmZmVjdCwgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7CiAgQXBwU2hlbGwsIEVycm9yU3RhdGUsIEZpZWxkLCBQYWdlSGVhZGVyLCBQYWdlU3Bpbm5lciwKICBTZWxlY3RJbnB1dCwgVGV4dElucHV0LCB1c2VTdG9yZSwKfSBmcm9tICcuLi9zaGFyZWQvY29tcG9uZW50cy5qc3gnOwppbXBvcnQgewogIGdldEFwcFNldHRpbmdzLCBnZXRDbGluaWNJbmZvLCB1cGRhdGVBcHBTZXR0aW5ncywgdXBkYXRlQ2xpbmljSW5mbywgQXBpRXJyb3IsCn0gZnJvbSAnLi4vc2hhcmVkL2FwaS5qcyc7CgpmdW5jdGlvbiBBZG1pblNldHRpbmdzKCkgewogIGNvbnN0IHN0b3JlID0gdXNlU3RvcmUoKTsKICBjb25zdCBbbG9hZGluZywgc2V0TG9hZGluZ10gPSB1c2VTdGF0ZSh0cnVlKTsKICBjb25zdCBbZXJyb3IsIHNldEVycm9yXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbY2xpbmljLCBzZXRDbGluaWNdID0gdXNlU3RhdGUoeyBuYW1lOiAnJywgcGhvbmU6ICcnLCBlbWFpbDogJycsIGFkZHJlc3M6ICcnLCBob3VyczogJycgfSk7CiAgY29uc3QgW3ByZWZzLCBzZXRQcmVmc10gPSB1c2VTdGF0ZSh7IGF1dG9Db25maXJtOiBmYWxzZSwgc2xvdEludGVydmFsOiAzMCB9KTsKICBjb25zdCBbc2F2aW5nQ2xpbmljLCBzZXRTYXZpbmdDbGluaWNdID0gdXNlU3RhdGUoZmFsc2UpOwogIGNvbnN0IFtzYXZpbmdQcmVmcywgc2V0U2F2aW5nUHJlZnNdID0gdXNlU3RhdGUoZmFsc2UpOwogIC8vIElubGluZSBmaWVsZCBlcnJvcjogZW1wdHkgY2xpbmljIG5hbWUgaXMgc2hvd24gbmV4dCB0byB0aGUgZmllbGQgaXRzZWxmCiAgY29uc3QgW2NsaW5pY0Vycm9yLCBzZXRDbGluaWNFcnJvcl0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgdXBkYXRlQ2xpbmljID0gKGssIHYpID0+IHNldENsaW5pYygoZikgPT4gKHsgLi4uZiwgW2tdOiB2IH0pKTsKICBjb25zdCB1cGRhdGVQcmVmID0gKGssIHYpID0+IHNldFByZWZzKChmKSA9PiAoeyAuLi5mLCBba106IHYgfSkpOwogIGNvbnN0IGZvY3VzTmFtZUZpZWxkID0gKCkgPT4gewogICAgY29uc3QgZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2xpbmljLW5hbWUnKTsKICAgIGlmIChlbCkgZWwuZm9jdXMoKTsKICB9OwoKICBjb25zdCBsb2FkID0gYXN5bmMgKCkgPT4gewogICAgc2V0TG9hZGluZyh0cnVlKTsKICAgIHNldEVycm9yKCcnKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IFtjLCBhXSA9IGF3YWl0IFByb21pc2UuYWxsKFtnZXRDbGluaWNJbmZvKCksIGdldEFwcFNldHRpbmdzKCldKTsKICAgICAgc2V0Q2xpbmljKHsKICAgICAgICBuYW1lOiBjLm5hbWUgfHwgJycsCiAgICAgICAgcGhvbmU6IGMucGhvbmUgfHwgJycsCiAgICAgICAgZW1haWw6IGMuZW1haWwgfHwgJycsCiAgICAgICAgYWRkcmVzczogYy5hZGRyZXNzIHx8ICcnLAogICAgICAgIGhvdXJzOiB0eXBlb2YgYy5ob3VycyA9PT0gJ3N0cmluZycgPyBjLmhvdXJzIDogJycsCiAgICAgIH0pOwogICAgICBzZXRQcmVmcyh7CiAgICAgICAgYXV0b0NvbmZpcm06IEJvb2xlYW4oYS5hdXRvX2NvbmZpcm1fYXBwb2ludG1lbnRzKSwKICAgICAgICBzbG90SW50ZXJ2YWw6IE51bWJlcihhLnNsb3RfaW50ZXJ2YWxfbWludXRlcyA/PyAzMCksCiAgICAgIH0pOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldEVycm9yKGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgbG9hZCBzZXR0aW5ncy4nKTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldExvYWRpbmcoZmFsc2UpOwogICAgfQogIH07CgogIHVzZUVmZmVjdCgoKSA9PiB7IGxvYWQoKTsgfSwgW10pOyAvLyBlc2xpbnQtZGlzYWJsZS1saW5lIHJlYWN0LWhvb2tzL2V4aGF1c3RpdmUtZGVwcwoKICBjb25zdCBzYXZlQ2xpbmljID0gYXN5bmMgKGUpID0+IHsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIGlmICghY2xpbmljLm5hbWUudHJpbSgpKSB7CiAgICAgIHNldENsaW5pY0Vycm9yKCdDbGluaWMgbmFtZSBpcyByZXF1aXJlZCcpOwogICAgICBmb2N1c05hbWVGaWVsZCgpOwogICAgICByZXR1cm47CiAgICB9CiAgICBzZXRTYXZpbmdDbGluaWModHJ1ZSk7CiAgICB0cnkgewogICAgICBjb25zdCBib2R5ID0geyBuYW1lOiBjbGluaWMubmFtZS50cmltKCkgfTsKICAgICAgaWYgKGNsaW5pYy5waG9uZS50cmltKCkpIGJvZHkucGhvbmUgPSBjbGluaWMucGhvbmUudHJpbSgpOwogICAgICBpZiAoY2xpbmljLmVtYWlsLnRyaW0oKSkgYm9keS5lbWFpbCA9IGNsaW5pYy5lbWFpbC50cmltKCk7CiAgICAgIGlmIChjbGluaWMuYWRkcmVzcy50cmltKCkpIGJvZHkuYWRkcmVzcyA9IGNsaW5pYy5hZGRyZXNzLnRyaW0oKTsKICAgICAgaWYgKGNsaW5pYy5ob3Vycy50cmltKCkpIGJvZHkuaG91cnMgPSBjbGluaWMuaG91cnMudHJpbSgpOwogICAgICBjb25zdCBzYXZlZCA9IGF3YWl0IHVwZGF0ZUNsaW5pY0luZm8oYm9keSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdDbGluaWMgaW5mbyBzYXZlZCcsIG1lc3NhZ2U6ICdUaGUgcHVibGljIHdlYnNpdGUgbm93IHNob3dzIHRoZSB1cGRhdGVkIGRldGFpbHMuJyB9KTsKICAgICAgc2V0Q2xpbmljKChwcmV2KSA9PiAoeyAuLi5wcmV2LCAuLi5zYXZlZCB9KSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ2Vycm9yJywgdGl0bGU6ICdTYXZlIGZhaWxlZCcsIG1lc3NhZ2U6IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnUGxlYXNlIHRyeSBhZ2Fpbi4nIH0pOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0U2F2aW5nQ2xpbmljKGZhbHNlKTsKICAgIH0KICB9OwoKICBjb25zdCBzYXZlUHJlZnMgPSBhc3luYyAoZSkgPT4gewogICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgc2V0U2F2aW5nUHJlZnModHJ1ZSk7CiAgICB0cnkgewogICAgICBjb25zdCBzYXZlZCA9IGF3YWl0IHVwZGF0ZUFwcFNldHRpbmdzKHsKICAgICAgICBhdXRvX2NvbmZpcm1fYXBwb2ludG1lbnRzOiBwcmVmcy5hdXRvQ29uZmlybSwKICAgICAgICBzbG90X2ludGVydmFsX21pbnV0ZXM6IHByZWZzLnNsb3RJbnRlcnZhbCwKICAgICAgfSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7CiAgICAgICAga2luZDogJ3N1Y2Nlc3MnLAogICAgICAgIHRpdGxlOiAnUHJlZmVyZW5jZXMgc2F2ZWQnLAogICAgICAgIG1lc3NhZ2U6IHByZWZzLmF1dG9Db25maXJtCiAgICAgICAgICA/ICdOZXcgcGF0aWVudCBib29raW5ncyB3aWxsIGJlIGNvbmZpcm1lZCBpbnN0YW50bHkuJwogICAgICAgICAgOiAnTmV3IHBhdGllbnQgYm9va2luZ3Mgd2lsbCB3YWl0IGZvciBzdGFmZiByZXZpZXcuJywKICAgICAgfSk7CiAgICAgIHNldFByZWZzKChwcmV2KSA9PiAoewogICAgICAgIC4uLnByZXYsCiAgICAgICAgYXV0b0NvbmZpcm06IEJvb2xlYW4oc2F2ZWQuYXV0b19jb25maXJtX2FwcG9pbnRtZW50cyA/PyBwcmV2LmF1dG9Db25maXJtKSwKICAgICAgICBzbG90SW50ZXJ2YWw6IE51bWJlcihzYXZlZC5zbG90X2ludGVydmFsX21pbnV0ZXMgPz8gcHJldi5zbG90SW50ZXJ2YWwpLAogICAgICB9KSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ2Vycm9yJywgdGl0bGU6ICdTYXZlIGZhaWxlZCcsIG1lc3NhZ2U6IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnUGxlYXNlIHRyeSBhZ2Fpbi4nIH0pOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0U2F2aW5nUHJlZnMoZmFsc2UpOwogICAgfQogIH07CgogIHJldHVybiAoCiAgICA8QXBwU2hlbGwgY3VycmVudD0ic2V0dGluZ3MiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0icGFnZSIgc3R5bGU9e3sgbWF4V2lkdGg6IDk2MCwgbWFyZ2luOiAnMCBhdXRvJyB9fT4KICAgICAgICA8UGFnZUhlYWRlcgogICAgICAgICAgdGl0bGU9IlNldHRpbmdzIgogICAgICAgICAgc3VidGl0bGU9IkNsaW5pYyBpbmZvcm1hdGlvbiBhbmQgYXBwb2ludG1lbnQgcHJlZmVyZW5jZXMuIgogICAgICAgICAgYnJlYWRjcnVtYnM9e1t7IGxhYmVsOiAnSG9tZScsIHRvOiAnL2FkbWluL2Rhc2hib2FyZCcgfSwgeyBsYWJlbDogJ1NldHRpbmdzJyB9XX0KICAgICAgICAvPgoKICAgICAgICB7bG9hZGluZyA/ICgKICAgICAgICAgIDxQYWdlU3Bpbm5lciAvPgogICAgICAgICkgOiBlcnJvciA/ICgKICAgICAgICAgIDxFcnJvclN0YXRlIHRpdGxlPSJDb3VsZCBub3QgbG9hZCBzZXR0aW5ncyIgbWVzc2FnZT17ZXJyb3J9IG9uUmV0cnk9e2xvYWR9IC8+CiAgICAgICAgKSA6ICgKICAgICAgICAgIDw+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIiBzdHlsZT17eyBtYXJnaW5Cb3R0b206IDE2IH19PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWhlYWRlciI+PGgyIGNsYXNzTmFtZT0iaC1zZWN0aW9uIj5DbGluaWMgaW5mb3JtYXRpb248L2gyPjwvZGl2PgogICAgICAgICAgICAgIDxmb3JtIG9uU3VibWl0PXtzYXZlQ2xpbmljfT4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWJvZHkiPgogICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzFmciAxZnInLCBnYXA6IDE0IH19PgogICAgICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iQ2xpbmljIG5hbWUiIHJlcXVpcmVkIGVycm9yPXtjbGluaWNFcnJvcn0gaHRtbEZvcj0iY2xpbmljLW5hbWUiPgogICAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dAogICAgICAgICAgICAgICAgICAgICAgICBpZD0iY2xpbmljLW5hbWUiCiAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtjbGluaWMubmFtZX0KICAgICAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhldikgPT4geyB1cGRhdGVDbGluaWMoJ25hbWUnLCBldi50YXJnZXQudmFsdWUpOyBpZiAoY2xpbmljRXJyb3IpIHNldENsaW5pY0Vycm9yKCcnKTsgfX0KICAgICAgICAgICAgICAgICAgICAgICAgZXJyb3I9e2NsaW5pY0Vycm9yfQogICAgICAgICAgICAgICAgICAgICAgICBtYXhMZW5ndGg9ezE2MH0KICAgICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IkNvbnRhY3QgbnVtYmVyIiByZXF1aXJlZD4KICAgICAgICAgICAgICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0idGVsIiB2YWx1ZT17Y2xpbmljLnBob25lfSBvbkNoYW5nZT17KGV2KSA9PiB1cGRhdGVDbGluaWMoJ3Bob25lJywgZXYudGFyZ2V0LnZhbHVlKX0gaWNvbj0icGhvbmUiIG1heExlbmd0aD17NDB9IC8+CiAgICAgICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IkVtYWlsIiByZXF1aXJlZD4KICAgICAgICAgICAgICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0iZW1haWwiIHZhbHVlPXtjbGluaWMuZW1haWx9IG9uQ2hhbmdlPXsoZXYpID0+IHVwZGF0ZUNsaW5pYygnZW1haWwnLCBldi50YXJnZXQudmFsdWUpfSBpY29uPSJtYWlsIiBtYXhMZW5ndGg9ezE2MH0gLz4KICAgICAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iQWRkcmVzcyI+CiAgICAgICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHZhbHVlPXtjbGluaWMuYWRkcmVzc30gb25DaGFuZ2U9eyhldikgPT4gdXBkYXRlQ2xpbmljKCdhZGRyZXNzJywgZXYudGFyZ2V0LnZhbHVlKX0gbWF4TGVuZ3RoPXs1MDB9IC8+CiAgICAgICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IkhvdXJzIiBoZWxwPSJPcHRpb25hbC4iPgogICAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dAogICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZT17Y2xpbmljLmhvdXJzfQogICAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGV2KSA9PiB1cGRhdGVDbGluaWMoJ2hvdXJzJywgZXYudGFyZ2V0LnZhbHVlKX0KICAgICAgICAgICAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9ImUuZy4gTW9u4oCTU2F0LCA4OjAwIEFNIOKAkyA2OjAwIFBNIgogICAgICAgICAgICAgICAgICAgICAgICBtYXhMZW5ndGg9ezE2MH0KICAgICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWZvb3RlciI+CiAgICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0ic3VibWl0IiBjbGFzc05hbWU9e2BidG4gYnRuLXByaW1hcnkgJHtzYXZpbmdDbGluaWMgPyAnYnRuLWxvYWRpbmcnIDogJyd9YH0gZGlzYWJsZWQ9e3NhdmluZ0NsaW5pY30+CiAgICAgICAgICAgICAgICAgICAge3NhdmluZ0NsaW5pYyA/ICdTYXZpbmfigKYnIDogJ1NhdmUgY2hhbmdlcyd9CiAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9mb3JtPgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZC1oZWFkZXIiPjxoMiBjbGFzc05hbWU9Imgtc2VjdGlvbiI+QXBwb2ludG1lbnQgcHJlZmVyZW5jZXM8L2gyPjwvZGl2PgogICAgICAgICAgICAgIDxmb3JtIG9uU3VibWl0PXtzYXZlUHJlZnN9PgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQtYm9keSBzdGFjayBsZyI+CiAgICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9ImNoZWNrYm94IiBzdHlsZT17eyBvcGFjaXR5OiAwLjU1IH19PgogICAgICAgICAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJjaGVja2JveCIgZGlzYWJsZWQgLz4KICAgICAgICAgICAgICAgICAgICA8c3Bhbj5FbWFpbCBhZG1pbnMgd2hlbiBhIG5ldyBhcHBvaW50bWVudCBpcyBib29rZWQgPHNwYW4gY2xhc3NOYW1lPSJ0LW11dGVkIj7CtyBDb21pbmcgc29vbjwvc3Bhbj48L3NwYW4+CiAgICAgICAgICAgICAgICAgIDwvbGFiZWw+CiAgICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9ImNoZWNrYm94IiBzdHlsZT17eyBvcGFjaXR5OiAwLjU1IH19PgogICAgICAgICAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJjaGVja2JveCIgZGlzYWJsZWQgLz4KICAgICAgICAgICAgICAgICAgICA8c3Bhbj5TZW5kIHBhdGllbnRzIGEgcmVtaW5kZXIgZW1haWwgdGhlIGRheSBiZWZvcmUgdGhlaXIgdmlzaXQgPHNwYW4gY2xhc3NOYW1lPSJ0LW11dGVkIj7CtyBDb21pbmcgc29vbjwvc3Bhbj48L3NwYW4+CiAgICAgICAgICAgICAgICAgIDwvbGFiZWw+CiAgICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9ImNoZWNrYm94Ij4KICAgICAgICAgICAgICAgICAgICA8aW5wdXQgdHlwZT0iY2hlY2tib3giIGNoZWNrZWQ9e3ByZWZzLmF1dG9Db25maXJtfSBvbkNoYW5nZT17KGV2KSA9PiB1cGRhdGVQcmVmKCdhdXRvQ29uZmlybScsIGV2LnRhcmdldC5jaGVja2VkKX0gLz4KICAgICAgICAgICAgICAgICAgICA8c3Bhbj5BdXRvLWNvbmZpcm0gcGVuZGluZyBhcHBvaW50bWVudHMgKHNraXAgbWFudWFsIHJldmlldyk8L3NwYW4+CiAgICAgICAgICAgICAgICAgIDwvbGFiZWw+CiAgICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iQXBwb2ludG1lbnQgc2xvdCBpbnRlcnZhbCIgaGVscD0iVGltZSBzbG90cyBvZmZlcmVkIG9uIHRoZSBwYXRpZW50IGJvb2tpbmcgZm9ybS4gSG91cmx5IHNob3dzIDowMCBzbG90cyBvbmx5LiBUaGUgYm9va2luZyBncmlkIHJ1bnMgb24gMzAtbWludXRlIGdyYW51bGFyaXR5LiI+CiAgICAgICAgICAgICAgICAgICAgPFNlbGVjdElucHV0IHZhbHVlPXtTdHJpbmcocHJlZnMuc2xvdEludGVydmFsKX0gb25DaGFuZ2U9eyhldikgPT4gdXBkYXRlUHJlZignc2xvdEludGVydmFsJywgTnVtYmVyKGV2LnRhcmdldC52YWx1ZSkpfT4KICAgICAgICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9IjE1Ij5FdmVyeSAxNSBtaW51dGVzPC9vcHRpb24+CiAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIzMCI+RXZlcnkgMzAgbWludXRlczwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iNjAiPkV2ZXJ5IDEgaG91cjwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWZvb3RlciI+CiAgICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0ic3VibWl0IiBjbGFzc05hbWU9e2BidG4gYnRuLXByaW1hcnkgJHtzYXZpbmdQcmVmcyA/ICdidG4tbG9hZGluZycgOiAnJ31gfSBkaXNhYmxlZD17c2F2aW5nUHJlZnN9PgogICAgICAgICAgICAgICAgICAgIHtzYXZpbmdQcmVmcyA/ICdTYXZpbmfigKYnIDogJ1NhdmUgcHJlZmVyZW5jZXMnfQogICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDwvZm9ybT4KICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InQtbXV0ZWQiIHN0eWxlPXt7IGZvbnRTaXplOiAxMiwgbWFyZ2luVG9wOiAxMiB9fT4KICAgICAgICAgICAgICBDbGluaWMgaW5mbyB1cGRhdGVzIHRoZSBwdWJsaWMgd2Vic2l0ZSwgYW5kIHByZWZlcmVuY2VzIGRyaXZlIHRoZSBwYXRpZW50IGJvb2tpbmcgZmxvdy4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgPC8+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L0FwcFNoZWxsPgogICk7Cn0KCmV4cG9ydCB7IEFkbWluU2V0dGluZ3MgfTsK
+// AdminSettings — clinic info + appointment preferences (Phase 6).
+// Prototype UI restored: "Clinic information" and "Appointment preferences"
+// cards with card-header/h-section headings and card-footer save buttons.
+// Real API: getClinicInfo/updateClinicInfo, getAppSettings/updateAppSettings.
+// The two email-notification checkboxes have no backend fields yet — they
+// render disabled with a "Coming soon" note.
+import { useEffect, useState } from 'react';
+import {
+  AppShell, ErrorState, Field, PageHeader, PageSpinner,
+  SelectInput, TextInput, useStore,
+} from '../shared/components.jsx';
+import {
+  getAppSettings, getClinicInfo, updateAppSettings, updateClinicInfo, ApiError,
+} from '../shared/api.js';
+
+function AdminSettings() {
+  const store = useStore();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [clinic, setClinic] = useState({ name: '', phone: '', email: '', address: '', hours: '' });
+  const [prefs, setPrefs] = useState({ autoConfirm: false, slotInterval: 30 });
+  const [savingClinic, setSavingClinic] = useState(false);
+  const [savingPrefs, setSavingPrefs] = useState(false);
+  // Inline field error: empty clinic name is shown next to the field itself
+  const [clinicError, setClinicError] = useState('');
+  const updateClinic = (k, v) => setClinic((f) => ({ ...f, [k]: v }));
+  const updatePref = (k, v) => setPrefs((f) => ({ ...f, [k]: v }));
+  const focusNameField = () => {
+    const el = document.getElementById('clinic-name');
+    if (el) el.focus();
+  };
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [c, a] = await Promise.all([getClinicInfo(), getAppSettings()]);
+      setClinic({
+        name: c.name || '',
+        phone: c.phone || '',
+        email: c.email || '',
+        address: c.address || '',
+        hours: typeof c.hours === 'string' ? c.hours : '',
+      });
+      setPrefs({
+        autoConfirm: Boolean(a.auto_confirm_appointments),
+        slotInterval: Number(a.slot_interval_minutes ?? 30),
+      });
+    } catch (err) {
+      setError(err.message || 'Could not load settings.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const saveClinic = async (e) => {
+    e.preventDefault();
+    if (!clinic.name.trim()) {
+      setClinicError('Clinic name is required');
+      focusNameField();
+      return;
+    }
+    setSavingClinic(true);
+    try {
+      const body = { name: clinic.name.trim() };
+      if (clinic.phone.trim()) body.phone = clinic.phone.trim();
+      if (clinic.email.trim()) body.email = clinic.email.trim();
+      if (clinic.address.trim()) body.address = clinic.address.trim();
+      if (clinic.hours.trim()) body.hours = clinic.hours.trim();
+      const saved = await updateClinicInfo(body);
+      store.pushToast({ kind: 'success', title: 'Clinic info saved', message: 'The public website now shows the updated details.' });
+      setClinic((prev) => ({ ...prev, ...saved }));
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setSavingClinic(false);
+    }
+  };
+
+  const savePrefs = async (e) => {
+    e.preventDefault();
+    setSavingPrefs(true);
+    try {
+      const saved = await updateAppSettings({
+        auto_confirm_appointments: prefs.autoConfirm,
+        slot_interval_minutes: prefs.slotInterval,
+      });
+      store.pushToast({
+        kind: 'success',
+        title: 'Preferences saved',
+        message: prefs.autoConfirm
+          ? 'New patient bookings will be confirmed instantly.'
+          : 'New patient bookings will wait for staff review.',
+      });
+      setPrefs((prev) => ({
+        ...prev,
+        autoConfirm: Boolean(saved.auto_confirm_appointments ?? prev.autoConfirm),
+        slotInterval: Number(saved.slot_interval_minutes ?? prev.slotInterval),
+      }));
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setSavingPrefs(false);
+    }
+  };
+
+  return (
+    <AppShell current="settings">
+      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+        <PageHeader
+          title="Settings"
+          subtitle="Clinic information and appointment preferences."
+          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Settings' }]}
+        />
+
+        {loading ? (
+          <PageSpinner />
+        ) : error ? (
+          <ErrorState title="Could not load settings" message={error} onRetry={load} />
+        ) : (
+          <>
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-header"><h2 className="h-section">Clinic information</h2></div>
+              <form onSubmit={saveClinic}>
+                <div className="card-body">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                    <Field label="Clinic name" required error={clinicError} htmlFor="clinic-name">
+                      <TextInput
+                        id="clinic-name"
+                        value={clinic.name}
+                        onChange={(ev) => { updateClinic('name', ev.target.value); if (clinicError) setClinicError(''); }}
+                        error={clinicError}
+                        maxLength={160}
+                      />
+                    </Field>
+                    <Field label="Contact number" required>
+                      <TextInput type="tel" value={clinic.phone} onChange={(ev) => updateClinic('phone', ev.target.value)} icon="phone" maxLength={40} />
+                    </Field>
+                    <Field label="Email" required>
+                      <TextInput type="email" value={clinic.email} onChange={(ev) => updateClinic('email', ev.target.value)} icon="mail" maxLength={160} />
+                    </Field>
+                    <Field label="Address">
+                      <TextInput value={clinic.address} onChange={(ev) => updateClinic('address', ev.target.value)} maxLength={500} />
+                    </Field>
+                    <Field label="Hours" help="Optional.">
+                      <TextInput
+                        value={clinic.hours}
+                        onChange={(ev) => updateClinic('hours', ev.target.value)}
+                        placeholder="e.g. Mon–Sat, 8:00 AM – 6:00 PM"
+                        maxLength={160}
+                      />
+                    </Field>
+                  </div>
+                </div>
+                <div className="card-footer">
+                  <button type="submit" className={`btn btn-primary ${savingClinic ? 'btn-loading' : ''}`} disabled={savingClinic}>
+                    {savingClinic ? 'Saving…' : 'Save changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="card">
+              <div className="card-header"><h2 className="h-section">Appointment preferences</h2></div>
+              <form onSubmit={savePrefs}>
+                <div className="card-body stack lg">
+                  <label className="checkbox" style={{ opacity: 0.55 }}>
+                    <input type="checkbox" disabled />
+                    <span>Email admins when a new appointment is booked <span className="t-muted">· Coming soon</span></span>
+                  </label>
+                  <label className="checkbox" style={{ opacity: 0.55 }}>
+                    <input type="checkbox" disabled />
+                    <span>Send patients a reminder email the day before their visit <span className="t-muted">· Coming soon</span></span>
+                  </label>
+                  <label className="checkbox">
+                    <input type="checkbox" checked={prefs.autoConfirm} onChange={(ev) => updatePref('autoConfirm', ev.target.checked)} />
+                    <span>Auto-confirm pending appointments (skip manual review)</span>
+                  </label>
+                  <Field label="Appointment slot interval" help="Time slots offered on the patient booking form. Hourly shows :00 slots only. The booking grid runs on 30-minute granularity.">
+                    <SelectInput value={String(prefs.slotInterval)} onChange={(ev) => updatePref('slotInterval', Number(ev.target.value))}>
+                      <option value="15">Every 15 minutes</option>
+                      <option value="30">Every 30 minutes</option>
+                      <option value="60">Every 1 hour</option>
+                    </SelectInput>
+                  </Field>
+                </div>
+                <div className="card-footer">
+                  <button type="submit" className={`btn btn-primary ${savingPrefs ? 'btn-loading' : ''}`} disabled={savingPrefs}>
+                    {savingPrefs ? 'Saving…' : 'Save preferences'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <p className="t-muted" style={{ fontSize: 12, marginTop: 12 }}>
+              Clinic info updates the public website, and preferences drive the patient booking flow.
+            </p>
+          </>
+        )}
+      </div>
+    </AppShell>
+  );
+}
+
+export { AdminSettings };

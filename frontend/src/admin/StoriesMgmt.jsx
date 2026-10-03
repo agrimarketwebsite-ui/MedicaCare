@@ -1,1 +1,220 @@
-Ly8gU3Rvcmllc01nbXQg4oCUIHBhdGllbnQgc3RvcnkgbW9kZXJhdGlvbiAoUGhhc2UgNikuCi8vIFRocmVlLXNlY3Rpb24gbGF5b3V0IHJlc3RvcmVkIGZyb20gdGhlIHByb3RvdHlwZTogIldhaXRpbmcgZm9yIHJldmlldyIsCi8vICJBcHByb3ZlZCAmIHNob3duIHB1YmxpY2x5IiwgIk5vdCBwdWJsaXNoZWQiLiBTZWFyY2ggZmlsdGVycyB0aGUgcXVvdGUsCi8vIGRpc3BsYXkgbmFtZSwgYW5kIHBhdGllbnQgaWRlbnRpdHkgY2xpZW50LXNpZGUuCi8vIFN0b3J5IHNoYXBlOiB7IGlkLCB0aXRsZSwgYm9keSwgc3RhdHVzLCBwYXRpZW50X2lkLCBkaXNwbGF5X25hbWUsIGNyZWF0ZWRfYXQsIHJldmlld2VkX2F0IH0uCmltcG9ydCB7IHVzZUVmZmVjdCwgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7CiAgQXBwU2hlbGwsIEVtcHR5U3RhdGUsIEVycm9yU3RhdGUsIEljb24sIFBhZ2VIZWFkZXIsIFBhdGllbnRBdmF0YXIsIHVzZVN0b3JlLAp9IGZyb20gJy4uL3NoYXJlZC9jb21wb25lbnRzLmpzeCc7CmltcG9ydCB7IGZvcm1hdERhdGUgfSBmcm9tICcuLi9zaGFyZWQvZGF0YS5qcyc7CmltcG9ydCB7IGFwcHJvdmVTdG9yeSwgZ2V0QWRtaW5TdG9yaWVzLCByZWplY3RTdG9yeSwgdW5wdWJsaXNoU3RvcnksIEFwaUVycm9yIH0gZnJvbSAnLi4vc2hhcmVkL2FwaS5qcyc7CgovLyAtLS0tLS0tLS0tIFBhdGllbnQgc3RvcmllcyAocHVibGljIHRlc3RpbW9uaWFsIG1vZGVyYXRpb24pIC0tLS0tLS0tLS0KLy8gUG9ydGFsIHN1Ym1pc3Npb25zIGxhbmQgaGVyZSBhcyBwZW5kaW5nOyBhcHByb3ZlZCBvbmVzIGFyZSBzaG93biBvbiB0aGUKLy8gcHVibGljICJXaGF0IHBhdGllbnRzIHNheSIgY2Fyb3VzZWwgdW5kZXIgdGhlIGRpc3BsYXkgbmFtZSBvbmx5LgpmdW5jdGlvbiBTdG9yeVJvdyh7IHQsIGFjdGlvbnMgfSkgewogIGNvbnN0IGRpc3BsYXlOYW1lID0gdC5kaXNwbGF5X25hbWUgfHwgJ0Fub255bW91cyc7CiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0iIHN0eWxlPXt7IGFsaWduSXRlbXM6ICdmbGV4LXN0YXJ0JyB9fT4KICAgICAgPFBhdGllbnRBdmF0YXIgcGVyc29uPXt7IG5hbWU6IGRpc3BsYXlOYW1lIH19IHNpemU9ezI4fSAvPgogICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtLWJvZHkiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tdGl0bGUiPiJ7dC5ib2R5fSI8L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtLXN1YiI+CiAgICAgICAgICBTaG93cyBhcyAie2Rpc3BsYXlOYW1lfSIgwrcgc3VibWl0dGVkIHtmb3JtYXREYXRlKCh0LmNyZWF0ZWRfYXQgfHwgJycpLnNsaWNlKDAsIDEwKSl9CiAgICAgICAgICB7dC5yZXZpZXdlZF9hdCA/IGAgwrcgcmV2aWV3ZWQgJHtmb3JtYXREYXRlKCh0LnJldmlld2VkX2F0IHx8ICcnKS5zbGljZSgwLCAxMCkpfWAgOiAnJ30KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBnYXA6IDYsIGZsZXhTaHJpbms6IDAgfX0+e2FjdGlvbnN9PC9kaXY+CiAgICA8L2Rpdj4KICApOwp9CgpmdW5jdGlvbiBTdG9yaWVzTWdtdCgpIHsKICBjb25zdCBzdG9yZSA9IHVzZVN0b3JlKCk7CiAgY29uc3QgW2xvYWRpbmcsIHNldExvYWRpbmddID0gdXNlU3RhdGUodHJ1ZSk7CiAgY29uc3QgW2Vycm9yLCBzZXRFcnJvcl0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgW3N0b3JpZXMsIHNldFN0b3JpZXNdID0gdXNlU3RhdGUoW10pOwogIGNvbnN0IFtidXN5SWQsIHNldEJ1c3lJZF0gPSB1c2VTdGF0ZShudWxsKTsKICBjb25zdCBbcXVlcnksIHNldFF1ZXJ5XSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbcmV0cnlLZXksIHNldFJldHJ5S2V5XSA9IHVzZVN0YXRlKDApOwoKICBjb25zdCBsb2FkID0gYXN5bmMgKCkgPT4gewogICAgc2V0TG9hZGluZyh0cnVlKTsKICAgIHNldEVycm9yKCcnKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IGxpc3QgPSBhd2FpdCBnZXRBZG1pblN0b3JpZXMoJycpOwogICAgICBzZXRTdG9yaWVzKGxpc3QpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldEVycm9yKGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgbG9hZCBzdG9yaWVzLicpOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0TG9hZGluZyhmYWxzZSk7CiAgICB9CiAgfTsKCiAgdXNlRWZmZWN0KCgpID0+IHsgbG9hZCgpOyB9LCBbcmV0cnlLZXldKTsgLy8gZXNsaW50LWRpc2FibGUtbGluZSByZWFjdC1ob29rcy9leGhhdXN0aXZlLWRlcHMKCiAgY29uc3QgcSA9IHF1ZXJ5LnRyaW0oKS50b0xvd2VyQ2FzZSgpOwogIC8vIFNlYXJjaCBzcGFucyB0aGUgcXVvdGUsIHRoZSBkaXNwbGF5IG5hbWUsIGFuZCB0aGUgcGF0aWVudCBpZGVudGl0eQogIGNvbnN0IG1hdGNoZXMgPSAodCkgPT4gewogICAgaWYgKCFxKSByZXR1cm4gdHJ1ZTsKICAgIHJldHVybiBgJHt0LmJvZHkgfHwgJyd9ICR7dC5kaXNwbGF5X25hbWUgfHwgJyd9ICR7dC5wYXRpZW50X25hbWUgfHwgJyd9YC50b0xvd2VyQ2FzZSgpLmluY2x1ZGVzKHEpOwogIH07CiAgY29uc3QgcGVuZGluZyA9IHN0b3JpZXMuZmlsdGVyKCh0KSA9PiB0LnN0YXR1cyA9PT0gJ3BlbmRpbmcnKS5maWx0ZXIobWF0Y2hlcyk7CiAgY29uc3QgYXBwcm92ZWQgPSBzdG9yaWVzLmZpbHRlcigodCkgPT4gdC5zdGF0dXMgPT09ICdhcHByb3ZlZCcpLmZpbHRlcihtYXRjaGVzKTsKICBjb25zdCByZWplY3RlZCA9IHN0b3JpZXMuZmlsdGVyKCh0KSA9PiB0LnN0YXR1cyA9PT0gJ3JlamVjdGVkJykuZmlsdGVyKG1hdGNoZXMpOwoKICBjb25zdCBhY3QgPSBhc3luYyAoaWQsIGZuLCB0aXRsZSwgbWVzc2FnZSkgPT4gewogICAgc2V0QnVzeUlkKGlkKTsKICAgIHRyeSB7CiAgICAgIGF3YWl0IGZuKGlkKTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZSwgbWVzc2FnZSB9KTsKICAgICAgbG9hZCgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdlcnJvcicsIHRpdGxlOiAnQWN0aW9uIGZhaWxlZCcsIG1lc3NhZ2U6IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnUGxlYXNlIHRyeSBhZ2Fpbi4nIH0pOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0QnVzeUlkKG51bGwpOwogICAgfQogIH07CgogIC8vIFNrZWxldG9uIHJvd3MgbWlycm9yaW5nIHRoZSBTdG9yeVJvdyBsYXlvdXQgKGF2YXRhciArIHF1b3RlICsgbWV0YSBsaW5lKQogIGNvbnN0IHN0b3J5U2tlbGV0b25zID0gKGNvdW50KSA9PiBBcnJheS5mcm9tKHsgbGVuZ3RoOiBjb3VudCB9KS5tYXAoKF8sIGkpID0+ICgKICAgIDxkaXYga2V5PXtpfSBjbGFzc05hbWU9Imxpc3QtaXRlbSIgYXJpYS1oaWRkZW49InRydWUiPgogICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiAyOCwgaGVpZ2h0OiAyOCwgYm9yZGVyUmFkaXVzOiAnNTAlJywgZmxleFNocmluazogMCB9fSAvPgogICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtLWJvZHkiIHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZmxleERpcmVjdGlvbjogJ2NvbHVtbicsIGdhcDogNiB9fT4KICAgICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IGhlaWdodDogMTEsIHdpZHRoOiAnNzAlJyB9fSAvPgogICAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgaGVpZ2h0OiAxMCwgd2lkdGg6ICc4NSUnIH19IC8+CiAgICAgIDwvZGl2PgogICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiA3NCwgaGVpZ2h0OiAyMiwgYm9yZGVyUmFkaXVzOiAndmFyKC0tci1waWxsKScsIGZsZXhTaHJpbms6IDAgfX0gLz4KICAgIDwvZGl2PgogICkpOwoKICByZXR1cm4gKAogICAgPEFwcFNoZWxsIGN1cnJlbnQ9InN0b3JpZXMiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0icGFnZSIgc3R5bGU9e3sgbWF4V2lkdGg6IDk2MCwgbWFyZ2luOiAnMCBhdXRvJyB9fT4KICAgICAgICA8UGFnZUhlYWRlcgogICAgICAgICAgdGl0bGU9IlBhdGllbnQgc3RvcmllcyIKICAgICAgICAgIHN1YnRpdGxlPXtsb2FkaW5nCiAgICAgICAgICAgID8gPHNwYW4gY2xhc3NOYW1lPSJza2VsIiBhcmlhLWhpZGRlbj0idHJ1ZSIgc3R5bGU9e3sgd2lkdGg6IDM0MCwgbWF4V2lkdGg6ICcxMDAlJywgaGVpZ2h0OiAxNCB9fSAvPgogICAgICAgICAgICA6IGAke3BlbmRpbmcubGVuZ3RofSB3YWl0aW5nIGZvciByZXZpZXcgwrcgJHthcHByb3ZlZC5sZW5ndGh9IHNob3duIG9uIHRoZSBwdWJsaWMgd2Vic2l0ZWB9CiAgICAgICAgICBicmVhZGNydW1icz17W3sgbGFiZWw6ICdIb21lJywgdG86ICcvYWRtaW4vZGFzaGJvYXJkJyB9LCB7IGxhYmVsOiAnUGF0aWVudCBzdG9yaWVzJyB9XX0KICAgICAgICAvPgoKICAgICAgICB7ZXJyb3IgPyAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZCI+CiAgICAgICAgICAgIDxFcnJvclN0YXRlIHRpdGxlPSJDb3VsZCBub3QgbG9hZCBzdG9yaWVzIiBtZXNzYWdlPXtlcnJvcn0gb25SZXRyeT17KCkgPT4gc2V0UmV0cnlLZXkoKGspID0+IGsgKyAxKX0gLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICkgOiAoCiAgICAgICAgICA8PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZCIgc3R5bGU9e3sgbWFyZ2luQm90dG9tOiAxNiB9fT4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGFibGUtdG9vbGJhciI+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaW5wdXQtZ3JvdXAgc2VhcmNoIj4KICAgICAgICAgICAgICAgICAgPEljb24gbmFtZT0ic2VhcmNoIiBzaXplPXsxNn0gY2xhc3NOYW1lPSJpbnB1dC1pY29uIiAvPgogICAgICAgICAgICAgICAgICA8aW5wdXQKICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImlucHV0IgogICAgICAgICAgICAgICAgICAgIHN0eWxlPXt7IHBhZGRpbmdMZWZ0OiAzOCB9fQogICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJTZWFyY2ggYnkgcXVvdGUsIGRpc3BsYXkgbmFtZSwgb3IgcGF0aWVudOKApiIKICAgICAgICAgICAgICAgICAgICBhcmlhLWxhYmVsPSJTZWFyY2ggc3RvcmllcyBieSBxdW90ZSwgZGlzcGxheSBuYW1lLCBvciBwYXRpZW50IgogICAgICAgICAgICAgICAgICAgIHZhbHVlPXtxdWVyeX0KICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldFF1ZXJ5KGUudGFyZ2V0LnZhbHVlKX0KICAgICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBtYXJnaW5MZWZ0OiAnYXV0bycsIGZvbnRTaXplOiAxMywgY29sb3I6ICd2YXIoLS10ZXh0LW11dGVkKScgfX0+CiAgICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9e3sgY29sb3I6ICd2YXIoLS10ZXh0KScgfX0+e3BlbmRpbmcubGVuZ3RoICsgYXBwcm92ZWQubGVuZ3RoICsgcmVqZWN0ZWQubGVuZ3RofTwvc3Ryb25nPiBtYXRjaGluZwogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQiIHN0eWxlPXt7IG1hcmdpbkJvdHRvbTogMTYgfX0+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQtaGVhZGVyIj4KICAgICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9Imgtc2VjdGlvbiI+V2FpdGluZyBmb3IgcmV2aWV3PC9oMj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgICAgICAgICAgIHN0b3J5U2tlbGV0b25zKDIpCiAgICAgICAgICAgICAgICApIDogcGVuZGluZy5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgcGFkZGluZzogJzhweCAyMHB4IDE2cHgnIH19PgogICAgICAgICAgICAgICAgICAgIDxFbXB0eVN0YXRlCiAgICAgICAgICAgICAgICAgICAgICBpY29uPSJtZXNzYWdlLXNxdWFyZSIKICAgICAgICAgICAgICAgICAgICAgIHRpdGxlPSJObyBzdG9yaWVzIHdhaXRpbmcgZm9yIHJldmlldyIKICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2U9IlN0b3JpZXMgc3VibWl0dGVkIGZyb20gdGhlIHBhdGllbnQgcG9ydGFsIChIZWxwICYgc3VwcG9ydCkgYXBwZWFyIGhlcmUgZm9yIGFwcHJvdmFsIGJlZm9yZSB0aGV5IGFyZSBzaG93biBvbiB0aGUgcHVibGljIHdlYnNpdGUuIgogICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgKSA6IHBlbmRpbmcubWFwKCh0KSA9PiAoCiAgICAgICAgICAgICAgICAgIDxTdG9yeVJvdyBrZXk9e3QuaWR9IHQ9e3R9IGFjdGlvbnM9ezw+CiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkgc20iCiAgICAgICAgICAgICAgICAgICAgICBkaXNhYmxlZD17YnVzeUlkID09PSB0LmlkfQogICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gYWN0KHQuaWQsIGFwcHJvdmVTdG9yeSwgJ1N0b3J5IGFwcHJvdmVkJywgJ0l0IGlzIG5vdyBzaG93biBvbiB0aGUgcHVibGljIHdlYnNpdGUuJyl9CiAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgQXBwcm92ZQogICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYnRuIGJ0bi1kYW5nZXItb3V0bGluZSBzbSIKICAgICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtidXN5SWQgPT09IHQuaWR9CiAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBhY3QodC5pZCwgcmVqZWN0U3RvcnksICdTdG9yeSByZWplY3RlZCcsICdJdCB3aWxsIG5vdCBhcHBlYXIgb24gdGhlIHB1YmxpYyB3ZWJzaXRlLicpfQogICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgIFJlamVjdAogICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICA8Lz59IC8+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZCIgc3R5bGU9e3sgbWFyZ2luQm90dG9tOiAxNiB9fT4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2FyZC1oZWFkZXIiPgogICAgICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT0iaC1zZWN0aW9uIj5BcHByb3ZlZCAmIHNob3duIHB1YmxpY2x5PC9oMj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgICAgICAgICAgIHN0b3J5U2tlbGV0b25zKDEpCiAgICAgICAgICAgICAgICApIDogYXBwcm92ZWQubGVuZ3RoID09PSAwID8gKAogICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IHBhZGRpbmc6ICc4cHggMjBweCAxNnB4JyB9fT4KICAgICAgICAgICAgICAgICAgICA8RW1wdHlTdGF0ZQogICAgICAgICAgICAgICAgICAgICAgaWNvbj0iZ2xvYmUiCiAgICAgICAgICAgICAgICAgICAgICB0aXRsZT0iTm90aGluZyBwdWJsaXNoZWQgeWV0IgogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZT0iQXBwcm92ZWQgc3RvcmllcyBhcHBlYXIgb24gdGhlIHB1YmxpYyB3ZWJzaXRlJ3MgV2hhdCBwYXRpZW50cyBzYXkgY2Fyb3VzZWwuIgogICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgKSA6IGFwcHJvdmVkLm1hcCgodCkgPT4gKAogICAgICAgICAgICAgICAgICA8U3RvcnlSb3cga2V5PXt0LmlkfSB0PXt0fSBhY3Rpb25zPXsKICAgICAgICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IHNtIgogICAgICAgICAgICAgICAgICAgICAgZGlzYWJsZWQ9e2J1c3lJZCA9PT0gdC5pZH0KICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IGFjdCh0LmlkLCB1bnB1Ymxpc2hTdG9yeSwgJ1N0b3J5IHVucHVibGlzaGVkJywgJ0l0IGlzIGJhY2sgaW4gdGhlIHJldmlldyBxdWV1ZS4nKX0KICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICBVbnB1Ymxpc2gKICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgfSAvPgogICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAge3JlamVjdGVkLmxlbmd0aCA+IDAgJiYgKAogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkIj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWhlYWRlciI+CiAgICAgICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9Imgtc2VjdGlvbiI+Tm90IHB1Ymxpc2hlZDwvaDI+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIHtyZWplY3RlZC5tYXAoKHQpID0+ICgKICAgICAgICAgICAgICAgICAgICA8U3RvcnlSb3cga2V5PXt0LmlkfSB0PXt0fSBhY3Rpb25zPXsKICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSBzbSIKICAgICAgICAgICAgICAgICAgICAgICAgZGlzYWJsZWQ9e2J1c3lJZCA9PT0gdC5pZH0KICAgICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gYWN0KHQuaWQsIHVucHVibGlzaFN0b3J5LCAnU3RvcnkgcmVzdG9yZWQnLCAnSXQgaXMgYmFjayBpbiB0aGUgcmV2aWV3IHF1ZXVlLicpfQogICAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgICBSZXN0b3JlIHRvIHJldmlldwogICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgfSAvPgogICAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApfQogICAgICAgICAgPC8+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L0FwcFNoZWxsPgogICk7Cn0KCmV4cG9ydCB7IFN0b3J5Um93LCBTdG9yaWVzTWdtdCB9Owo=
+// StoriesMgmt — patient story moderation (Phase 6).
+// Three-section layout restored from the prototype: "Waiting for review",
+// "Approved & shown publicly", "Not published". Search filters the quote,
+// display name, and patient identity client-side.
+// Story shape: { id, title, body, status, patient_id, display_name, created_at, reviewed_at }.
+import { useEffect, useState } from 'react';
+import {
+  AppShell, EmptyState, ErrorState, Icon, PageHeader, PatientAvatar, useStore,
+} from '../shared/components.jsx';
+import { formatDate } from '../shared/data.js';
+import { approveStory, getAdminStories, rejectStory, unpublishStory, ApiError } from '../shared/api.js';
+
+// ---------- Patient stories (public testimonial moderation) ----------
+// Portal submissions land here as pending; approved ones are shown on the
+// public "What patients say" carousel under the display name only.
+function StoryRow({ t, actions }) {
+  const displayName = t.display_name || 'Anonymous';
+  return (
+    <div className="list-item" style={{ alignItems: 'flex-start' }}>
+      <PatientAvatar person={{ name: displayName }} size={28} />
+      <div className="list-item-body">
+        <div className="list-item-title">"{t.body}"</div>
+        <div className="list-item-sub">
+          Shows as "{displayName}" · submitted {formatDate((t.created_at || '').slice(0, 10))}
+          {t.reviewed_at ? ` · reviewed ${formatDate((t.reviewed_at || '').slice(0, 10))}` : ''}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{actions}</div>
+    </div>
+  );
+}
+
+function StoriesMgmt() {
+  const store = useStore();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stories, setStories] = useState([]);
+  const [busyId, setBusyId] = useState(null);
+  const [query, setQuery] = useState('');
+  const [retryKey, setRetryKey] = useState(0);
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const list = await getAdminStories('');
+      setStories(list);
+    } catch (err) {
+      setError(err.message || 'Could not load stories.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const q = query.trim().toLowerCase();
+  // Search spans the quote, the display name, and the patient identity
+  const matches = (t) => {
+    if (!q) return true;
+    return `${t.body || ''} ${t.display_name || ''} ${t.patient_name || ''}`.toLowerCase().includes(q);
+  };
+  const pending = stories.filter((t) => t.status === 'pending').filter(matches);
+  const approved = stories.filter((t) => t.status === 'approved').filter(matches);
+  const rejected = stories.filter((t) => t.status === 'rejected').filter(matches);
+
+  const act = async (id, fn, title, message) => {
+    setBusyId(id);
+    try {
+      await fn(id);
+      store.pushToast({ kind: 'success', title, message });
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Action failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  // Skeleton rows mirroring the StoryRow layout (avatar + quote + meta line)
+  const storySkeletons = (count) => Array.from({ length: count }).map((_, i) => (
+    <div key={i} className="list-item" aria-hidden="true">
+      <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
+      <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <span className="skel" style={{ height: 11, width: '70%' }} />
+        <span className="skel" style={{ height: 10, width: '85%' }} />
+      </div>
+      <span className="skel" style={{ width: 74, height: 22, borderRadius: 'var(--r-pill)', flexShrink: 0 }} />
+    </div>
+  ));
+
+  return (
+    <AppShell current="stories">
+      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+        <PageHeader
+          title="Patient stories"
+          subtitle={loading
+            ? <span className="skel" aria-hidden="true" style={{ width: 340, maxWidth: '100%', height: 14 }} />
+            : `${pending.length} waiting for review · ${approved.length} shown on the public website`}
+          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Patient stories' }]}
+        />
+
+        {error ? (
+          <div className="card">
+            <ErrorState title="Could not load stories" message={error} onRetry={() => setRetryKey((k) => k + 1)} />
+          </div>
+        ) : (
+          <>
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="table-toolbar">
+                <div className="input-group search">
+                  <Icon name="search" size={16} className="input-icon" />
+                  <input
+                    className="input"
+                    style={{ paddingLeft: 38 }}
+                    placeholder="Search by quote, display name, or patient…"
+                    aria-label="Search stories by quote, display name, or patient"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                </div>
+                <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
+                  <strong style={{ color: 'var(--text)' }}>{pending.length + approved.length + rejected.length}</strong> matching
+                </div>
+              </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-header">
+                <h2 className="h-section">Waiting for review</h2>
+              </div>
+              <div>
+                {loading ? (
+                  storySkeletons(2)
+                ) : pending.length === 0 ? (
+                  <div style={{ padding: '8px 20px 16px' }}>
+                    <EmptyState
+                      icon="message-square"
+                      title="No stories waiting for review"
+                      message="Stories submitted from the patient portal (Help & support) appear here for approval before they are shown on the public website."
+                    />
+                  </div>
+                ) : pending.map((t) => (
+                  <StoryRow key={t.id} t={t} actions={<>
+                    <button
+                      className="btn btn-primary sm"
+                      disabled={busyId === t.id}
+                      onClick={() => act(t.id, approveStory, 'Story approved', 'It is now shown on the public website.')}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn btn-danger-outline sm"
+                      disabled={busyId === t.id}
+                      onClick={() => act(t.id, rejectStory, 'Story rejected', 'It will not appear on the public website.')}
+                    >
+                      Reject
+                    </button>
+                  </>} />
+                ))}
+              </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-header">
+                <h2 className="h-section">Approved & shown publicly</h2>
+              </div>
+              <div>
+                {loading ? (
+                  storySkeletons(1)
+                ) : approved.length === 0 ? (
+                  <div style={{ padding: '8px 20px 16px' }}>
+                    <EmptyState
+                      icon="globe"
+                      title="Nothing published yet"
+                      message="Approved stories appear on the public website's What patients say carousel."
+                    />
+                  </div>
+                ) : approved.map((t) => (
+                  <StoryRow key={t.id} t={t} actions={
+                    <button
+                      className="btn btn-secondary sm"
+                      disabled={busyId === t.id}
+                      onClick={() => act(t.id, unpublishStory, 'Story unpublished', 'It is back in the review queue.')}
+                    >
+                      Unpublish
+                    </button>
+                  } />
+                ))}
+              </div>
+            </div>
+
+            {rejected.length > 0 && (
+              <div className="card">
+                <div className="card-header">
+                  <h2 className="h-section">Not published</h2>
+                </div>
+                <div>
+                  {rejected.map((t) => (
+                    <StoryRow key={t.id} t={t} actions={
+                      <button
+                        className="btn btn-secondary sm"
+                        disabled={busyId === t.id}
+                        onClick={() => act(t.id, unpublishStory, 'Story restored', 'It is back in the review queue.')}
+                      >
+                        Restore to review
+                      </button>
+                    } />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </AppShell>
+  );
+}
+
+export { StoryRow, StoriesMgmt };
