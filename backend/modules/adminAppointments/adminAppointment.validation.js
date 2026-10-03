@@ -57,7 +57,12 @@ export const createAppointmentSchema = z
     patient_id: uuidSchema,
     appointment_date: calendarDateSchema,
     start_time: timeSchema,
-    end_time: timeSchema,
+    duration_minutes: z.coerce
+      .number()
+      .int()
+      .min(15, 'Duration must be 15–120 minutes')
+      .max(120, 'Duration must be 15–120 minutes')
+      .default(30),
     reason: z.string().trim().min(1, 'Please describe the reason for the visit').max(500, 'Reason is too long (max 500 characters)'),
     status: appointmentStatusSchema.default('pending'),
     booked_for: z.string().trim().max(120).optional(),
@@ -65,11 +70,7 @@ export const createAppointmentSchema = z
     additional_notes: z.string().trim().max(1000, 'Notes are too long (max 1000 characters)').optional(),
     contact_number: phoneSchema.optional(),
   })
-  .strict()
-  .refine((d) => d.start_time < d.end_time, {
-    message: 'end_time must be after start_time',
-    path: ['end_time'],
-  });
+  .strict();
 
 export const updateAppointmentSchema = z
   .object({

@@ -107,6 +107,7 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
 
   before(async () => {
     ({ base, server } = await H.bootApp());
+    state.uniqueComment = 'Magaling na doktor! run-' + Date.now();
     const password_hash = await hashPassword(password);
     for (let i = 0; i < 2; i++) {
       const { accountId, email } = await acquireAccount(password_hash, i, 'phase5rate');
@@ -153,7 +154,7 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
 
     const rate = await H.api(base, 'POST', '/ratings', {
       token: state.patientToken,
-      body: { appointment_id: apptId, stars: 5, comment: 'Magaling na doktor!' },
+      body: { appointment_id: apptId, stars: 5, comment: state.uniqueComment },
     });
     assert.equal(rate.status, 201, 'patient rating submitted');
   });
@@ -179,7 +180,7 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
     assert.equal(r.status, 200);
     const { ratings, avg_rating, rating_count } = r.json.data;
     assert.ok(Array.isArray(ratings));
-    const mine = ratings.find((x) => x.stars === 5 && x.comment === 'Magaling na doktor!');
+    const mine = ratings.find((x) => x.stars === 5 && x.comment === state.uniqueComment);
     assert.ok(mine, 'nakikita ng doctor ang rating ng sariling visit');
     assert.ok(mine.patient_name, 'may patient name (hindi patient_id leak)');
     assert.ok(Number(rating_count) >= 1, 'rating_count ≥ 1');
@@ -190,7 +191,7 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
     const r = await apiDoc(1, 'GET', '/ratings/doctor');
     assert.equal(r.status, 200);
     const { ratings } = r.json.data;
-    assert.ok(!(ratings || []).some((x) => x.comment === 'Magaling na doktor!'));
+    assert.ok(!(ratings || []).some((x) => x.comment === state.uniqueComment));
   });
 
   it('patient role → 403 sa doctor feedback endpoint', async () => {

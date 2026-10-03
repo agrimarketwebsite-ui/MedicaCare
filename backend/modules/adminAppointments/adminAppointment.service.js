@@ -9,6 +9,7 @@ import ApiError from '../../shared/utils/ApiError.js';
 import { logActivity } from '../../shared/utils/activityLog.js';
 import { encryptField } from '../../shared/utils/crypto.js';
 import { decryptRow, encryptRow } from '../patients/patient.service.js';
+import { normalizeTime, addMinutesToTime } from '../appointments/appointment.service.js';
 import * as repo from './adminAppointment.repository.js';
 
 const APPT_WRITE_ENC_FIELDS = ['reason', 'additional_notes', 'contact_number'];
@@ -50,8 +51,11 @@ export async function getAppointment(id) {
 }
 
 export async function createAppointment(actor, input) {
-  const { doctor_id, patient_id, appointment_date, start_time, end_time, reason, status,
+  const { doctor_id, patient_id, appointment_date, start_time, duration_minutes, reason, status,
     booked_for, is_first_visit, additional_notes, contact_number } = input;
+  // Tulad ng patient flow: ang end_time ay kino-compute mula sa
+  // start_time + duration_minutes (hindi ipinapasa ng caller).
+  const end_time = addMinutesToTime(normalizeTime(start_time), duration_minutes);
   try {
     const row = await repo.createAppointment(
       encryptRow(
