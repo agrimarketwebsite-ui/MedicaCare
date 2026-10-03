@@ -1,7 +1,6 @@
 // HelpSupport — patient (split from screens-patient.jsx)
 import { useEffect, useState } from 'react';
 import { AppShell, Badge, Field, Icon, navigate, PageHeader, PageSpinner, TextArea, TextInput, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, HOSPITAL } from '../shared/data.js';
 import { focusFirstError } from './helpers.js';
 
 import { Profile } from './Profile.jsx';
@@ -20,13 +19,15 @@ function HelpSupport() {
   // "Share your experience" — submissions go to the admin console as pending
   // and only appear on the public website after staff approval, under a
   // display name (never the account identity)
+  const meName = me.name || me.full_name || '';
   const displayNameDefault = (() => {
-    const parts = (me.name || '').trim().split(/\s+/);
+    const parts = meName.trim().split(/\s+/);
     return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : (parts[0] || 'Patient');
   })();
   const [storyForm, setStoryForm] = useState({ displayName: displayNameDefault, quote: '' });
   const [storyErrors, setStoryErrors] = useState({});
-  const myStories = store.testimonials.filter(t => t.patientId === me.id);
+  const meId = me.id || me.patient_id;
+  const myStories = (store.testimonials || []).filter(t => String(t.patientId) === String(meId));
   const updateStory = (k, v) => { setStoryForm(f => ({ ...f, [k]: v })); if (storyErrors[k]) setStoryErrors(e => ({ ...e, [k]: null })); };
 
   const submitStory = (e) => {
@@ -41,13 +42,13 @@ function HelpSupport() {
     store.setTestimonials([
       {
         id: 't' + Date.now(),
-        patientId: me.id,
+        patientId: meId,
         displayName: storyForm.displayName.trim(),
         quote: q,
         status: 'pending',
         createdAt: new Date().toISOString().slice(0, 10),
       },
-      ...store.testimonials,
+      ...(store.testimonials || []),
     ]);
     setStoryForm({ displayName: displayNameDefault, quote: '' });
     store.pushToast({ title: 'Story submitted', msg: 'Thank you! Our staff will review it before it appears on the website.' });
@@ -58,7 +59,7 @@ function HelpSupport() {
     { q: 'Can I cancel or reschedule an appointment?', a: 'Yes. Open the appointment from "My appointments" or its details page — use Reschedule to pick a new date and time slot, or Cancel to release the slot. Both are free any time before your visit.' },
     { q: 'What do the appointment statuses mean?', a: 'Pending means your request was received and is awaiting confirmation. Confirmed means your slot is reserved. Completed means the visit has happened. Cancelled means the appointment was called off.' },
     { q: 'How do I update my personal information?', a: 'Go to your Profile page to edit your contact details, address, emergency contact, and change your password.' },
-    { q: 'Are my records and data secure?', a: 'Yes, within the scope of this prototype. All data stays in your browser (localStorage) and only fictional demo data is used. A production system would add server-side access control and hashed passwords.' },
+    { q: 'Are my records and data secure?', a: 'Yes. Your account is protected by your password, and sensitive details (like contact information) are stored encrypted on the clinic\u2019s servers. Only you and authorized clinic staff can see your records.' },
   ];
 
   if (pageLoading) {
