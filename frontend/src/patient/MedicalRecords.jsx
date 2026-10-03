@@ -1,79 +1,96 @@
 // MedicalRecords — patient (split from screens-patient.jsx)
 import { useEffect, useState } from 'react';
 import { AppShell, Badge, EmptyState, Icon, Modal, navigate, PageHeader, SelectInput, SkeletonRows, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, downloadFile, findDoctor, formatDate } from '../shared/data.js';
+import { getAppointments } from '../shared/api.js';
 
-import { buildRecordsHTML, localToday } from './helpers.js';
+import { buildRecordsHTML, downloadFile, localToday, toFrontendAppt } from './helpers.js';
 
 // ---------- Medical Records ----------
-// Prototype page — records derive from the logged-in patient's completed
-// appointments; all seed data is fictional (real patient data is not allowed).
+// Records derive from the patient's real completed appointments (Phase 4 API);
+// lab results and medications are added by clinic staff (no patient-facing
+// API endpoint — the tables show honest empty states until staff add entries).
 function MedicalRecords() {
   const store = useStore();
   const me = store.currentPatient || window.CURRENT_PATIENT;
-  // Simulated fetch — skeleton while "loading", same 600ms pattern as the
-  // other patient pages
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
+  const [loadError, setLoadError] = useState('');
+  const [completed, setCompleted] = useState([]);
   const [doctorFilter, setDoctorFilter] = useState('all');
   const [viewLab, setViewLab] = useState(null);
   const today = localToday();
 
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setLoadError('');
+    getAppointments('completed')
+      .then((list) => {
+        if (cancelled) return;
+        setCompleted((list || []).map(toFrontendAppt).filter(Boolean));
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoadError('Could not load your records. Please try again.');
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   // Records come from real completed visits: when staff mark an appointment
-  // completed in the admin console they capture the doctor's notes, and that
-  // visit lands here automatically (no hardcoded demo list)
-  const records = store.appointments
-    .filter(a => a.patientId === me.id && a.status === 'completed')
-    .sort((a, b) => b.date.localeCompare(a.date))
+  // completed, that visit lands here automatically (no hardcoded demo list)
+  const records = completed
+    .slice()
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
     .map(a => ({
       id: a.id,
       date: a.date,
       type: 'Consultation',
       doctorId: a.doctorId,
+      doctorName: a.doctorName,
       title: a.reason,
-      summary: a.notes || 'No consultation notes were recorded for this visit.',
+      summary: a.additionalNotes || 'No consultation notes were recorded for this visit.',
     }));
-  const recordDoctors = [...new Set(records.map(r => r.doctorId))]
-    .map(id => window.findDoctor(id))
-    .filter(Boolean);
+  const recordDoctors = [...new Map(records.map(r => [r.doctorId, r.doctorName])).entries()]
+    .map(([id, name]) => ({ id, name: name || (window.findDoctor(id) || {}).name || '—' }))
+    .filter(d => d.id);
   const filteredRecords = doctorFilter === 'all'
     ? records
-    : records.filter(r => r.doctorId === doctorFilter);
+    : records.filter(r => String(r.doctorId) === String(doctorFilter));
 
-  // Lab results + medications — staff-encoded entries from the shared store
-  // (Admin console → Patients → Labs & medications). Seed rows are fictional
-  // demo data for the demo account; registered accounts start empty.
-  const labs = (store.labs || [])
-    .filter(l => l.patientId === me.id)
-    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  const meds = (store.meds || []).filter(m => m.patientId === me.id);
+  // Lab results + medications — staff-encoded entries (no patient-facing API
+  // endpoint; the store holds local entries only, so real patients see the
+  // honest empty states below until staff add entries via a staff endpoint).
+  const labs = [];
+  const meds = [];
 
   // Billing summary — a record of bills, NOT a payment portal: consultation
-  // fees are settled at the cashier during the visit (the prototype has no
-  // online payment on purpose). Visits completed today haven't been to the
-  // cashier yet, so they read as "Settle at cashier"; older ones are Paid
-  // receipts. Official receipts live on each appointment's details page.
-  const bills = store.appointments
-    .filter(a => a.patientId === me.id && a.status === 'completed')
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .map(a => {
-      const doc = window.findDoctor(a.doctorId);
-      return {
-        id: a.id,
-        date: a.date,
-        service: a.reason,
-        doctor: doc ? doc.name : '—',
-        amount: doc ? doc.fee : 0,
-        status: a.date < today ? 'Paid' : 'Settle at cashier',
-      };
-    });
+  // fees are settled at the cashier during the visit. Visits completed today
+  // haven't been to the cashier yet, so they read as "Settle at cashier";
+  // older ones are Paid receipts. Official receipts live on each
+  // appointment's details page.
+  const bills = completed
+    .slice()
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    .map(a => ({
+      id: a.id,
+      date: a.date,
+      service: a.reason,
+      doctor: a.doctorName || '—',
+      amount: Number(a.doctorFee) || 0,
+      status: a.date < today ? 'Paid' : 'Settle at cashier',
+    }));
   const totalPaid = bills.filter(b => b.status === 'Paid').reduce((s, b) => s + b.amount, 0);
   const totalDue = bills.filter(b => b.status !== 'Paid').reduce((s, b) => s + b.amount, 0);
 
   const downloadRecords = () => {
-    downloadFile(`medicacare-records-${me.id}.html`, buildRecordsHTML(me, records, meds, labs, bills), 'text/html;charset=utf-8');
+    downloadFile(`medicacare-records-${me.id || 'patient'}.html`, buildRecordsHTML(me, records, meds, labs, bills), 'text/html;charset=utf-8');
     store.pushToast({ title: 'Records downloaded', msg: 'Open the file to view or print your full medical summary.' });
   };
+
+  const bloodType = me.blood_type || me.bloodType || '—';
+  const allergies = me.allergies || 'None';
+  const emergencyContact = me.emergency_contact || me.emergencyContact || '—';
 
   return (
     <AppShell current="records">
@@ -86,6 +103,15 @@ function MedicalRecords() {
           breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Medical records' }]}
           actions={<button className="btn btn-secondary" onClick={downloadRecords}><Icon name="download" size={14} /> Download records</button>}
         />
+
+        {loadError && (
+          <div className="card" style={{ marginBottom: 16 }}>
+            <div className="card-body">
+              <EmptyState icon="alert-triangle" title="Couldn't load your records" message={loadError}
+                actions={<button className="btn btn-secondary" onClick={() => window.location.reload()}>Try again</button>} />
+            </div>
+          </div>
+        )}
 
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-header"><h2 className="h-section">Health summary</h2></div>
@@ -102,15 +128,15 @@ function MedicalRecords() {
                 <>
                   <div>
                     <div className="t-muted" style={{ fontSize: 12, marginBottom: 4 }}>Blood type</div>
-                    <div style={{ fontWeight: 600 }}>{me.bloodType}</div>
+                    <div style={{ fontWeight: 600 }}>{bloodType}</div>
                   </div>
                   <div>
                     <div className="t-muted" style={{ fontSize: 12, marginBottom: 4 }}>Known allergies</div>
-                    <div style={{ fontWeight: 600 }}>{me.allergies || 'None'}</div>
+                    <div style={{ fontWeight: 600 }}>{allergies}</div>
                   </div>
                   <div>
                     <div className="t-muted" style={{ fontSize: 12, marginBottom: 4 }}>Emergency contact</div>
-                    <div style={{ fontWeight: 600 }}>{me.emergencyContact}</div>
+                    <div style={{ fontWeight: 600 }}>{emergencyContact}</div>
                   </div>
                 </>
               )}
@@ -178,7 +204,7 @@ function MedicalRecords() {
           </p>
         </div>
 
-        {/* Medications — fictional demo rows for the demo patient */}
+        {/* Medications — added by clinic staff */}
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-header"><h2 className="h-section">Medications</h2></div>
           <div className="card-body" style={{ padding: 0 }}>
@@ -210,11 +236,11 @@ function MedicalRecords() {
             </div>
           </div>
           <p className="t-help" style={{ padding: '10px 20px 16px', margin: 0 }}>
-            Medications are added by clinic staff. Seed rows for the demo account are fictional demo data.
+            Medications are added by clinic staff.
           </p>
         </div>
 
-        {/* Lab results — fictional demo rows for the demo patient */}
+        {/* Lab results — added by clinic staff */}
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-header"><h2 className="h-section">Lab results</h2></div>
           <div className="card-body" style={{ padding: 0 }}>
@@ -247,7 +273,7 @@ function MedicalRecords() {
             </div>
           </div>
           <p className="t-help" style={{ padding: '10px 20px 16px', margin: 0 }}>
-            Lab results are added by clinic staff. Seed rows are fictional demo data — the values are not real medical readings.
+            Lab results are added by clinic staff.
           </p>
         </div>
 
@@ -278,20 +304,17 @@ function MedicalRecords() {
                           : 'No records for the selected doctor.'}
                       />
                     </td></tr>
-                  ) : filteredRecords.map(r => {
-                    const doc = window.findDoctor(r.doctorId);
-                    return (
-                      <tr key={r.id}>
-                        <td data-label="Date">{window.formatDate(r.date)}</td>
-                        <td data-label="Type">{r.type}</td>
-                        <td data-label="Doctor">{doc ? doc.name : '—'}</td>
-                        <td className="record-cell" data-label="Record">
-                          <div style={{ fontWeight: 600 }}>{r.title}</div>
-                          <div className="t-muted" style={{ fontSize: 12.5 }}>{r.summary}</div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  ) : filteredRecords.map(r => (
+                    <tr key={r.id}>
+                      <td data-label="Date">{window.formatDate(r.date)}</td>
+                      <td data-label="Type">{r.type}</td>
+                      <td data-label="Doctor">{r.doctorName || '—'}</td>
+                      <td className="record-cell" data-label="Record">
+                        <div style={{ fontWeight: 600 }}>{r.title}</div>
+                        <div className="t-muted" style={{ fontSize: 12.5 }}>{r.summary}</div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -299,7 +322,7 @@ function MedicalRecords() {
         </div>
 
         <p className="t-muted" style={{ fontSize: 12, marginTop: 12 }}>
-          Note: records come from your completed appointments — our staff adds the doctor's notes when marking a visit complete. Seed data in this prototype is fictional.
+          Note: records come from your completed appointments — our staff adds the doctor's notes when marking a visit complete.
         </p>
       </div>
 
