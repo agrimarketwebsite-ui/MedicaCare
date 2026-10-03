@@ -47,8 +47,8 @@ function AppointmentHistory() {
   // after a successful POST, enforced server-side with 409)
   const [rateAppt, setRateAppt] = useState(null);
   const hasRated = (apptId) => (store.ratings || []).some(r => r.appointmentId === apptId);
-  // Ang API `rated` flag ang source of truth (cross-device); ang local
-  // record ay para lang sa rating na ginawa sa device/session na ito.
+  // The API `rated` flag is the source of truth (cross-device); the local
+  // record only covers a rating made on this device/session.
   const isRated = (a) => Boolean(a.rated) || hasRated(a.id);
   // Column sorting (guideline 18) — default stays newest-first by date
   const [sortKey, setSortKey] = useState('date');
@@ -62,7 +62,7 @@ function AppointmentHistory() {
       const list = await getAppointments();
       setAppts((list || []).map(toFrontendAppt).filter(Boolean));
     } catch (err) {
-      setLoadError(err.message || 'Hindi ma-load ang appointments.');
+      setLoadError(err.message || 'Could not load the appointments.');
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ function AppointmentHistory() {
     let cancelled = false;
     getAppointments()
       .then((list) => { if (!cancelled) setAppts((list || []).map(toFrontendAppt).filter(Boolean)); })
-      .catch((err) => { if (!cancelled) setLoadError(err.message || 'Hindi ma-load ang appointments.'); })
+      .catch((err) => { if (!cancelled) setLoadError(err.message || 'Could not load the appointments.'); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +125,7 @@ function AppointmentHistory() {
       setConfirmCancel(null);
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Hindi na-cancel', msg: err.message || 'Pakisubukang muli.' });
+      store.pushToast({ kind: 'error', title: 'Could not cancel', msg: err.message || 'Please try again.' });
     } finally {
       setCancelLoading(false);
     }
@@ -138,13 +138,13 @@ function AppointmentHistory() {
           title="My appointments"
           subtitle={loading
             ? <span className="skel" aria-hidden="true" style={{ width: 200, maxWidth: '100%', height: 14 }} />
-            : `${appts.length} appointment${appts.length === 1 ? '' : 's'} in total`}
+            : `${appts.length} appointments in total`}
           breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Appointments' }]}
           actions={<button className="btn btn-primary" onClick={() => navigate('/patient/book')}><Icon name="calendar-plus" size={14} /> Book appointment</button>}
         />
 
         {loadError ? (
-          <div className="card"><ErrorState title="Hindi ma-load ang appointments" message={loadError} onRetry={load} /></div>
+          <div className="card"><ErrorState title="Couldn't load the appointments" message={loadError} onRetry={load} /></div>
         ) : (
         <div className="card">
           <div className="table-toolbar">
@@ -168,11 +168,9 @@ function AppointmentHistory() {
           </div>
 
           {!loading && filtered.length === 0 ? (
-            <EmptyState icon="calendar-search" title={appts.length === 0 ? 'No appointments yet' : 'No appointments match your filters'}
-              message={appts.length === 0 ? 'Book your first appointment with one of our specialists.' : 'Try changing your filters or search terms.'}
-              actions={appts.length === 0
-                ? <button className="btn btn-primary" onClick={() => navigate('/patient/doctors')}><Icon name="stethoscope" size={14} /> Find a doctor</button>
-                : <button className="btn btn-secondary" onClick={() => { setQuery(''); setStatus('all'); }}>Clear filters</button>} />
+            <EmptyState icon="calendar-search" title="No appointments match your filters"
+              message="Try changing your filters or search terms."
+              actions={<button className="btn btn-secondary" onClick={() => { setQuery(''); setStatus('all'); }}>Clear filters</button>} />
           ) : (
             <>
               <div className="table-wrap">
