@@ -1,5 +1,7 @@
 // Shared helpers — doctor portal (mga pure functions lang, walang store).
 // Sinusundan ang visual/copy patterns ng patient portal.
+import { useStore } from '../shared/components.jsx';
+import { findDoctor } from '../shared/data.js';
 
 /** "HH:MM:SS" (24h, galing sa API) → "h:mm AM/PM" para sa display. */
 function fmtTime12(hhmmss) {
@@ -77,7 +79,43 @@ function starsDisplay(stars) {
   return '★'.repeat(n) + '☆'.repeat(Math.max(0, 5 - n));
 }
 
+// The logged-in doctor's record (fallback keeps pages rendering if the
+// doctor was removed from the directory)
+function useDoctor() {
+  const store = useStore();
+  return (store.doctorSession && findDoctor(store.doctorSession.doctorId))
+    || { id: '', name: 'Unknown doctor', specialty: '—', room: '—' };
+}
+
+// Short name for the compact week-view chips ("Juan Miguel B." style)
+function shortName(name) {
+  if (!name) return '?';
+  const parts = String(name).trim().split(/\s+/);
+  return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : parts[0];
+}
+
+// After inline validation fails, move focus to the first invalid field so
+// keyboard and screen-reader users land straight on what needs fixing.
+function focusFirstError() {
+  const el = document.querySelector('.input.error, .textarea.error, .select.error');
+  if (el) el.focus();
+}
+
+// Mon–Sun ISO dates of the current week
+function getWeekDays() {
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const pad = (x) => String(x).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  });
+}
+
 export {
   fmtTime12, localToday, parseDay, fmtDayShort, fmtDateLong,
   weekDays, addDays, mondayOf, WEEKDAY_LABELS, starsDisplay,
+  useDoctor, shortName, focusFirstError, getWeekDays,
 };
