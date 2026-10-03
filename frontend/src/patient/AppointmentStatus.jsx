@@ -1,8 +1,9 @@
 // AppointmentStatus — patient (Phase 4: wired to the backend API)
-// Optional apptId (galing sa "View status timeline" ng AppointmentDetails o sa
-// BookingConfirmation): ipinapakita ang timeline ng TINUKOY na appointment.
-// Kung walang apptId (dashboard "Check status"), ang next upcoming appointment
-// (pending/confirmed) ang ipinapakita, enriched by the real status_history
+// Optional apptId (from the "View status timeline" button in AppointmentDetails
+// or "View appointment status" in BookingConfirmation): shows that
+// appointment's timeline. Without apptId (dashboard "Check status"), the next
+// upcoming appointment (pending/confirmed) is shown, falling back to the most
+// recent appointment; the timeline is enriched by the real status_history
 // from GET /api/appointments/:id.
 import { useEffect, useState } from 'react';
 import { AppShell, DoctorAvatar, EmptyState, ErrorState, Icon, navigate, PageHeader, StatusBadge, useStore } from '../shared/components.jsx';
@@ -29,8 +30,8 @@ function AppointmentStatus({ apptId }) {
     setLoadError('');
     setNotFound(false);
     (async () => {
-      // Deep link: ipakita ang timeline ng tinukoy na appointment (BOLA-safe —
-      // ang GET /api/appointments/:id ay 404 para sa appointment ng iba).
+      // Deep link: show the specified appointment's timeline (BOLA-safe —
+      // GET /api/appointments/:id returns 404 for someone else's appointment).
       if (apptId) {
         try {
           const detail = await getAppointment(apptId);
@@ -38,7 +39,7 @@ function AppointmentStatus({ apptId }) {
         } catch (err) {
           if (!cancelled) {
             if (err && err.status === 404) setNotFound(true);
-            else setLoadError(err.message || 'Hindi ma-load ang appointment.');
+            else setLoadError(err.message || 'Could not load the appointment.');
           }
         } finally {
           if (!cancelled) setLoading(false);
@@ -51,11 +52,11 @@ function AppointmentStatus({ apptId }) {
         const upcoming = mapped
           .filter(a => a.status === 'pending' || a.status === 'confirmed')
           .sort((a, b) => a.date.localeCompare(b.date) || time24Value(a.time) - time24Value(b.time));
-        // Fallback (original page behavior): kapag walang upcoming, ipakita
-        // ang PINAKABAGONG appointment kahit cancelled/completed/no-show —
-        // ang "No appointments yet" ay para lang sa talagang walang
-        // appointment. Kung hindi ito fallback, ang cancelled booking ay
-        // magmumukhang walang history.
+        // Fallback (original page behavior): with no upcoming appointment,
+        // show the NEWEST appointment even if cancelled/completed/no-show —
+        // "No appointments yet" is only for patients with no appointments at
+        // all. Without this fallback a cancelled booking would look like it
+        // has no history.
         const fallback = mapped
           .slice()
           .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))[0] || null;
@@ -72,7 +73,7 @@ function AppointmentStatus({ apptId }) {
         }
         if (!cancelled) setAppt(next);
       } catch (err) {
-        if (!cancelled) setLoadError(err.message || 'Hindi ma-load ang appointments.');
+        if (!cancelled) setLoadError(err.message || 'Could not load the appointments.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -167,7 +168,7 @@ function AppointmentStatus({ apptId }) {
       <AppShell current="dashboard">
         <div className="page">
           <PageHeader title="Appointment status" breadcrumbs={[{ label: 'Home', to: '/patient/dashboard' }, { label: 'Status' }]} />
-          <div className="card"><ErrorState title="Hindi ma-load ang status" message={loadError} onRetry={() => window.location.reload()} /></div>
+          <div className="card"><ErrorState title="Couldn't load the status" message={loadError} onRetry={() => window.location.reload()} /></div>
         </div>
       </AppShell>
     );
@@ -190,7 +191,7 @@ function AppointmentStatus({ apptId }) {
   const doctor = {
     name: appt.doctorName,
     specialty: appt.specialty,
-    room: appt.doctorRoom || dirDoctor?.room || 'MedicaCare',
+    room: appt.doctorRoom || dirDoctor?.room || '—',
     fee: appt.doctorFee ?? dirDoctor?.fee ?? 0,
     photo: dirDoctor?.photo,
   };
@@ -198,11 +199,10 @@ function AppointmentStatus({ apptId }) {
   const histAt = (to) => (appt.statusHistory || []).find(h => h.to_status === to)?.created_at;
   const bookedAt = appt.createdAt ? formatDateTime(appt.createdAt) : '';
   const confirmedAt = histAt('confirmed') ? formatDateTime(histAt('confirmed')) : '';
-  const completedAt = histAt('completed') ? formatDateTime(histAt('completed')) : '';
   const cancelledAt = histAt('cancelled') ? formatDateTime(histAt('cancelled')) : '';
   const noShowAt = histAt('no-show') ? formatDateTime(histAt('no-show')) : '';
-  // Terminal statuses: ang timeline ay nagtatapos sa aktwal na nangyari
-  // (hindi sa "Visit completed" na hindi na mangyayari).
+  // Terminal statuses: the timeline ends with what actually happened
+  // (not "Visit completed", which will never happen for these).
   const steps = appt.status === 'cancelled'
     ? [
       { label: 'Booked', sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
@@ -216,9 +216,9 @@ function AppointmentStatus({ apptId }) {
       ]
       : [
         { label: 'Booked',    sub: `Request submitted${bookedAt ? ` · ${bookedAt}` : ''}`, done: true, active: false },
-        { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : `Confirmed${confirmedAt ? ` · ${confirmedAt}` : ''}`, done: appt.status !== 'pending', active: appt.status === 'pending' },
+        { label: 'Reviewed by staff', sub: appt.status === 'pending' ? 'Awaiting confirmation' : 'Confirmed', done: appt.status !== 'pending', active: appt.status === 'pending' },
         { label: 'Confirmed', sub: appt.status === 'confirmed' || appt.status === 'completed' ? 'Ready to visit' : 'Waiting', done: appt.status === 'confirmed' || appt.status === 'completed', active: appt.status === 'confirmed' },
-        { label: 'Visit completed', sub: appt.status === 'completed' ? `Completed${completedAt ? ` · ${completedAt}` : ''}` : 'After your visit', done: appt.status === 'completed', active: false },
+        { label: 'Visit completed', sub: appt.status === 'completed' ? 'Doctor notes available in records' : 'After your visit', done: appt.status === 'completed', active: false },
       ];
 
   return (
