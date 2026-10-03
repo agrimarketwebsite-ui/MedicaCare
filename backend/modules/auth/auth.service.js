@@ -217,4 +217,32 @@ export async function resetPassword(token, newPassword) {
   return { message: 'Password has been reset. Please log in with your new password.' };
 }
 
-export default { register, login, refresh, logout, forgotPassword, resetPassword };
+// ---------------------------------------------------------------------------
+// Change password — logged-in user lang (requireAuth). Ine-verify ang
+// CURRENT password bago palitan (ASVS V2.5). Pagkatapos magpalit, lahat ng
+// sessions ay nire-revoke — ang client ay mag-logout/silent-refresh ulit
+// gamit ang kasalukuyang session (ang access token ay nananatiling valid
+// hanggang mag-expire sa 15m, pero ang refresh chain ay patay na).
+// ---------------------------------------------------------------------------
+export async function changePassword({ id, kind }, currentPassword, newPassword) {
+  const account = await repo.findAccountHashById(kind, id);
+  if (!account) {
+    throw ApiError.unauthorized('Session revoked — please log in again');
+  }
+  const okPassword = await verifyPassword(currentPassword, account.password_hash);
+  if (!okPassword) {
+    await repo.logAuthEvent(`${kind}:${id}`, 'auth.change_password.failed', 'wrong-current-password');
+    throw ApiError.unauthorized('Current password is incorrect');
+  }
+  const password_hash = await hashPassword(newPassword);
+  await repo.updatePasswordHash(kind, id, password_hash);
+  const revoked = await repo.revokeAllRefreshTokens(kind, id);
+  await repo.logAuthEvent(
+    `${kind}:${id}`,
+    'auth.change_password',
+    `revoked ${revoked} sessions`,
+  );
+  return { message: 'Password changed successfully' };
+}
+
+export default { register, login, refresh, logout, forgotPassword, resetPassword, changePassword };
