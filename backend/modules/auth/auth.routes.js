@@ -1,9 +1,11 @@
 // backend/modules/auth/auth.routes.js
 // Phase 2 — POST /api/auth/register, /login, /refresh, /logout,
-//                 /forgot-password, /reset-password.
+//                 /forgot-password, /reset-password, /change-password.
 // Security (API4 / ASVS V2.5):
 //   - authLimiter (10/15min) sa mga credential endpoints
-//     (register/login/forgot/reset) — brute-force protection.
+//     (register/login/forgot/reset/change-password) — brute-force protection.
+//     Ang /change-password ay authenticated na (requireAuth) pero kailangan
+//     pa rin ng limiter dahil ang currentPassword ay subject sa guessing.
 //   - Ang /refresh ay bearer-token rotation (hindi password guessing) —
 //     may sariling refreshLimiter (120/15min). Dati itong nakasama sa
 //     authLimiter at nagiging sanhi ng spurious logout: bawat page reload
@@ -23,6 +25,7 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  changePasswordSchema,
 } from './auth.validation.js';
 import * as controller from './auth.controller.js';
 
@@ -34,5 +37,6 @@ router.post('/refresh', refreshLimiter, controller.refresh);
 router.post('/logout', requireAuth, controller.logout);
 router.post('/forgot-password', authLimiter, validate({ body: forgotPasswordSchema }), controller.forgotPassword);
 router.post('/reset-password', authLimiter, validate({ body: resetPasswordSchema }), controller.resetPassword);
+router.post('/change-password', requireAuth, authLimiter, validate({ body: changePasswordSchema }), controller.changePassword);
 
 export default router;
