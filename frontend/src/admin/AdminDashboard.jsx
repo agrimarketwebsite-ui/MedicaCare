@@ -33,7 +33,7 @@ function AdminDashboard() {
     setError('');
     Promise.all([
       getReportStats(),
-      getAdminAppointments({ limit: 1000 }),
+      getAdminAppointments({ limit: 100 }),
       getAdminPatients('', 1, 1000),
       getAdminDoctors('', 1, 1000),
     ])

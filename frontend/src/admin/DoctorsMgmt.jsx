@@ -255,7 +255,7 @@ function DoctorsMgmt() {
   const printSchedule = async (d) => {
     const today = localToday();
     try {
-      const r = await getAdminAppointments({ date: today, doctor_id: d.id, limit: 200 });
+      const r = await getAdminAppointments({ date: today, doctor_id: d.id, limit: 100 });
       const list = (r.appointments || []).sort((a, b) =>
         (a.start_time || '').localeCompare(b.start_time || ''));
       printDoctorSchedule(d, list, today);

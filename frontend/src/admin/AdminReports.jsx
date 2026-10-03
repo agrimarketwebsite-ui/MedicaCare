@@ -23,7 +23,7 @@ function AdminReports() {
     setLoading(true);
     setError('');
     Promise.all([
-      getAdminAppointments({ limit: 1000 }),
+      getAdminAppointments({ limit: 100 }),
       getAdminDoctors('', 1, 1000),
     ])
       .then(([appts, docs]) => {
