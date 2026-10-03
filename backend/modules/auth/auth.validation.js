@@ -78,4 +78,14 @@ export const resetPasswordSchema = z
   })
   .strict();
 
-export default { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };
+export const changePasswordSchema = z
+  .object({
+    // Ang current password ay min(1) lang — bine-verify lang ang hash
+    // (tulad ng login password, hindi ine-enforce ang strength policy dito).
+    currentPassword: z.string().min(1, 'Current password is required').max(128),
+    // Ang new password ay sumusunod sa register strength policy.
+    newPassword: passwordSchema,
+  })
+  .strict();
+
+export default { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema };
