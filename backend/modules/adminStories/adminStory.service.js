@@ -11,30 +11,30 @@ export async function listStories({ status } = {}) {
   return { stories };
 }
 
-async function moderate(actor, id, status, actionLabel) {
+async function moderate({ reviewerId, actor }, id, status, actionLabel) {
   const current = await repo.getStoryById(id);
   if (!current) throw ApiError.notFound('Story not found');
-  const row = await repo.moderateStory(id, { status, reviewed_by: actor });
+  const row = await repo.moderateStory(id, { status, reviewed_by: reviewerId });
   await logActivity(actor, `story.${actionLabel}`, `Story by "${current.display_name}" → ${status}`);
   return { story: row };
 }
 
-export async function approveStory(actor, id) {
-  return moderate(actor, id, 'approved', 'approve');
+export async function approveStory(reviewerId, actor, id) {
+  return moderate({ reviewerId, actor }, id, 'approved', 'approve');
 }
 
-export async function rejectStory(actor, id) {
-  return moderate(actor, id, 'rejected', 'reject');
+export async function rejectStory(reviewerId, actor, id) {
+  return moderate({ reviewerId, actor }, id, 'rejected', 'reject');
 }
 
 /** Unpublish: approved → pending lang (hindi pwede ang rejected → pending). */
-export async function unpublishStory(actor, id) {
+export async function unpublishStory(reviewerId, actor, id) {
   const current = await repo.getStoryById(id);
   if (!current) throw ApiError.notFound('Story not found');
   if (current.status !== 'approved') {
     throw ApiError.conflict(`Cannot unpublish a story with status '${current.status}'.`);
   }
-  return moderate(actor, id, 'pending', 'unpublish');
+  return moderate({ reviewerId, actor }, id, 'pending', 'unpublish');
 }
 
 export default {

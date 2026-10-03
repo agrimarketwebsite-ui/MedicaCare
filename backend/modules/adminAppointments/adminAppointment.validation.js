@@ -30,7 +30,7 @@ const phoneSchema = z
   .trim()
   .min(7, 'Enter a valid contact number')
   .max(20, 'Contact number is too long')
-  .regex(/^[+()\-\\s\d]+$/, 'Enter a valid contact number')
+  .regex(/^[+()\-\s\d]+$/, 'Enter a valid contact number')
   .refine(
     (v) => {
       const digits = v.replace(/\D/g, '');

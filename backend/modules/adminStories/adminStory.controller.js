@@ -14,19 +14,19 @@ export const listStories = asyncHandler(async (req, res) => {
 
 export const approveStory = asyncHandler(async (req, res) => {
   const actor = await actorEmail(req.user.id);
-  const data = await service.approveStory(actor, req.validated.params.id);
+  const data = await service.approveStory(req.user.id, actor, req.validated.params.id);
   return ok(res, data);
 });
 
 export const rejectStory = asyncHandler(async (req, res) => {
   const actor = await actorEmail(req.user.id);
-  const data = await service.rejectStory(actor, req.validated.params.id);
+  const data = await service.rejectStory(req.user.id, actor, req.validated.params.id);
   return ok(res, data);
 });
 
 export const unpublishStory = asyncHandler(async (req, res) => {
   const actor = await actorEmail(req.user.id);
-  const data = await service.unpublishStory(actor, req.validated.params.id);
+  const data = await service.unpublishStory(req.user.id, actor, req.validated.params.id);
   return ok(res, data);
 });
 

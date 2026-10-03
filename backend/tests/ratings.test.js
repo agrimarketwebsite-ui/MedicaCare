@@ -45,7 +45,6 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
   let base, server;
   const password = 'DocStr0ng1';
   const state = {};
-  const emails = docs.map((_, i) => H.uniqueEmail(`phase5rate${i}`));
 
   const apiDoc = (idx, method, path, opts) =>
     H.api(base, method, path, { ...opts, token: state[`docToken${idx}`] });
@@ -59,19 +58,61 @@ describe('ratings integration — Phase 5 doctor feedback view', { skip: !H || d
     return new Date(Date.UTC(y, m - 1, d + delta)).toISOString().slice(0, 10);
   }
 
+  /**
+   * Humanap ng doctor na may weekday availability at WALANG doctor_account pa,
+   * hindi kasama ang mga doctor_id sa `exclude`.
+   */
+  async function findDoctorWithoutAccount(exclude) {
+    const { data, error } = await H.supabase
+      .from('doctor_weekly_availability')
+      .select('doctor_id, weekday')
+      .in('weekday', [1, 2, 3, 4, 5])
+      .order('weekday', { ascending: true })
+      .limit(60);
+    if (error) throw error;
+    const seen = new Map();
+    for (const r of data || []) if (!seen.has(r.doctor_id)) seen.set(r.doctor_id, r);
+    for (const [doctorId, row] of seen) {
+      if (exclude.has(doctorId)) continue;
+      const existing = await H.supabase
+        .from('doctor_accounts').select('id').eq('doctor_id', doctorId).maybeSingle();
+      if (existing.error) throw existing.error;
+      if (!existing.data) return { doctorId, weekday: row.weekday };
+    }
+    return null;
+  }
+
+  /**
+   * Gumawa ng doctor_account para kay docs[i]. 23505-tolerant: kapag ang
+   * doctor ay nabigyan na ng account ng ibang sabay-tumatakbong suite,
+   * papalitan ang docs[i] ng ibang doctor na walang account pa at uulitin.
+   */
+  async function acquireAccount(password_hash, i, emailPrefix) {
+    for (;;) {
+      const email = H.uniqueEmail(`${emailPrefix}${i}`);
+      const ins = await H.supabase
+        .from('doctor_accounts')
+        .insert({ doctor_id: docs[i].doctorId, email, password_hash })
+        .select('id')
+        .single();
+      if (!ins.error) return { accountId: ins.data.id, email };
+      if (ins.error.code !== '23505') {
+        throw new Error(`create doctor_accounts ${i}: ${ins.error.message}`);
+      }
+      const replacement = await findDoctorWithoutAccount(new Set(docs.map((d) => d.doctorId)));
+      if (!replacement) throw new Error('walang available na doctor para sa test');
+      docs[i] = replacement;
+    }
+  }
+
   before(async () => {
     ({ base, server } = await H.bootApp());
     const password_hash = await hashPassword(password);
     for (let i = 0; i < 2; i++) {
-      const ins = await H.supabase
-        .from('doctor_accounts')
-        .insert({ doctor_id: docs[i].doctorId, email: emails[i], password_hash })
-        .select('id')
-        .single();
-      if (ins.error) throw new Error(`create doctor_accounts ${i}: ${ins.error.message}`);
-      state[`docAccount${i}`] = ins.data.id;
+      const { accountId, email } = await acquireAccount(password_hash, i, 'phase5rate');
+      state[`docAccount${i}`] = accountId;
       const login = await H.api(base, 'POST', '/auth/login', {
-        body: { email: emails[i], password, role: 'doctor' },
+        body: { email, password, role: 'doctor' },
       });
       assert.equal(login.status, 200, `doctor login ${i}`);
       state[`docToken${i}`] = login.json.data.accessToken;

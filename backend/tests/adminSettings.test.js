@@ -83,7 +83,7 @@ describe('admin integration — Phase 6 settings', { skip: !H }, () => {
   });
 
   it('GET /admin/clinic → 200, may clinic info', async () => {
-    const r = await apiAdmin('GET', '/admin/clinic');
+    const r = await apiAdmin('GET', '/admin/settings/clinic');
     assert.equal(r.status, 200);
     const clinic = r.json.data.clinic ?? r.json.data;
     assert.ok(clinic.name, 'may clinic name');
@@ -91,18 +91,18 @@ describe('admin integration — Phase 6 settings', { skip: !H }, () => {
 
   it('PUT /admin/clinic → 200 at nagpe-persist (tapos restore)', async () => {
     const newName = `MedicaCare Test Clinic ${Date.now()}`;
-    const u = await apiAdmin('PUT', '/admin/clinic', { body: { name: newName } });
+    const u = await apiAdmin('PUT', '/admin/settings/clinic', { body: { name: newName } });
     assert.equal(u.status, 200, `PUT clinic: ${JSON.stringify(u.json)}`);
-    const g = await apiAdmin('GET', '/admin/clinic');
+    const g = await apiAdmin('GET', '/admin/settings/clinic');
     const clinic = g.json.data.clinic ?? g.json.data;
     assert.equal(clinic.name, newName, 'nag-persist ang bagong name');
     // Ibalik agad ang original.
-    const back = await apiAdmin('PUT', '/admin/clinic', { body: { name: state.origClinic.name } });
+    const back = await apiAdmin('PUT', '/admin/settings/clinic', { body: { name: state.origClinic.name } });
     assert.equal(back.status, 200);
   });
 
   it('GET /admin/app → 200, may appointment preferences', async () => {
-    const r = await apiAdmin('GET', '/admin/app');
+    const r = await apiAdmin('GET', '/admin/settings/app');
     assert.equal(r.status, 200);
     const prefs = r.json.data.preferences ?? r.json.data.app ?? r.json.data;
     assert.equal(typeof prefs.auto_confirm_appointments, 'boolean');
@@ -110,16 +110,16 @@ describe('admin integration — Phase 6 settings', { skip: !H }, () => {
   });
 
   it('PUT /admin/app → 200 at nagpe-persist (tapos restore)', async () => {
-    const u = await apiAdmin('PUT', '/admin/app', {
+    const u = await apiAdmin('PUT', '/admin/settings/app', {
       body: { auto_confirm_appointments: true, slot_interval_minutes: 30 },
     });
     assert.equal(u.status, 200, `PUT app: ${JSON.stringify(u.json)}`);
-    const g = await apiAdmin('GET', '/admin/app');
+    const g = await apiAdmin('GET', '/admin/settings/app');
     const prefs = g.json.data.preferences ?? g.json.data.app ?? g.json.data;
     assert.equal(prefs.auto_confirm_appointments, true);
     assert.equal(prefs.slot_interval_minutes, 30);
     // Ibalik agad ang original values.
-    const back = await apiAdmin('PUT', '/admin/app', {
+    const back = await apiAdmin('PUT', '/admin/settings/app', {
       body: {
         auto_confirm_appointments: state.origApp.auto_confirm_appointments,
         slot_interval_minutes: state.origApp.slot_interval_minutes,

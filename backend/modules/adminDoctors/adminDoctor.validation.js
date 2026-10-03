@@ -48,7 +48,7 @@ const doctorFields = {
   consultation_fee: z.number().min(0).max(1000000),
   room: z.string().trim().max(60),
   gender: genderSchema,
-  photo_url: z.string().trim().max(500),
+  photo_url: z.string().trim().max(500).optional().nullable(),
 };
 
 export const listDoctorsQuerySchema = z
