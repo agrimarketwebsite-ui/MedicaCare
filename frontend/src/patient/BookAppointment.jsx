@@ -4,18 +4,25 @@
 // Kapag galing sa DoctorAvailability, ang store.pendingBooking ay
 // nagpi-pre-fill ng doctor/date/time — editable pa rin ang lahat ng fields.
 // POST /api/appointments → 201 navigates to the confirmation with the
-// reference_code; 409 (slot taken / attendee overlap) shows a friendly banner.
+// reference_code; 409 (slot taken / attendee overlap) shows an error banner.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, Field, Icon, navigate, PageHeader, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
+import { AppShell, DoctorAvatar, Field, Icon, navigate, PageHeader, PageSpinner, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
 import { bookAppointment, getSlots, ApiError } from '../shared/api.js';
 import { fmtTime12, focusFirstError, isPastSlot, nextDays, time24 } from './helpers.js';
 
+import { Profile } from './Profile.jsx';
+
+// ---------- Book Appointment (form) ----------
 function BookAppointment() {
   const store = useStore();
   const pending = store.pendingBooking;
   const me = store.profile;
+  // Simulated fetch — centered circle spinner while "loading", same 600ms
+  // pattern as the other patient pages
+  const [pageLoading, setPageLoading] = useState(true);
+  useEffect(() => { const t = setTimeout(() => setPageLoading(false), 600); return () => clearTimeout(t); }, []);
   // Walang visible duration control — ang tagal ay galing sa draft
-  // (DoctorAvailability) o default na 30 minuto
+  // (DoctorAvailability) o default na 30 minuto; ipinapasa lang sa API
   const [duration] = useState(pending?.duration || 30);
   const [form, setForm] = useState({
     doctorId: pending?.doctorId || '',
@@ -103,7 +110,6 @@ function BookAppointment() {
         ...(form.forWhom !== 'self' ? { family_member_id: form.forWhom } : {}),
       });
       store.setPendingBooking(null);
-      store.pushToast({ title: 'Appointment booked', msg: `Reference ${appt.reference_code} — see you on ${form.date}.` });
       navigate('/patient/confirmation?ref=' + encodeURIComponent(appt.reference_code));
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
@@ -121,7 +127,7 @@ function BookAppointment() {
           setSubmitError(msg || 'That slot has just been taken. Please pick a different date or time.');
         }
       } else {
-        setSubmitError(err.message || 'Hindi na-book ang appointment. Pakisubukang muli.');
+        setSubmitError(err.message || 'Could not book the appointment. Please try again.');
       }
       window.scrollTo(0, 0);
     } finally {
@@ -129,9 +135,13 @@ function BookAppointment() {
     }
   };
 
-  const forWhomName = form.forWhom === 'self'
-    ? (me?.full_name || 'Myself')
-    : ((store.familyMembers || []).find(f => f.id === form.forWhom)?.full_name || '');
+  if (pageLoading) {
+    return (
+      <AppShell current="book">
+        <div className="page"><PageSpinner /></div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell current="book">
@@ -157,12 +167,6 @@ function BookAppointment() {
                 {!overlapError && (
                   <div style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{submitError}</div>
                 )}
-                {slotTaken && form.doctorId && (
-                  <button className="btn btn-secondary sm" style={{ marginTop: 10 }}
-                    onClick={() => navigate('/patient/availability/' + form.doctorId)}>
-                    <Icon name="arrow-left" size={13} /> Back to available slots
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -184,7 +188,6 @@ function BookAppointment() {
                       ))}
                     </SelectInput>
                   </Field>
-
                   <Field label="Who is this visit for?" help="Book for yourself or a family member saved on your Profile page.">
                     <SelectInput value={form.forWhom} onChange={e => update('forWhom', e.target.value)}>
                       <option value="self">Myself{me?.full_name ? ` (${me.full_name})` : ''}</option>
@@ -193,7 +196,6 @@ function BookAppointment() {
                       ))}
                     </SelectInput>
                   </Field>
-
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <Field label="Date" required error={errors.date}>
                       <SelectInput value={form.date} onChange={e => changeDate(e.target.value)} error={errors.date}>
@@ -280,9 +282,8 @@ function BookAppointment() {
                           side column — the side-by-side label/value grid leaves
                           too little room for values like long dates (same
                           pattern as the other narrow side cards) */}
-                      <div className="detail-row compact"><div className="label">Visit for</div><div className="value">{forWhomName}</div></div>
                       <div className="detail-row compact"><div className="label">Date</div><div className="value">{form.date ? window.formatDateLong(form.date) : '—'}</div></div>
-                      <div className="detail-row compact"><div className="label">Time</div><div className="value">{form.time ? `${fmtTime12(form.time + ':00')} (${duration} min)` : '—'}</div></div>
+                      <div className="detail-row compact"><div className="label">Time</div><div className="value">{form.time ? fmtTime12(form.time + ':00') : '—'}</div></div>
                       <div className="detail-row compact"><div className="label">Location</div><div className="value">{doctor.room}</div></div>
                       <div className="detail-row compact"><div className="label">Consultation fee</div><div className="value">₱{Number(doctor.fee || 0).toLocaleString()}</div></div>
                     </div>
