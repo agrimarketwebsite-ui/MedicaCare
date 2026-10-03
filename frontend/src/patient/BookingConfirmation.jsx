@@ -3,11 +3,14 @@
 // The appointment is re-fetched from GET /api/appointments so the page also
 // works as a deep link — never a false success from stale store state.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, EmptyState, Icon, navigate, StatusBadge, useHashRoute } from '../shared/components.jsx';
+import { AppShell, DoctorAvatar, EmptyState, Icon, navigate, StatusBadge, useHashRoute, useStore } from '../shared/components.jsx';
 import { getAppointments } from '../shared/api.js';
 import { toFrontendAppt } from './helpers.js';
 
+// ---------- Booking Confirmation ----------
 function BookingConfirmation() {
+  const store = useStore();
+  const me = store.profile;
   const route = useHashRoute();
   const [, query] = route.split('?');
   const ref = new URLSearchParams(query || '').get('ref');
@@ -29,13 +32,16 @@ function BookingConfirmation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);
 
-  const doctor = appt ? { name: appt.doctorName, specialty: appt.specialty } : null;
+  // Doctor display: API doctor fields + store directory (avatar/photo)
+  const doctor = appt
+    ? ((store.doctors || []).find(d => d.id === appt.doctorId) || { name: appt.doctorName, specialty: appt.specialty })
+    : null;
 
   return (
     <AppShell current="doctors">
       <div className="page" style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px' }}>
-        {/* §15/§32: deep-linking here without a reference (o hindi mahanap ang
-            booking) must not read as a false success */}
+        {/* §15/§32: deep-linking here without a recent booking (e.g. after the
+            store was cleared) must not read as a false success */}
         {loading ? (
           <div className="card" style={{ padding: 40, textAlign: 'center' }} aria-hidden="true">
             <span className="skel" style={{ width: 72, height: 72, borderRadius: '50%', display: 'inline-block', marginBottom: 20 }} />
@@ -46,8 +52,8 @@ function BookingConfirmation() {
           <div className="card">
             <EmptyState
               icon="calendar-x"
-              title="No booking to show"
-              message="We couldn't find that booking. Book an appointment first, or open it later from your appointment history."
+              title="No recent booking to show"
+              message="This page shows the confirmation of your latest booking. Book an appointment first, or open it later from your appointment history."
               actions={<button className="btn btn-primary" onClick={() => navigate('/patient/book')}>Book an appointment</button>}
             />
           </div>
@@ -57,20 +63,11 @@ function BookingConfirmation() {
             <Icon name="check-circle-2" size={36} />
           </div>
           <h1 className="h-page" style={{ marginBottom: 8 }}>Appointment successfully booked</h1>
-          <p className="t-muted" style={{ fontSize: 14, maxWidth: 400, margin: '0 auto 8px' }}>
+          <p className="t-muted" style={{ fontSize: 14, maxWidth: 400, margin: '0 auto 24px' }}>
             {appt.status === 'confirmed'
               ? 'Your appointment is confirmed — no waiting for staff review. You can track it any time from your dashboard.'
               : 'Your appointment request has been received. You can track your appointment status any time from your dashboard.'}
           </p>
-          {/* Reference code — prominently, tulad ng hinihingi ng pasyente sa resibo */}
-          <div className="t-mono" style={{
-            display: 'inline-block', fontSize: 22, fontWeight: 700, letterSpacing: '0.04em',
-            color: 'var(--primary)', background: 'var(--primary-soft)',
-            border: '1px dashed var(--primary-border)', borderRadius: 10,
-            padding: '10px 22px', margin: '12px 0 24px',
-          }}>
-            {appt.reference}
-          </div>
 
           {doctor && (
             <div style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: 10, padding: 20, textAlign: 'left', marginBottom: 24 }}>
@@ -101,7 +98,7 @@ function BookingConfirmation() {
                   <div className="t-mono" style={{ fontSize: 14, fontWeight: 500 }}>{appt.reference}</div>
                 </div>
                 {/* Proxy booking: confirm immediately who the visit is for */}
-                {appt.bookedFor && (
+                {appt.bookedFor && appt.bookedFor !== me?.full_name && (
                   <div>
                     <div className="t-help">Booking for</div>
                     <div style={{ fontSize: 14, fontWeight: 500 }}>{appt.bookedFor}</div>
@@ -111,9 +108,8 @@ function BookingConfirmation() {
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
             <button className="btn btn-secondary" onClick={() => navigate('/patient/dashboard')}>Back to dashboard</button>
-            <button className="btn btn-secondary" onClick={() => navigate('/patient/appointment/' + appt.id)}>View details</button>
             <button className="btn btn-primary" onClick={() => navigate('/patient/status')}>View appointment status</button>
           </div>
         </div>
