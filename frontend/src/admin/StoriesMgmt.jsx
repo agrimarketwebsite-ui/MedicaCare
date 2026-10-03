@@ -1,8 +1,11 @@
 // StoriesMgmt — patient story moderation (Phase 6).
 // Three-section layout restored from the prototype: "Waiting for review",
-// "Approved & shown publicly", "Not published". Search filters the quote,
-// display name, and patient identity client-side.
-// Story shape: { id, title, body, status, patient_id, display_name, created_at, reviewed_at }.
+// "Approved & shown publicly", "Not published". Search filters the quote and
+// display name client-side.
+// Story shape: { id, display_name, quote, status, reviewed_at, created_at }.
+// NOTE: the prototype's StoryRow also showed the author's account identity
+// (name + email) for staff verification, but the API does not return patient
+// identity for stories, so only the public display name can be shown.
 import { useEffect, useState } from 'react';
 import {
   AppShell, EmptyState, ErrorState, Icon, PageHeader, PatientAvatar, useStore,
@@ -19,7 +22,7 @@ function StoryRow({ t, actions }) {
     <div className="list-item" style={{ alignItems: 'flex-start' }}>
       <PatientAvatar person={{ name: displayName }} size={28} />
       <div className="list-item-body">
-        <div className="list-item-title">"{t.body}"</div>
+        <div className="list-item-title">"{t.quote}"</div>
         <div className="list-item-sub">
           Shows as "{displayName}" · submitted {formatDate((t.created_at || '').slice(0, 10))}
           {t.reviewed_at ? ` · reviewed ${formatDate((t.reviewed_at || '').slice(0, 10))}` : ''}
@@ -55,23 +58,25 @@ function StoriesMgmt() {
   useEffect(() => { load(); }, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const q = query.trim().toLowerCase();
-  // Search spans the quote, the display name, and the patient identity
+  // Search spans the quote and the display name (the API returns no patient
+  // identity for stories, so it cannot be searched)
   const matches = (t) => {
     if (!q) return true;
-    return `${t.body || ''} ${t.display_name || ''} ${t.patient_name || ''}`.toLowerCase().includes(q);
+    return `${t.quote || ''} ${t.display_name || ''}`.toLowerCase().includes(q);
   };
   const pending = stories.filter((t) => t.status === 'pending').filter(matches);
   const approved = stories.filter((t) => t.status === 'approved').filter(matches);
   const rejected = stories.filter((t) => t.status === 'rejected').filter(matches);
 
-  const act = async (id, fn, title, message) => {
+  const act = async (id, fn, title, msg) => {
     setBusyId(id);
     try {
       await fn(id);
-      store.pushToast({ kind: 'success', title, message });
+      // NOTE: ToastLayer reads `t.msg` — `message` would render an empty body
+      store.pushToast({ kind: 'success', title, msg });
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Action failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+      store.pushToast({ kind: 'error', title: 'Action failed', msg: err instanceof ApiError ? err.message : 'Please try again.' });
     } finally {
       setBusyId(null);
     }
@@ -201,7 +206,7 @@ function StoriesMgmt() {
                       <button
                         className="btn btn-secondary sm"
                         disabled={busyId === t.id}
-                        onClick={() => act(t.id, unpublishStory, 'Story restored', 'It is back in the review queue.')}
+                        onClick={() => act(t.id, unpublishStory, 'Story unpublished', 'It is back in the review queue.')}
                       >
                         Restore to review
                       </button>
