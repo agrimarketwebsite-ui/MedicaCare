@@ -14,7 +14,7 @@ function must(result, context) {
   return result.data;
 }
 
-const PATIENT_EMBED = 'patients(id, full_name, email)';
+const PATIENT_EMBED = 'patients(id, full_name, email, phone)';
 const DOCTOR_EMBED = 'doctors(id, full_name, specialties(name))';
 
 export const ADMIN_APPT_COLS =
