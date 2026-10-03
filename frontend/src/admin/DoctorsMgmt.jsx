@@ -1,1 +1,407 @@
-Ly8gRG9jdG9yc01nbXQg4oCUIGRvY3RvciBkaXJlY3RvcnkgKHJlc3RvcmVkIHByb3RvdHlwZSBVSSwgcmVhbCBBUEkpLgovLyBUYWJsZSArIGFkZC9lZGl0IChEb2N0b3JGb3JtTW9kYWwpICsgZGVsZXRlIChDb25maXJtTW9kYWwpICsgYXZhaWxhYmlsaXR5Ci8vIHN1Yi12aWV3ICsgc3BlY2lhbHR5IGZpbHRlciArIEV4cG9ydCBDU1YuCmltcG9ydCB7IHVzZUVmZmVjdCwgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7CiAgQXBwU2hlbGwsIEJhZGdlLCBDb25maXJtTW9kYWwsIERvY3RvckF2YXRhciwgRG9jdG9yU3RhdHVzQmFkZ2UsIEVtcHR5U3RhdGUsCiAgRXJyb3JTdGF0ZSwgSWNvbiwgUGFnZUhlYWRlciwgUGFnaW5hdGlvbiwgU2VsZWN0SW5wdXQsIFNrZWxldG9uUm93cywgdXNlU3RvcmUsCn0gZnJvbSAnLi4vc2hhcmVkL2NvbXBvbmVudHMuanN4JzsKaW1wb3J0IHsgZm9ybWF0RGF5UmFuZ2UgfSBmcm9tICcuLi9zaGFyZWQvZGF0YS5qcyc7CmltcG9ydCB7CiAgZGVsZXRlQWRtaW5Eb2N0b3IsIGdldEFkbWluRG9jdG9yQXZhaWxhYmlsaXR5LCBnZXRBZG1pbkRvY3RvcnMsCiAgZ2V0U3BlY2lhbHR5QnJlYWtkb3duLCBBcGlFcnJvciwKfSBmcm9tICcuLi9zaGFyZWQvYXBpLmpzJzsKaW1wb3J0IHsgZG93bmxvYWRDU1YsIGxvY2FsVG9kYXksIHByaW50RG9jdG9yU2NoZWR1bGUgfSBmcm9tICcuL2hlbHBlcnMuanMnOwppbXBvcnQgeyBEb2N0b3JGb3JtTW9kYWwgfSBmcm9tICcuL0RvY3RvckZvcm1Nb2RhbC5qc3gnOwppbXBvcnQgeyBnZXRBZG1pbkFwcG9pbnRtZW50cyB9IGZyb20gJy4uL3NoYXJlZC9hcGkuanMnOwoKY29uc3QgUEFHRV9TSVpFID0gMTU7CmNvbnN0IERBWVMgPSBbJ1N1bmRheScsICdNb25kYXknLCAnVHVlc2RheScsICdXZWRuZXNkYXknLCAnVGh1cnNkYXknLCAnRnJpZGF5JywgJ1NhdHVyZGF5J107CgpmdW5jdGlvbiBmbXREYXkoZCkgewogIGNvbnN0IG4gPSBOdW1iZXIoZCk7CiAgcmV0dXJuIE51bWJlci5pc0ludGVnZXIobikgJiYgbiA+PSAwICYmIG4gPD0gNiA/IERBWVNbbl0gOiBTdHJpbmcoZCA/PyAn4oCUJyk7Cn0KCi8vIC0tLS0tLS0tLS0gQXZhaWxhYmlsaXR5IHN1Yi12aWV3IChrZXB0IGZyb20gUGhhc2UgNikgLS0tLS0tLS0tLQpmdW5jdGlvbiBBdmFpbGFiaWxpdHlQYW5lbCh7IGRvY3Rvciwgb25DbG9zZSB9KSB7CiAgY29uc3Qgc3RvcmUgPSB1c2VTdG9yZSgpOwogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKHRydWUpOwogIGNvbnN0IFtlbnRyaWVzLCBzZXRFbnRyaWVzXSA9IHVzZVN0YXRlKFtdKTsKICBjb25zdCBbZXJyb3IsIHNldEVycm9yXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbZm9ybSwgc2V0Rm9ybV0gPSB1c2VTdGF0ZSh7IGRheV9vZl93ZWVrOiAnMScsIHN0YXJ0X3RpbWU6ICcwOTowMCcsIGVuZF90aW1lOiAnMTc6MDAnIH0pOwogIGNvbnN0IFtlZGl0aW5nSWQsIHNldEVkaXRpbmdJZF0gPSB1c2VTdGF0ZShudWxsKTsKICBjb25zdCBbYnVzeSwgc2V0QnVzeV0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW2RlbGV0aW5nSWQsIHNldERlbGV0aW5nSWRdID0gdXNlU3RhdGUobnVsbCk7CgogIGNvbnN0IGxvYWQgPSBhc3luYyAoKSA9PiB7CiAgICBzZXRMb2FkaW5nKHRydWUpOwogICAgc2V0RXJyb3IoJycpOwogICAgdHJ5IHsKICAgICAgY29uc3QgbGlzdCA9IGF3YWl0IGdldEFkbWluRG9jdG9yQXZhaWxhYmlsaXR5KGRvY3Rvci5pZCk7CiAgICAgIHNldEVudHJpZXMobGlzdCk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0RXJyb3IoZXJyLm1lc3NhZ2UgfHwgJ0NvdWxkIG5vdCBsb2FkIGF2YWlsYWJpbGl0eS4nKTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldExvYWRpbmcoZmFsc2UpOwogICAgfQogIH07CgogIHVzZUVmZmVjdCgoKSA9PiB7IGxvYWQoKTsgfSwgW2RvY3Rvci5pZF0pOyAvLyBlc2xpbnQtZGlzYWJsZS1saW5lIHJlYWN0LWhvb2tzL2V4aGF1c3RpdmUtZGVwcwoKICBjb25zdCByZXNldEZvcm0gPSAoKSA9PiB7CiAgICBzZXRGb3JtKHsgZGF5X29mX3dlZWs6ICcxJywgc3RhcnRfdGltZTogJzA5OjAwJywgZW5kX3RpbWU6ICcxNzowMCcgfSk7CiAgICBzZXRFZGl0aW5nSWQobnVsbCk7CiAgfTsKCiAgY29uc3QgZG9TYXZlID0gYXN5bmMgKCkgPT4gewogICAgaWYgKCFmb3JtLnN0YXJ0X3RpbWUgfHwgIWZvcm0uZW5kX3RpbWUpIHJldHVybjsKICAgIHNldEJ1c3kodHJ1ZSk7CiAgICBzZXRFcnJvcignJyk7CiAgICB0cnkgewogICAgICBjb25zdCBib2R5ID0gewogICAgICAgIGRheV9vZl93ZWVrOiBOdW1iZXIoZm9ybS5kYXlfb2Zfd2VlayksCiAgICAgICAgc3RhcnRfdGltZTogZm9ybS5zdGFydF90aW1lLAogICAgICAgIGVuZF90aW1lOiBmb3JtLmVuZF90aW1lLAogICAgICB9OwogICAgICBpZiAoZWRpdGluZ0lkKSB7CiAgICAgICAgY29uc3QgeyB1cGRhdGVBZG1pbkRvY3RvckF2YWlsYWJpbGl0eSB9ID0gYXdhaXQgaW1wb3J0KCcuLi9zaGFyZWQvYXBpLmpzJyk7CiAgICAgICAgYXdhaXQgdXBkYXRlQWRtaW5Eb2N0b3JBdmFpbGFiaWxpdHkoZG9jdG9yLmlkLCBlZGl0aW5nSWQsIGJvZHkpOwogICAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdBdmFpbGFiaWxpdHkgdXBkYXRlZCcsIG1lc3NhZ2U6ICdUaGUgdGltZSBzbG90IHdhcyB1cGRhdGVkLicgfSk7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgY29uc3QgeyBjcmVhdGVBZG1pbkRvY3RvckF2YWlsYWJpbGl0eSB9ID0gYXdhaXQgaW1wb3J0KCcuLi9zaGFyZWQvYXBpLmpzJyk7CiAgICAgICAgYXdhaXQgY3JlYXRlQWRtaW5Eb2N0b3JBdmFpbGFiaWxpdHkoZG9jdG9yLmlkLCBib2R5KTsKICAgICAgICBzdG9yZS5wdXNoVG9hc3QoeyBraW5kOiAnc3VjY2VzcycsIHRpdGxlOiAnQXZhaWxhYmlsaXR5IGFkZGVkJywgbWVzc2FnZTogJ1RoZSB0aW1lIHNsb3Qgd2FzIGFkZGVkLicgfSk7CiAgICAgIH0KICAgICAgcmVzZXRGb3JtKCk7CiAgICAgIGxvYWQoKTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzZXRFcnJvcihlcnIgaW5zdGFuY2VvZiBBcGlFcnJvciA/IGVyci5tZXNzYWdlIDogJ0NvdWxkIG5vdCBzYXZlIHRoZSBhdmFpbGFiaWxpdHkgc2xvdC4nKTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldEJ1c3koZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRvRGVsZXRlID0gYXN5bmMgKCkgPT4gewogICAgaWYgKCFkZWxldGluZ0lkKSByZXR1cm47CiAgICBzZXRCdXN5KHRydWUpOwogICAgdHJ5IHsKICAgICAgY29uc3QgeyBkZWxldGVBZG1pbkRvY3RvckF2YWlsYWJpbGl0eSB9ID0gYXdhaXQgaW1wb3J0KCcuLi9zaGFyZWQvYXBpLmpzJyk7CiAgICAgIGF3YWl0IGRlbGV0ZUFkbWluRG9jdG9yQXZhaWxhYmlsaXR5KGRvY3Rvci5pZCwgZGVsZXRpbmdJZCk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdTbG90IHJlbW92ZWQnLCBtZXNzYWdlOiAnVGhlIGF2YWlsYWJpbGl0eSBzbG90IHdhcyByZW1vdmVkLicgfSk7CiAgICAgIHNldERlbGV0aW5nSWQobnVsbCk7CiAgICAgIGxvYWQoKTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzZXRFcnJvcihlcnIgaW5zdGFuY2VvZiBBcGlFcnJvciA/IGVyci5tZXNzYWdlIDogJ0NvdWxkIG5vdCByZW1vdmUgdGhlIHNsb3QuJyk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRCdXN5KGZhbHNlKTsKICAgIH0KICB9OwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImNhcmQiIHN0eWxlPXt7IG1hcmdpblRvcDogMTYgfX0+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJjYXJkLWhlYWRlciI+CiAgICAgICAgPGRpdj4KICAgICAgICAgIDxoMyBzdHlsZT17eyBtYXJnaW46IDAgfX0+QXZhaWxhYmlsaXR5IOKAlCB7ZG9jdG9yLmZ1bGxfbmFtZX08L2gzPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtbXV0ZWQiIHN0eWxlPXt7IGZvbnRTaXplOiAxMi41IH19PldlZWtseSBzY2hlZHVsZSB0aGF0IHBhdGllbnRzIHNlZSB3aGVuIGJvb2tpbmcuPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tZ2hvc3Qgc20iIG9uQ2xpY2s9e29uQ2xvc2V9PjxJY29uIG5hbWU9IngiIHNpemU9ezE0fSAvPiBDbG9zZTwvYnV0dG9uPgogICAgICA8L2Rpdj4KICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQtYm9keSI+CiAgICAgICAge2Vycm9yICYmIDxkaXYgY2xhc3NOYW1lPSJmb3JtLWVycm9yIiBzdHlsZT17eyBtYXJnaW5Cb3R0b206IDEyIH19PjxJY29uIG5hbWU9ImFsZXJ0LWNpcmNsZSIgc2l6ZT17MTR9IC8+IHtlcnJvcn08L2Rpdj59CiAgICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgICA8dGFibGUgY2xhc3NOYW1lPSJ0YWJsZSIgYXJpYS1oaWRkZW49InRydWUiPjx0Ym9keT48U2tlbGV0b25Sb3dzIHJvd3M9ezN9IGNvbHM9ezR9IC8+PC90Ym9keT48L3RhYmxlPgogICAgICAgICkgOiBlbnRyaWVzLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgIDxFbXB0eVN0YXRlIGljb249ImNsb2NrIiB0aXRsZT0iTm8gYXZhaWxhYmlsaXR5IHNldCIgbWVzc2FnZT0iQWRkIHRoZSBkb2N0b3IncyB3ZWVrbHkgc2xvdHMgYmVsb3cuIiAvPgogICAgICAgICkgOiAoCiAgICAgICAgICA8dGFibGUgY2xhc3NOYW1lPSJ0YWJsZSI+CiAgICAgICAgICAgIDx0aGVhZD48dHI+PHRoPkRheTwvdGg+PHRoPlN0YXJ0PC90aD48dGg+RW5kPC90aD48dGg+PC90aD48L3RyPjwvdGhlYWQ+CiAgICAgICAgICAgIDx0Ym9keT4KICAgICAgICAgICAgICB7ZW50cmllcy5tYXAoZSA9PiAoCiAgICAgICAgICAgICAgICA8dHIga2V5PXtlLmlkfT4KICAgICAgICAgICAgICAgICAgPHRkPntmbXREYXkoZS5kYXlfb2Zfd2Vlayl9PC90ZD4KICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0idC1tdXRlZCI+eyhlLnN0YXJ0X3RpbWUgfHwgJycpLnNsaWNlKDAsIDUpfTwvdGQ+CiAgICAgICAgICAgICAgICAgIDx0ZCBjbGFzc05hbWU9InQtbXV0ZWQiPnsoZS5lbmRfdGltZSB8fCAnJykuc2xpY2UoMCwgNSl9PC90ZD4KICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPXt7IHRleHRBbGlnbjogJ3JpZ2h0Jywgd2hpdGVTcGFjZTogJ25vd3JhcCcgfX0+CiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tZ2hvc3Qgc20iIHRpdGxlPSJFZGl0IHNsb3QiIG9uQ2xpY2s9eygpID0+IHsKICAgICAgICAgICAgICAgICAgICAgIHNldEZvcm0oeyBkYXlfb2Zfd2VlazogU3RyaW5nKGUuZGF5X29mX3dlZWspLCBzdGFydF90aW1lOiAoZS5zdGFydF90aW1lIHx8ICcnKS5zbGljZSgwLCA1KSwgZW5kX3RpbWU6IChlLmVuZF90aW1lIHx8ICcnKS5zbGljZSgwLCA1KSB9KTsKICAgICAgICAgICAgICAgICAgICAgIHNldEVkaXRpbmdJZChlLmlkKTsKICAgICAgICAgICAgICAgICAgICB9fT48SWNvbiBuYW1lPSJwZW5jaWwiIHNpemU9ezE0fSAvPjwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLWdob3N0IHNtIiB0aXRsZT0iUmVtb3ZlIHNsb3QiIG9uQ2xpY2s9eygpID0+IHNldERlbGV0aW5nSWQoZS5pZCl9PjxJY29uIG5hbWU9InRyYXNoLTIiIHNpemU9ezE0fSAvPjwvYnV0dG9uPgogICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgPC90cj4KICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgPC90Ym9keT4KICAgICAgICAgIDwvdGFibGU+CiAgICAgICAgKX0KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZ2FwOiA4LCBhbGlnbkl0ZW1zOiAnZmxleC1lbmQnLCBtYXJnaW5Ub3A6IDEyLCBmbGV4V3JhcDogJ3dyYXAnIH19PgogICAgICAgICAgPGxhYmVsIHN0eWxlPXt7IGZvbnRTaXplOiAxMi41IH19PkRheQogICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2Zvcm0uZGF5X29mX3dlZWt9IG9uQ2hhbmdlPXtlID0+IHNldEZvcm0oZiA9PiAoeyAuLi5mLCBkYXlfb2Zfd2VlazogZS50YXJnZXQudmFsdWUgfSkpfSBzdHlsZT17eyBtYXJnaW5MZWZ0OiA2IH19PgogICAgICAgICAgICAgIHtEQVlTLm1hcCgoZCwgaSkgPT4gPG9wdGlvbiBrZXk9e2l9IHZhbHVlPXtpfT57ZH08L29wdGlvbj4pfQogICAgICAgICAgICA8L1NlbGVjdElucHV0PgogICAgICAgICAgPC9sYWJlbD4KICAgICAgICAgIDxsYWJlbCBzdHlsZT17eyBmb250U2l6ZTogMTIuNSB9fT5TdGFydAogICAgICAgICAgICA8aW5wdXQgdHlwZT0idGltZSIgY2xhc3NOYW1lPSJpbnB1dCIgdmFsdWU9e2Zvcm0uc3RhcnRfdGltZX0gb25DaGFuZ2U9e2UgPT4gc2V0Rm9ybShmID0+ICh7IC4uLmYsIHN0YXJ0X3RpbWU6IGUudGFyZ2V0LnZhbHVlIH0pKX0gc3R5bGU9e3sgbWFyZ2luTGVmdDogNiB9fSAvPgogICAgICAgICAgPC9sYWJlbD4KICAgICAgICAgIDxsYWJlbCBzdHlsZT17eyBmb250U2l6ZTogMTIuNSB9fT5FbmQKICAgICAgICAgICAgPGlucHV0IHR5cGU9InRpbWUiIGNsYXNzTmFtZT0iaW5wdXQiIHZhbHVlPXtmb3JtLmVuZF90aW1lfSBvbkNoYW5nZT17ZSA9PiBzZXRGb3JtKGYgPT4gKHsgLi4uZiwgZW5kX3RpbWU6IGUudGFyZ2V0LnZhbHVlIH0pKX0gc3R5bGU9e3sgbWFyZ2luTGVmdDogNiB9fSAvPgogICAgICAgICAgPC9sYWJlbD4KICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSBzbSIgb25DbGljaz17ZG9TYXZlfSBkaXNhYmxlZD17YnVzeX0+e2VkaXRpbmdJZCA/ICdVcGRhdGUgc2xvdCcgOiAnQWRkIHNsb3QnfTwvYnV0dG9uPgogICAgICAgICAge2VkaXRpbmdJZCAmJiA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1naG9zdCBzbSIgb25DbGljaz17cmVzZXRGb3JtfT5DYW5jZWw8L2J1dHRvbj59CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgICA8Q29uZmlybU1vZGFsCiAgICAgICAgb3Blbj17ISFkZWxldGluZ0lkfQogICAgICAgIG9uQ2xvc2U9eygpID0+IHNldERlbGV0aW5nSWQobnVsbCl9CiAgICAgICAgb25Db25maXJtPXtkb0RlbGV0ZX0KICAgICAgICBsb2FkaW5nPXtidXN5fQogICAgICAgIHRpdGxlPSJSZW1vdmUgYXZhaWxhYmlsaXR5IHNsb3Q/IgogICAgICAgIG1lc3NhZ2U9IlRoaXMgc2xvdCB3aWxsIG5vIGxvbmdlciBiZSBib29rYWJsZSBieSBwYXRpZW50cy4iCiAgICAgICAgY29uZmlybUxhYmVsPSJSZW1vdmUgc2xvdCIKICAgICAgLz4KICAgIDwvZGl2PgogICk7Cn0KCi8vIC0tLS0tLS0tLS0gRG9jdG9ycyBNYW5hZ2VtZW50IC0tLS0tLS0tLS0KZnVuY3Rpb24gRG9jdG9yc01nbXQoKSB7CiAgY29uc3Qgc3RvcmUgPSB1c2VTdG9yZSgpOwogIGNvbnN0IFtxdWVyeSwgc2V0UXVlcnldID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IFtzcGVjaWFsdHksIHNldFNwZWNpYWx0eV0gPSB1c2VTdGF0ZSgnYWxsJyk7CiAgY29uc3QgW3NwZWNpYWx0aWVzLCBzZXRTcGVjaWFsdGllc10gPSB1c2VTdGF0ZShbXSk7CiAgY29uc3QgW3BhZ2UsIHNldFBhZ2VdID0gdXNlU3RhdGUoMSk7CiAgY29uc3QgW2xvYWRpbmcsIHNldExvYWRpbmddID0gdXNlU3RhdGUodHJ1ZSk7CiAgY29uc3QgW2Vycm9yLCBzZXRFcnJvcl0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgW2RvY3RvcnMsIHNldERvY3RvcnNdID0gdXNlU3RhdGUoW10pOwogIGNvbnN0IFt0b3RhbCwgc2V0VG90YWxdID0gdXNlU3RhdGUoMCk7CiAgY29uc3QgW2F2YWlsTWFwLCBzZXRBdmFpbE1hcF0gPSB1c2VTdGF0ZSh7fSk7CiAgY29uc3QgW2Zvcm1PcGVuLCBzZXRGb3JtT3Blbl0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW2VkaXRpbmcsIHNldEVkaXRpbmddID0gdXNlU3RhdGUobnVsbCk7CiAgY29uc3QgW2RlbGV0aW5nLCBzZXREZWxldGluZ10gPSB1c2VTdGF0ZShudWxsKTsKICBjb25zdCBbZGVsZXRlQnVzeSwgc2V0RGVsZXRlQnVzeV0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW2F2YWlsRG9jdG9yLCBzZXRBdmFpbERvY3Rvcl0gPSB1c2VTdGF0ZShudWxsKTsKCiAgY29uc3QgbG9hZCA9IGFzeW5jICgpID0+IHsKICAgIHNldExvYWRpbmcodHJ1ZSk7CiAgICBzZXRFcnJvcignJyk7CiAgICB0cnkgewogICAgICBjb25zdCBbciwgc3BlY10gPSBhd2FpdCBQcm9taXNlLmFsbChbCiAgICAgICAgZ2V0QWRtaW5Eb2N0b3JzKHF1ZXJ5LnRyaW0oKSwgcGFnZSwgUEFHRV9TSVpFKSwKICAgICAgICBnZXRTcGVjaWFsdHlCcmVha2Rvd24oKS5jYXRjaCgoKSA9PiBbXSksCiAgICAgIF0pOwogICAgICBzZXREb2N0b3JzKHIuZG9jdG9ycyk7CiAgICAgIHNldFRvdGFsKHIudG90YWwpOwogICAgICBzZXRTcGVjaWFsdGllcyhzcGVjLm1hcChzID0+IHMuc3BlY2lhbHR5KS5maWx0ZXIoQm9vbGVhbikpOwogICAgICAvLyBGZXRjaCBhdmFpbGFiaWxpdHkgZGF5LXJhbmdlcyBmb3IgdGhlIHBhZ2UgKGZvciB0aGUgQXZhaWxhYmlsaXR5IGNvbHVtbikKICAgICAgY29uc3QgYXZhaWxFbnRyaWVzID0gYXdhaXQgUHJvbWlzZS5hbGwoCiAgICAgICAgci5kb2N0b3JzLm1hcChkID0+IGdldEFkbWluRG9jdG9yQXZhaWxhYmlsaXR5KGQuaWQpLmNhdGNoKCgpID0+IFtdKSkKICAgICAgKTsKICAgICAgY29uc3QgbWFwID0ge307CiAgICAgIHIuZG9jdG9ycy5mb3JFYWNoKChkLCBpKSA9PiB7CiAgICAgICAgY29uc3QgZGF5cyA9IFsuLi5uZXcgU2V0KGF2YWlsRW50cmllc1tpXS5tYXAoZSA9PiBOdW1iZXIoZS5kYXlfb2Zfd2VlaykpKV0uc29ydCgpOwogICAgICAgIG1hcFtkLmlkXSA9IGRheXM7CiAgICAgIH0pOwogICAgICBzZXRBdmFpbE1hcChtYXApOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldEVycm9yKGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgbG9hZCBkb2N0b3JzLicpOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0TG9hZGluZyhmYWxzZSk7CiAgICB9CiAgfTsKCiAgdXNlRWZmZWN0KCgpID0+IHsgbG9hZCgpOyB9LCBbcGFnZV0pOyAvLyBlc2xpbnQtZGlzYWJsZS1saW5lIHJlYWN0LWhvb2tzL2V4aGF1c3RpdmUtZGVwcwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgY29uc3QgdCA9IHNldFRpbWVvdXQoKCkgPT4geyBzZXRQYWdlKDEpOyBsb2FkKCk7IH0sIDM1MCk7CiAgICByZXR1cm4gKCkgPT4gY2xlYXJUaW1lb3V0KHQpOwogIH0sIFtxdWVyeV0pOyAvLyBlc2xpbnQtZGlzYWJsZS1saW5lIHJlYWN0LWhvb2tzL2V4aGF1c3RpdmUtZGVwcwoKICBjb25zdCBmaWx0ZXJlZCA9IGRvY3RvcnMuZmlsdGVyKGQgPT4gewogICAgaWYgKHNwZWNpYWx0eSAhPT0gJ2FsbCcgJiYgKGQuc3BlY2lhbHRpZXM/Lm5hbWUgfHwgZC5zcGVjaWFsdHlfbmFtZSkgIT09IHNwZWNpYWx0eSkgcmV0dXJuIGZhbHNlOwogICAgcmV0dXJuIHRydWU7CiAgfSk7CgogIGNvbnN0IGRvRGVsZXRlID0gYXN5bmMgKCkgPT4gewogICAgaWYgKCFkZWxldGluZykgcmV0dXJuOwogICAgc2V0RGVsZXRlQnVzeSh0cnVlKTsKICAgIHRyeSB7CiAgICAgIGF3YWl0IGRlbGV0ZUFkbWluRG9jdG9yKGRlbGV0aW5nLmlkKTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZTogJ0RvY3RvciByZW1vdmVkJywgbWVzc2FnZTogYCR7ZGVsZXRpbmcuZnVsbF9uYW1lfSdzIHByb2ZpbGUgaGFzIGJlZW4gZGVsZXRlZC5gIH0pOwogICAgICBzZXREZWxldGluZyhudWxsKTsKICAgICAgbG9hZCgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdlcnJvcicsIHRpdGxlOiAnRGVsZXRlIGZhaWxlZCcsIG1lc3NhZ2U6IGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgZGVsZXRlIGRvY3Rvci4nIH0pOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0RGVsZXRlQnVzeShmYWxzZSk7CiAgICB9CiAgfTsKCiAgY29uc3QgZG9FeHBvcnQgPSAoKSA9PiB7CiAgICBkb3dubG9hZENTVignbWVkaWNhY2FyZS1kb2N0b3JzLmNzdicsIFsKICAgICAgWydJRCcsICdOYW1lJywgJ1NwZWNpYWx0eScsICdTdGF0dXMnLCAnQ2xpbmljIGRheXMnLCAnRXhwZXJpZW5jZSAoeXJzKScsICdDb25zdWx0YXRpb24gZmVlICjigrEpJywgJ1Jvb20nXSwKICAgICAgLi4uZmlsdGVyZWQubWFwKGQgPT4gWwogICAgICAgIGQuaWQsIGQuZnVsbF9uYW1lLCBkLnNwZWNpYWx0aWVzPy5uYW1lIHx8IGQuc3BlY2lhbHR5X25hbWUgfHwgJycsCiAgICAgICAgZC5zdGF0dXMsIGZvcm1hdERheVJhbmdlKGF2YWlsTWFwW2QuaWRdIHx8IFtdKSwKICAgICAgICBkLnllYXJzX29mX2V4cGVyaWVuY2UgPz8gJycsIGQuY29uc3VsdGF0aW9uX2ZlZSA/PyAnJywgZC5yb29tIHx8ICcnLAogICAgICBdKSwKICAgIF0pOwogICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZTogJ0V4cG9ydCByZWFkeScsIG1lc3NhZ2U6IGAke2ZpbHRlcmVkLmxlbmd0aH0gZG9jdG9yKHMpIGV4cG9ydGVkIHRvIENTVi5gIH0pOwogIH07CgogIGNvbnN0IHNwZWNpYWx0eU9mID0gKGQpID0+IGQuc3BlY2lhbHRpZXM/Lm5hbWUgfHwgZC5zcGVjaWFsdHlfbmFtZSB8fCAn4oCUJzsKCiAgLy8gU3RhZmYgcHJpbnQgdGhlIGRheSdzIHBhdGllbnQgbGlzdCBmb3IgYSBkb2N0b3IgKFBERiB2aWEgdGhlIGJyb3dzZXIncwogIC8vIG5hdGl2ZSAiU2F2ZSBhcyBQREYiKQogIGNvbnN0IHByaW50U2NoZWR1bGUgPSBhc3luYyAoZCkgPT4gewogICAgY29uc3QgdG9kYXkgPSBsb2NhbFRvZGF5KCk7CiAgICB0cnkgewogICAgICBjb25zdCByID0gYXdhaXQgZ2V0QWRtaW5BcHBvaW50bWVudHMoeyBkYXRlOiB0b2RheSwgZG9jdG9yX2lkOiBkLmlkLCBsaW1pdDogMjAwIH0pOwogICAgICBjb25zdCBsaXN0ID0gKHIuYXBwb2ludG1lbnRzIHx8IFtdKS5zb3J0KChhLCBiKSA9PgogICAgICAgIChhLnN0YXJ0X3RpbWUgfHwgJycpLmxvY2FsZUNvbXBhcmUoYi5zdGFydF90aW1lIHx8ICcnKSk7CiAgICAgIHByaW50RG9jdG9yU2NoZWR1bGUoZCwgbGlzdCwgdG9kYXkpOwogICAgICBzdG9yZS5wdXNoVG9hc3QoewogICAgICAgIGtpbmQ6ICdzdWNjZXNzJywKICAgICAgICB0aXRsZTogJ1ByaW50IGRpYWxvZyBvcGVuZWQnLAogICAgICAgIG1lc3NhZ2U6IGBDaG9vc2UgIlNhdmUgYXMgUERGIiBhcyB0aGUgZGVzdGluYXRpb24gdG8gZG93bmxvYWQgdG9kYXkncyAke2xpc3QubGVuZ3RofSBhcHBvaW50bWVudChzKSBhcyBhIFBERi5gLAogICAgICB9KTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzdG9yZS5wdXNoVG9hc3QoeyBraW5kOiAnZXJyb3InLCB0aXRsZTogJ1ByaW50IGZhaWxlZCcsIG1lc3NhZ2U6IGVyci5tZXNzYWdlIHx8ICdDb3VsZCBub3QgbG9hZCB0b2RheVwncyBzY2hlZHVsZS4nIH0pOwogICAgfQogIH07CgogIHJldHVybiAoCiAgICA8QXBwU2hlbGwgY3VycmVudD0iZG9jdG9ycyI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJwYWdlIj4KICAgICAgICA8UGFnZUhlYWRlcgogICAgICAgICAgdGl0bGU9IkRvY3RvcnMiCiAgICAgICAgICBzdWJ0aXRsZT17bG9hZGluZwogICAgICAgICAgICA/IDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgYXJpYS1oaWRkZW49InRydWUiIHN0eWxlPXt7IHdpZHRoOiAyNDAsIG1heFdpZHRoOiAnMTAwJScsIGhlaWdodDogMTQgfX0gLz4KICAgICAgICAgICAgOiBgJHt0b3RhbH0gZG9jdG9ycyBhY3Jvc3MgJHtzcGVjaWFsdGllcy5sZW5ndGh9IHNwZWNpYWx0aWVzYH0KICAgICAgICAgIGJyZWFkY3J1bWJzPXtbeyBsYWJlbDogJ0hvbWUnLCB0bzogJy9hZG1pbi9kYXNoYm9hcmQnIH0sIHsgbGFiZWw6ICdEb2N0b3JzJyB9XX0KICAgICAgICAgIGFjdGlvbnM9ezw+CiAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSIgb25DbGljaz17ZG9FeHBvcnR9PjxJY29uIG5hbWU9ImRvd25sb2FkIiBzaXplPXsxNH0gLz4gRXhwb3J0IENTVjwvYnV0dG9uPgogICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1wcmltYXJ5IiBvbkNsaWNrPXsoKSA9PiB7IHNldEVkaXRpbmcobnVsbCk7IHNldEZvcm1PcGVuKHRydWUpOyB9fT48SWNvbiBuYW1lPSJwbHVzIiBzaXplPXsxNH0gLz4gQWRkIGRvY3RvcjwvYnV0dG9uPgogICAgICAgICAgPC8+fQogICAgICAgIC8+CgogICAgICAgIHtlcnJvciA/ICgKICAgICAgICAgIDxFcnJvclN0YXRlIHRpdGxlPSJDb3VsZCBub3QgbG9hZCBkb2N0b3JzIiBtZXNzYWdlPXtlcnJvcn0gb25SZXRyeT17bG9hZH0gLz4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNhcmQiPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGFibGUtdG9vbGJhciI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImlucHV0LWdyb3VwIHNlYXJjaCI+CiAgICAgICAgICAgICAgICA8SWNvbiBuYW1lPSJzZWFyY2giIHNpemU9ezE2fSBjbGFzc05hbWU9ImlucHV0LWljb24iIC8+CiAgICAgICAgICAgICAgICA8aW5wdXQgY2xhc3NOYW1lPSJpbnB1dCIgc3R5bGU9e3sgcGFkZGluZ0xlZnQ6IDM4IH19IHBsYWNlaG9sZGVyPSJTZWFyY2ggYnkgbmFtZSBvciBzcGVjaWFsdHnigKYiIGFyaWEtbGFiZWw9IlNlYXJjaCBkb2N0b3JzIGJ5IG5hbWUgb3Igc3BlY2lhbHR5IiB2YWx1ZT17cXVlcnl9IG9uQ2hhbmdlPXtlID0+IHNldFF1ZXJ5KGUudGFyZ2V0LnZhbHVlKX0gLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8U2VsZWN0SW5wdXQgc3R5bGU9e3sgbWF4V2lkdGg6IDE4MCB9fSB2YWx1ZT17c3BlY2lhbHR5fSBvbkNoYW5nZT17ZSA9PiBzZXRTcGVjaWFsdHkoZS50YXJnZXQudmFsdWUpfSBhcmlhLWxhYmVsPSJGaWx0ZXIgYnkgc3BlY2lhbHR5Ij4KICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9ImFsbCI+QWxsIHNwZWNpYWx0aWVzPC9vcHRpb24+CiAgICAgICAgICAgICAgICB7c3BlY2lhbHRpZXMubWFwKHMgPT4gPG9wdGlvbiBrZXk9e3N9IHZhbHVlPXtzfT57c308L29wdGlvbj4pfQogICAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRhYmxlLXdyYXAiPgogICAgICAgICAgICAgIDx0YWJsZSBjbGFzc05hbWU9InRhYmxlIHRhYmxlLXJlc3BvbnNpdmUtc3RhY2sgdGFibGUtY29tcGFjdCI+CiAgICAgICAgICAgICAgICA8dGhlYWQ+CiAgICAgICAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICAgICAgICA8dGg+RG9jdG9yPC90aD4KICAgICAgICAgICAgICAgICAgICA8dGg+U3BlY2lhbHR5PC90aD4KICAgICAgICAgICAgICAgICAgICA8dGg+U3RhdHVzPC90aD4KICAgICAgICAgICAgICAgICAgICA8dGg+QXZhaWxhYmlsaXR5PC90aD4KICAgICAgICAgICAgICAgICAgICA8dGg+RXhwZXJpZW5jZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoPkZlZTwvdGg+CiAgICAgICAgICAgICAgICAgICAgPHRoIGNsYXNzTmFtZT0iY29sLWFjdGlvbnMiPkFjdGlvbnM8L3RoPgogICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgPC90aGVhZD4KICAgICAgICAgICAgICAgIDx0Ym9keT4KICAgICAgICAgICAgICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgICAgICAgICAgICAgQXJyYXkuZnJvbSh7IGxlbmd0aDogNSB9KS5tYXAoKF8sIHIpID0+ICgKICAgICAgICAgICAgICAgICAgICAgIDx0ciBrZXk9e3J9PgogICAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iRG9jdG9yIj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iY2VsbC13aXRoLWF2YXRhciI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiAyOCwgaGVpZ2h0OiAyOCwgYm9yZGVyUmFkaXVzOiAnNTAlJywgZmxleFNocmluazogMCB9fSAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBtaW5XaWR0aDogMCB9fT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJza2VsIiBzdHlsZT17eyB3aWR0aDogMTEwLCBtYXhXaWR0aDogJzEwMCUnLCBoZWlnaHQ6IDEyLCBkaXNwbGF5OiAnYmxvY2snIH19IC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDkwLCBoZWlnaHQ6IDEwLCBkaXNwbGF5OiAnYmxvY2snLCBtYXJnaW5Ub3A6IDQgfX0gLz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iU3BlY2lhbHR5Ij48c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiAnNjUlJywgaGVpZ2h0OiAxMiB9fSAvPjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZCBkYXRhLWxhYmVsPSJTdGF0dXMiPjxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDY0LCBoZWlnaHQ6IDE4IH19IC8+PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGRhdGEtbGFiZWw9IkF2YWlsYWJpbGl0eSIgY2xhc3NOYW1lPSJ0ZC1ub3dyYXAiPjxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDk2LCBoZWlnaHQ6IDExIH19IC8+PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGRhdGEtbGFiZWw9IkV4cGVyaWVuY2UiPjxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDQwLCBoZWlnaHQ6IDEyIH19IC8+PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGRhdGEtbGFiZWw9IkZlZSI+PHNwYW4gY2xhc3NOYW1lPSJza2VsIiBzdHlsZT17eyB3aWR0aDogNTYsIGhlaWdodDogMTIgfX0gLz48L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJjb2wtYWN0aW9ucyI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGdhcDogNiB9fT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0ic2tlbCIgc3R5bGU9e3sgd2lkdGg6IDI0LCBoZWlnaHQ6IDI0IH19IC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InNrZWwiIHN0eWxlPXt7IHdpZHRoOiAyNCwgaGVpZ2h0OiAyNCB9fSAvPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJza2VsIiBzdHlsZT17eyB3aWR0aDogMjQsIGhlaWdodDogMjQgfX0gLz4KICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgPC90ZD4KICAgICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICAgKSkKICAgICAgICAgICAgICAgICAgKSA6IGZpbHRlcmVkLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICAgICAgICA8dHI+PHRkIGNvbFNwYW49ezd9IGNsYXNzTmFtZT0iZW1wdHktY2VsbCIgc3R5bGU9e3sgcGFkZGluZzogMCB9fT4KICAgICAgICAgICAgICAgICAgICAgIDxFbXB0eVN0YXRlIGljb249InN0ZXRob3Njb3BlIiB0aXRsZT0iTm8gZG9jdG9ycyBmb3VuZCIgbWVzc2FnZT0iVHJ5IGNsZWFyaW5nIHlvdXIgc2VhcmNoIG9yIGFkZCBhIG5ldyBkb2N0b3IuIgogICAgICAgICAgICAgICAgICAgICAgICBhY3Rpb25zPXs8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1wcmltYXJ5IiBvbkNsaWNrPXsoKSA9PiB7IHNldEVkaXRpbmcobnVsbCk7IHNldEZvcm1PcGVuKHRydWUpOyB9fT48SWNvbiBuYW1lPSJwbHVzIiBzaXplPXsxNH0gLz4gQWRkIGRvY3RvcjwvYnV0dG9uPn0gLz4KICAgICAgICAgICAgICAgICAgICA8L3RkPjwvdHI+CiAgICAgICAgICAgICAgICAgICkgOiBmaWx0ZXJlZC5tYXAoZCA9PiAoCiAgICAgICAgICAgICAgICAgICAgPHRyIGtleT17ZC5pZH0+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iRG9jdG9yIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNlbGwtd2l0aC1hdmF0YXIiPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxEb2N0b3JBdmF0YXIgZG9jdG9yPXt7IG5hbWU6IGQuZnVsbF9uYW1lLCBwaG90bzogZC5waG90b191cmwgfX0gc2l6ZT17Mjh9IC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBtaW5XaWR0aDogMCB9fT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjZWxsLXByaW1hcnkgY2VsbC1wcmltYXJ5LXRydW5jYXRlIiBzdHlsZT17eyBtYXhXaWR0aDogMTUwIH19IHRpdGxlPXtkLmZ1bGxfbmFtZX0+e2QuZnVsbF9uYW1lfTwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImNlbGwtc2Vjb25kYXJ5Ij57ZC5yb29tIHx8ICfigJQnfTwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iU3BlY2lhbHR5Ij57c3BlY2lhbHR5T2YoZCl9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgIDx0ZCBkYXRhLWxhYmVsPSJTdGF0dXMiPjxEb2N0b3JTdGF0dXNCYWRnZSBzdGF0dXM9e2Quc3RhdHVzfSAvPjwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iQXZhaWxhYmlsaXR5IiBjbGFzc05hbWU9InRkLW5vd3JhcCIgc3R5bGU9e3sgZm9udFNpemU6IDEyLjUsIGNvbG9yOiAndmFyKC0tdGV4dC1zZWNvbmRhcnkpJyB9fT4KICAgICAgICAgICAgICAgICAgICAgICAge2Zvcm1hdERheVJhbmdlKGF2YWlsTWFwW2QuaWRdIHx8IFtdKX0KICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgZGF0YS1sYWJlbD0iRXhwZXJpZW5jZSI+e2QueWVhcnNfb2ZfZXhwZXJpZW5jZSAhPSBudWxsID8gYCR7ZC55ZWFyc19vZl9leHBlcmllbmNlfSB5cnNgIDogJ+KAlCd9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgIDx0ZCBkYXRhLWxhYmVsPSJGZWUiPntkLmNvbnN1bHRhdGlvbl9mZWUgIT0gbnVsbCA/IGDigrEke051bWJlcihkLmNvbnN1bHRhdGlvbl9mZWUpLnRvTG9jYWxlU3RyaW5nKCl9YCA6ICfigJQnfTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJjb2wtYWN0aW9ucyIgc3R5bGU9e3sgd2hpdGVTcGFjZTogJ25vd3JhcCcgfX0+CiAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSBzbSIgb25DbGljaz17KCkgPT4gc2V0QXZhaWxEb2N0b3IoZCl9IHRpdGxlPSJNYW5hZ2UgYXZhaWxhYmlsaXR5Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICA8SWNvbiBuYW1lPSJjbG9jayIgc2l6ZT17MTR9IC8+IEF2YWlsYWJpbGl0eQogICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0bi1pY29uIiB0aXRsZT0iUHJpbnQgLyBzYXZlIHNjaGVkdWxlIGFzIFBERiIgYXJpYS1sYWJlbD0iUHJpbnQgb3Igc2F2ZSB0b2RheSdzIHNjaGVkdWxlIGFzIFBERiIgb25DbGljaz17KCkgPT4gcHJpbnRTY2hlZHVsZShkKX0+PEljb24gbmFtZT0icHJpbnRlciIgc2l6ZT17MTZ9IC8+PC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4taWNvbiIgdGl0bGU9IkVkaXQiIGFyaWEtbGFiZWw9IkVkaXQgZG9jdG9yIiBvbkNsaWNrPXsoKSA9PiB7IHNldEVkaXRpbmcoZCk7IHNldEZvcm1PcGVuKHRydWUpOyB9fT48SWNvbiBuYW1lPSJwZW5jaWwiIHNpemU9ezE2fSAvPjwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuLWljb24iIHRpdGxlPSJEZWxldGUiIGFyaWEtbGFiZWw9IkRlbGV0ZSBkb2N0b3IiIG9uQ2xpY2s9eygpID0+IHNldERlbGV0aW5nKGQpfSBzdHlsZT17eyBjb2xvcjogJ3ZhcigtLWVycm9yKScgfX0+PEljb24gbmFtZT0idHJhc2gtMiIgc2l6ZT17MTZ9IC8+PC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgICAgPC90Ym9keT4KICAgICAgICAgICAgICA8L3RhYmxlPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgeyFsb2FkaW5nICYmIGZpbHRlcmVkLmxlbmd0aCA+IDAgJiYgPFBhZ2luYXRpb24gcGFnZT17cGFnZX0gc2V0UGFnZT17c2V0UGFnZX0gdG90YWw9e3RvdGFsfSBwYWdlU2l6ZT17UEFHRV9TSVpFfSBsYWJlbD0iZG9jdG9ycyIgLz59CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQoKICAgICAgICB7YXZhaWxEb2N0b3IgJiYgKAogICAgICAgICAgPEF2YWlsYWJpbGl0eVBhbmVsIGtleT17YXZhaWxEb2N0b3IuaWR9IGRvY3Rvcj17YXZhaWxEb2N0b3J9IG9uQ2xvc2U9eygpID0+IHsgc2V0QXZhaWxEb2N0b3IobnVsbCk7IGxvYWQoKTsgfX0gLz4KICAgICAgICApfQogICAgICA8L2Rpdj4KCiAgICAgIDxEb2N0b3JGb3JtTW9kYWwKICAgICAgICBvcGVuPXtmb3JtT3Blbn0KICAgICAgICBvbkNsb3NlPXsoKSA9PiB7IHNldEZvcm1PcGVuKGZhbHNlKTsgc2V0RWRpdGluZyhudWxsKTsgfX0KICAgICAgICBpbml0aWFsPXtlZGl0aW5nfQogICAgICAgIG9uU2F2ZWQ9e2xvYWR9CiAgICAgIC8+CiAgICAgIDxDb25maXJtTW9kYWwKICAgICAgICBvcGVuPXshIWRlbGV0aW5nfQogICAgICAgIG9uQ2xvc2U9eygpID0+IHNldERlbGV0aW5nKG51bGwpfQogICAgICAgIG9uQ29uZmlybT17ZG9EZWxldGV9CiAgICAgICAgbG9hZGluZz17ZGVsZXRlQnVzeX0KICAgICAgICB0aXRsZT0iRGVsZXRlIHRoaXMgZG9jdG9yPyIKICAgICAgICBtZXNzYWdlPXtkZWxldGluZyA/IGAke2RlbGV0aW5nLmZ1bGxfbmFtZX0ncyBwcm9maWxlIHdpbGwgYmUgcmVtb3ZlZC4gRXhpc3RpbmcgYXBwb2ludG1lbnRzIHdpbGwgcmVtYWluIGJ1dCB0aGUgZG9jdG9yIHdpbGwgbm8gbG9uZ2VyIGJlIGJvb2thYmxlLmAgOiAnJ30KICAgICAgICBjb25maXJtTGFiZWw9IkRlbGV0ZSBkb2N0b3IiCiAgICAgICAga2luZD0iZGFuZ2VyIgogICAgICAvPgogICAgPC9BcHBTaGVsbD4KICApOwp9CgpleHBvcnQgeyBEb2N0b3JzTWdtdCB9Owo=
+// DoctorsMgmt — doctor directory (restored prototype UI, real API).
+// Table + add/edit (DoctorFormModal) + delete (ConfirmModal) + availability
+// sub-view + specialty filter + Export CSV.
+import { useEffect, useState } from 'react';
+import {
+  AppShell, Badge, ConfirmModal, DoctorAvatar, DoctorStatusBadge, EmptyState,
+  ErrorState, Icon, PageHeader, Pagination, SelectInput, SkeletonRows, useStore,
+} from '../shared/components.jsx';
+import { formatDayRange } from '../shared/data.js';
+import {
+  deleteAdminDoctor, getAdminDoctorAvailability, getAdminDoctors,
+  getSpecialtyBreakdown, ApiError,
+} from '../shared/api.js';
+import { downloadCSV, localToday, printDoctorSchedule } from './helpers.js';
+import { DoctorFormModal } from './DoctorFormModal.jsx';
+import { getAdminAppointments } from '../shared/api.js';
+
+const PAGE_SIZE = 15;
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function fmtDay(d) {
+  const n = Number(d);
+  return Number.isInteger(n) && n >= 0 && n <= 6 ? DAYS[n] : String(d ?? '—');
+}
+
+// ---------- Availability sub-view (kept from Phase 6) ----------
+function AvailabilityPanel({ doctor, onClose }) {
+  const store = useStore();
+  const [loading, setLoading] = useState(true);
+  const [entries, setEntries] = useState([]);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({ day_of_week: '1', start_time: '09:00', end_time: '17:00' });
+  const [editingId, setEditingId] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const list = await getAdminDoctorAvailability(doctor.id);
+      setEntries(list);
+    } catch (err) {
+      setError(err.message || 'Could not load availability.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, [doctor.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const resetForm = () => {
+    setForm({ day_of_week: '1', start_time: '09:00', end_time: '17:00' });
+    setEditingId(null);
+  };
+
+  const doSave = async () => {
+    if (!form.start_time || !form.end_time) return;
+    setBusy(true);
+    setError('');
+    try {
+      const body = {
+        day_of_week: Number(form.day_of_week),
+        start_time: form.start_time,
+        end_time: form.end_time,
+      };
+      if (editingId) {
+        const { updateAdminDoctorAvailability } = await import('../shared/api.js');
+        await updateAdminDoctorAvailability(doctor.id, editingId, body);
+        store.pushToast({ kind: 'success', title: 'Availability updated', message: 'The time slot was updated.' });
+      } else {
+        const { createAdminDoctorAvailability } = await import('../shared/api.js');
+        await createAdminDoctorAvailability(doctor.id, body);
+        store.pushToast({ kind: 'success', title: 'Availability added', message: 'The time slot was added.' });
+      }
+      resetForm();
+      load();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not save the availability slot.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doDelete = async () => {
+    if (!deletingId) return;
+    setBusy(true);
+    try {
+      const { deleteAdminDoctorAvailability } = await import('../shared/api.js');
+      await deleteAdminDoctorAvailability(doctor.id, deletingId);
+      store.pushToast({ kind: 'success', title: 'Slot removed', message: 'The availability slot was removed.' });
+      setDeletingId(null);
+      load();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not remove the slot.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <div className="card-header">
+        <div>
+          <h3 style={{ margin: 0 }}>Availability — {doctor.full_name}</h3>
+          <div className="t-muted" style={{ fontSize: 12.5 }}>Weekly schedule that patients see when booking.</div>
+        </div>
+        <button className="btn btn-ghost sm" onClick={onClose}><Icon name="x" size={14} /> Close</button>
+      </div>
+      <div className="card-body">
+        {error && <div className="form-error" style={{ marginBottom: 12 }}><Icon name="alert-circle" size={14} /> {error}</div>}
+        {loading ? (
+          <table className="table" aria-hidden="true"><tbody><SkeletonRows rows={3} cols={4} /></tbody></table>
+        ) : entries.length === 0 ? (
+          <EmptyState icon="clock" title="No availability set" message="Add the doctor's weekly slots below." />
+        ) : (
+          <table className="table">
+            <thead><tr><th>Day</th><th>Start</th><th>End</th><th></th></tr></thead>
+            <tbody>
+              {entries.map(e => (
+                <tr key={e.id}>
+                  <td>{fmtDay(e.day_of_week)}</td>
+                  <td className="t-muted">{(e.start_time || '').slice(0, 5)}</td>
+                  <td className="t-muted">{(e.end_time || '').slice(0, 5)}</td>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <button className="btn btn-ghost sm" title="Edit slot" onClick={() => {
+                      setForm({ day_of_week: String(e.day_of_week), start_time: (e.start_time || '').slice(0, 5), end_time: (e.end_time || '').slice(0, 5) });
+                      setEditingId(e.id);
+                    }}><Icon name="pencil" size={14} /></button>
+                    <button className="btn btn-ghost sm" title="Remove slot" onClick={() => setDeletingId(e.id)}><Icon name="trash-2" size={14} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginTop: 12, flexWrap: 'wrap' }}>
+          <label style={{ fontSize: 12.5 }}>Day
+            <SelectInput value={form.day_of_week} onChange={e => setForm(f => ({ ...f, day_of_week: e.target.value }))} style={{ marginLeft: 6 }}>
+              {DAYS.map((d, i) => <option key={i} value={i}>{d}</option>)}
+            </SelectInput>
+          </label>
+          <label style={{ fontSize: 12.5 }}>Start
+            <input type="time" className="input" value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} style={{ marginLeft: 6 }} />
+          </label>
+          <label style={{ fontSize: 12.5 }}>End
+            <input type="time" className="input" value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} style={{ marginLeft: 6 }} />
+          </label>
+          <button className="btn btn-secondary sm" onClick={doSave} disabled={busy}>{editingId ? 'Update slot' : 'Add slot'}</button>
+          {editingId && <button className="btn btn-ghost sm" onClick={resetForm}>Cancel</button>}
+        </div>
+      </div>
+      <ConfirmModal
+        open={!!deletingId}
+        onClose={() => setDeletingId(null)}
+        onConfirm={doDelete}
+        loading={busy}
+        title="Remove availability slot?"
+        message="This slot will no longer be bookable by patients."
+        confirmLabel="Remove slot"
+      />
+    </div>
+  );
+}
+
+// ---------- Doctors Management ----------
+function DoctorsMgmt() {
+  const store = useStore();
+  const [query, setQuery] = useState('');
+  const [specialty, setSpecialty] = useState('all');
+  const [specialties, setSpecialties] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [doctors, setDoctors] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [availMap, setAvailMap] = useState({});
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [availDoctor, setAvailDoctor] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [r, spec] = await Promise.all([
+        getAdminDoctors(query.trim(), page, PAGE_SIZE),
+        getSpecialtyBreakdown().catch(() => []),
+      ]);
+      setDoctors(r.doctors);
+      setTotal(r.total);
+      setSpecialties(spec.map(s => s.specialty).filter(Boolean));
+      // Fetch availability day-ranges for the page (for the Availability column)
+      const availEntries = await Promise.all(
+        r.doctors.map(d => getAdminDoctorAvailability(d.id).catch(() => []))
+      );
+      const map = {};
+      r.doctors.forEach((d, i) => {
+        const days = [...new Set(availEntries[i].map(e => Number(e.day_of_week)))].sort();
+        map[d.id] = days;
+      });
+      setAvailMap(map);
+    } catch (err) {
+      setError(err.message || 'Could not load doctors.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const t = setTimeout(() => { setPage(1); load(); }, 350);
+    return () => clearTimeout(t);
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const filtered = doctors.filter(d => {
+    if (specialty !== 'all' && (d.specialties?.name || d.specialty_name) !== specialty) return false;
+    return true;
+  });
+
+  const doDelete = async () => {
+    if (!deleting) return;
+    setDeleteBusy(true);
+    try {
+      await deleteAdminDoctor(deleting.id);
+      store.pushToast({ kind: 'success', title: 'Doctor removed', message: `${deleting.full_name}'s profile has been deleted.` });
+      setDeleting(null);
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Delete failed', message: err.message || 'Could not delete doctor.' });
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
+
+  const doExport = () => {
+    downloadCSV('medicacare-doctors.csv', [
+      ['ID', 'Name', 'Specialty', 'Status', 'Clinic days', 'Experience (yrs)', 'Consultation fee (₱)', 'Room'],
+      ...filtered.map(d => [
+        d.id, d.full_name, d.specialties?.name || d.specialty_name || '',
+        d.status, formatDayRange(availMap[d.id] || []),
+        d.years_of_experience ?? '', d.consultation_fee ?? '', d.room || '',
+      ]),
+    ]);
+    store.pushToast({ kind: 'success', title: 'Export ready', message: `${filtered.length} doctor(s) exported to CSV.` });
+  };
+
+  const specialtyOf = (d) => d.specialties?.name || d.specialty_name || '—';
+
+  // Staff print the day's patient list for a doctor (PDF via the browser's
+  // native "Save as PDF")
+  const printSchedule = async (d) => {
+    const today = localToday();
+    try {
+      const r = await getAdminAppointments({ date: today, doctor_id: d.id, limit: 200 });
+      const list = (r.appointments || []).sort((a, b) =>
+        (a.start_time || '').localeCompare(b.start_time || ''));
+      printDoctorSchedule(d, list, today);
+      store.pushToast({
+        kind: 'success',
+        title: 'Print dialog opened',
+        message: `Choose "Save as PDF" as the destination to download today's ${list.length} appointment(s) as a PDF.`,
+      });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Print failed', message: err.message || 'Could not load today\'s schedule.' });
+    }
+  };
+
+  return (
+    <AppShell current="doctors">
+      <div className="page">
+        <PageHeader
+          title="Doctors"
+          subtitle={loading
+            ? <span className="skel" aria-hidden="true" style={{ width: 240, maxWidth: '100%', height: 14 }} />
+            : `${total} doctors across ${specialties.length} specialties`}
+          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Doctors' }]}
+          actions={<>
+            <button className="btn btn-secondary" onClick={doExport}><Icon name="download" size={14} /> Export CSV</button>
+            <button className="btn btn-primary" onClick={() => { setEditing(null); setFormOpen(true); }}><Icon name="plus" size={14} /> Add doctor</button>
+          </>}
+        />
+
+        {error ? (
+          <ErrorState title="Could not load doctors" message={error} onRetry={load} />
+        ) : (
+          <div className="card">
+            <div className="table-toolbar">
+              <div className="input-group search">
+                <Icon name="search" size={16} className="input-icon" />
+                <input className="input" style={{ paddingLeft: 38 }} placeholder="Search by name or specialty…" aria-label="Search doctors by name or specialty" value={query} onChange={e => setQuery(e.target.value)} />
+              </div>
+              <SelectInput style={{ maxWidth: 180 }} value={specialty} onChange={e => setSpecialty(e.target.value)} aria-label="Filter by specialty">
+                <option value="all">All specialties</option>
+                {specialties.map(s => <option key={s} value={s}>{s}</option>)}
+              </SelectInput>
+            </div>
+
+            <div className="table-wrap">
+              <table className="table table-responsive-stack table-compact">
+                <thead>
+                  <tr>
+                    <th>Doctor</th>
+                    <th>Specialty</th>
+                    <th>Status</th>
+                    <th>Availability</th>
+                    <th>Experience</th>
+                    <th>Fee</th>
+                    <th className="col-actions">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    Array.from({ length: 5 }).map((_, r) => (
+                      <tr key={r}>
+                        <td data-label="Doctor">
+                          <div className="cell-with-avatar">
+                            <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
+                            <div style={{ minWidth: 0 }}>
+                              <span className="skel" style={{ width: 110, maxWidth: '100%', height: 12, display: 'block' }} />
+                              <span className="skel" style={{ width: 90, height: 10, display: 'block', marginTop: 4 }} />
+                            </div>
+                          </div>
+                        </td>
+                        <td data-label="Specialty"><span className="skel" style={{ width: '65%', height: 12 }} /></td>
+                        <td data-label="Status"><span className="skel" style={{ width: 64, height: 18 }} /></td>
+                        <td data-label="Availability" className="td-nowrap"><span className="skel" style={{ width: 96, height: 11 }} /></td>
+                        <td data-label="Experience"><span className="skel" style={{ width: 40, height: 12 }} /></td>
+                        <td data-label="Fee"><span className="skel" style={{ width: 56, height: 12 }} /></td>
+                        <td className="col-actions">
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <span className="skel" style={{ width: 24, height: 24 }} />
+                            <span className="skel" style={{ width: 24, height: 24 }} />
+                            <span className="skel" style={{ width: 24, height: 24 }} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : filtered.length === 0 ? (
+                    <tr><td colSpan={7} className="empty-cell" style={{ padding: 0 }}>
+                      <EmptyState icon="stethoscope" title="No doctors found" message="Try clearing your search or add a new doctor."
+                        actions={<button className="btn btn-primary" onClick={() => { setEditing(null); setFormOpen(true); }}><Icon name="plus" size={14} /> Add doctor</button>} />
+                    </td></tr>
+                  ) : filtered.map(d => (
+                    <tr key={d.id}>
+                      <td data-label="Doctor">
+                        <div className="cell-with-avatar">
+                          <DoctorAvatar doctor={{ name: d.full_name, photo: d.photo_url }} size={28} />
+                          <div style={{ minWidth: 0 }}>
+                            <div className="cell-primary cell-primary-truncate" style={{ maxWidth: 150 }} title={d.full_name}>{d.full_name}</div>
+                            <div className="cell-secondary">{d.room || '—'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td data-label="Specialty">{specialtyOf(d)}</td>
+                      <td data-label="Status"><DoctorStatusBadge status={d.status} /></td>
+                      <td data-label="Availability" className="td-nowrap" style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
+                        {formatDayRange(availMap[d.id] || [])}
+                      </td>
+                      <td data-label="Experience">{d.years_of_experience != null ? `${d.years_of_experience} yrs` : '—'}</td>
+                      <td data-label="Fee">{d.consultation_fee != null ? `₱${Number(d.consultation_fee).toLocaleString()}` : '—'}</td>
+                      <td className="col-actions" style={{ whiteSpace: 'nowrap' }}>
+                        <button className="btn btn-secondary sm" onClick={() => setAvailDoctor(d)} title="Manage availability">
+                          <Icon name="clock" size={14} /> Availability
+                        </button>
+                        <button className="btn-icon" title="Print / save schedule as PDF" aria-label="Print or save today's schedule as PDF" onClick={() => printSchedule(d)}><Icon name="printer" size={16} /></button>
+                        <button className="btn-icon" title="Edit" aria-label="Edit doctor" onClick={() => { setEditing(d); setFormOpen(true); }}><Icon name="pencil" size={16} /></button>
+                        <button className="btn-icon" title="Delete" aria-label="Delete doctor" onClick={() => setDeleting(d)} style={{ color: 'var(--error)' }}><Icon name="trash-2" size={16} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {!loading && filtered.length > 0 && <Pagination page={page} setPage={setPage} total={total} pageSize={PAGE_SIZE} label="doctors" />}
+          </div>
+        )}
+
+        {availDoctor && (
+          <AvailabilityPanel key={availDoctor.id} doctor={availDoctor} onClose={() => { setAvailDoctor(null); load(); }} />
+        )}
+      </div>
+
+      <DoctorFormModal
+        open={formOpen}
+        onClose={() => { setFormOpen(false); setEditing(null); }}
+        initial={editing}
+        onSaved={load}
+      />
+      <ConfirmModal
+        open={!!deleting}
+        onClose={() => setDeleting(null)}
+        onConfirm={doDelete}
+        loading={deleteBusy}
+        title="Delete this doctor?"
+        message={deleting ? `${deleting.full_name}'s profile will be removed. Existing appointments will remain but the doctor will no longer be bookable.` : ''}
+        confirmLabel="Delete doctor"
+        kind="danger"
+      />
+    </AppShell>
+  );
+}
+
+export { DoctorsMgmt };

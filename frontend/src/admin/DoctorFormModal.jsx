@@ -1,1 +1,355 @@
-Ly8gRG9jdG9yRm9ybU1vZGFsIOKAlCBhZGQvZWRpdCBkb2N0b3IgKyBwb3J0YWwgYWNjZXNzIChyZXN0b3JlZCBwcm90b3R5cGUgVUksCi8vIHJlYWwgQVBJKS4gUHJvcHM6IG9wZW4sIG9uQ2xvc2UsIGluaXRpYWw/IChkb2N0b3Igcm93IOKAlCBlZGl0IG1vZGUpLAovLyBvblNhdmVkKHNhdmVkRG9jdG9yKS4KaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VSZWYsIHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgewogIERvY3RvckF2YXRhciwgRmllbGQsIEljb24sIE1vZGFsLCBTZWxlY3RJbnB1dCwgVGV4dElucHV0LCBUZXh0QXJlYSwgdXNlU3RvcmUsCn0gZnJvbSAnLi4vc2hhcmVkL2NvbXBvbmVudHMuanN4JzsKaW1wb3J0IHsKICBjcmVhdGVBZG1pbkRvY3RvciwgdXBkYXRlQWRtaW5Eb2N0b3IsIGdyYW50UG9ydGFsQWNjZXNzLAogIHJlc2V0UG9ydGFsQWNjZXNzLCByZXZva2VQb3J0YWxBY2Nlc3MsIEFwaUVycm9yLAp9IGZyb20gJy4uL3NoYXJlZC9hcGkuanMnOwppbXBvcnQgeyBhcGlPcHRpb25hbCB9IGZyb20gJy4uL3NoYXJlZC9hcGkuanMnOwppbXBvcnQgeyBmb2N1c0ZpcnN0RXJyb3IgfSBmcm9tICcuL2hlbHBlcnMuanMnOwoKY29uc3QgREFZUyA9IFsnTW9uJywgJ1R1ZScsICdXZWQnLCAnVGh1JywgJ0ZyaScsICdTYXQnLCAnU3VuJ107CgpmdW5jdGlvbiBEb2N0b3JGb3JtTW9kYWwoeyBvcGVuLCBvbkNsb3NlLCBpbml0aWFsLCBvblNhdmVkIH0pIHsKICBjb25zdCBzdG9yZSA9IHVzZVN0b3JlKCk7CiAgY29uc3QgaXNFZGl0ID0gISFpbml0aWFsOwogIGNvbnN0IFtmb3JtLCBzZXRGb3JtXSA9IHVzZVN0YXRlKHsKICAgIG5hbWU6ICcnLCBzcGVjaWFsdHlfaWQ6ICcnLCBzdGF0dXM6ICdhdmFpbGFibGUnLCByb29tOiAnJywKICAgIGV4cDogJycsIGZlZTogJycsIGdlbmRlcjogJycsIGJpbzogJycsCiAgfSk7CiAgY29uc3QgW3NwZWNpYWx0aWVzLCBzZXRTcGVjaWFsdGllc10gPSB1c2VTdGF0ZShbXSk7CiAgY29uc3QgW2F2YWlsLCBzZXRBdmFpbF0gPSB1c2VTdGF0ZShbJ01vbicsICdUdWUnLCAnV2VkJywgJ1RodScsICdGcmknXSk7CiAgY29uc3QgW2Vycm9ycywgc2V0RXJyb3JzXSA9IHVzZVN0YXRlKHt9KTsKICBjb25zdCBbc2F2aW5nLCBzZXRTYXZpbmddID0gdXNlU3RhdGUoZmFsc2UpOwogIC8vIFBvcnRhbCBhY2Nlc3MKICBjb25zdCBbcG9ydGFsRW1haWwsIHNldFBvcnRhbEVtYWlsXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbcG9ydGFsUHcsIHNldFBvcnRhbFB3XSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbcG9ydGFsRXJyb3JzLCBzZXRQb3J0YWxFcnJvcnNdID0gdXNlU3RhdGUoe30pOwogIGNvbnN0IFtwb3J0YWxCdXN5LCBzZXRQb3J0YWxCdXN5XSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbcG9ydGFsSW5mbywgc2V0UG9ydGFsSW5mb10gPSB1c2VTdGF0ZShudWxsKTsKICBjb25zdCBbc2hvd1Jldm9rZSwgc2V0U2hvd1Jldm9rZV0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgW3Bob3RvLCBzZXRQaG90b10gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgW3Bob3RvRXJyb3IsIHNldFBob3RvRXJyb3JdID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IHBob3RvSW5wdXRSZWYgPSB1c2VSZWYobnVsbCk7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoIW9wZW4pIHJldHVybjsKICAgIGFwaU9wdGlvbmFsKCcvZG9jdG9ycy9zcGVjaWFsdGllcycsIHsgYXV0aDogZmFsc2UgfSkudGhlbigoZCkgPT4gewogICAgICBzZXRTcGVjaWFsdGllcyhkLnNwZWNpYWx0aWVzIHx8IFtdKTsKICAgIH0pOwogICAgaWYgKGluaXRpYWwpIHsKICAgICAgc2V0Rm9ybSh7CiAgICAgICAgbmFtZTogaW5pdGlhbC5mdWxsX25hbWUgfHwgJycsCiAgICAgICAgc3BlY2lhbHR5X2lkOiBpbml0aWFsLnNwZWNpYWx0eV9pZCB8fCAnJywKICAgICAgICBzdGF0dXM6IGluaXRpYWwuc3RhdHVzIHx8ICdhdmFpbGFibGUnLAogICAgICAgIHJvb206IGluaXRpYWwucm9vbSB8fCAnJywKICAgICAgICBleHA6IGluaXRpYWwueWVhcnNfb2ZfZXhwZXJpZW5jZSA/PyAnJywKICAgICAgICBmZWU6IGluaXRpYWwuY29uc3VsdGF0aW9uX2ZlZSA/PyAnJywKICAgICAgICBnZW5kZXI6IGluaXRpYWwuZ2VuZGVyIHx8ICcnLAogICAgICAgIGJpbzogaW5pdGlhbC5iaW8gfHwgJycsCiAgICAgIH0pOwogICAgICBzZXRQb3J0YWxJbmZvKGluaXRpYWwuZG9jdG9yX2FjY291bnRzPy5lbWFpbCB8fCBpbml0aWFsLnBvcnRhbF9lbWFpbAogICAgICAgID8geyBlbWFpbDogaW5pdGlhbC5kb2N0b3JfYWNjb3VudHM/LmVtYWlsIHx8IGluaXRpYWwucG9ydGFsX2VtYWlsIH0KICAgICAgICA6IG51bGwpOwogICAgfSBlbHNlIHsKICAgICAgc2V0Rm9ybSh7IG5hbWU6ICcnLCBzcGVjaWFsdHlfaWQ6ICcnLCBzdGF0dXM6ICdhdmFpbGFibGUnLCByb29tOiAnJywgZXhwOiAnJywgZmVlOiAnJywgZ2VuZGVyOiAnJywgYmlvOiAnJyB9KTsKICAgICAgc2V0UG9ydGFsSW5mbyhudWxsKTsKICAgIH0KICAgIHNldEF2YWlsKFsnTW9uJywgJ1R1ZScsICdXZWQnLCAnVGh1JywgJ0ZyaSddKTsKICAgIHNldEVycm9ycyh7fSk7CiAgICBzZXRQb3J0YWxFbWFpbCgnJyk7CiAgICBzZXRQb3J0YWxQdygnJyk7CiAgICBzZXRQb3J0YWxFcnJvcnMoe30pOwogICAgc2V0U2hvd1Jldm9rZShmYWxzZSk7CiAgICBzZXRQaG90byhpbml0aWFsPy5waG90b191cmwgfHwgJycpOwogICAgc2V0UGhvdG9FcnJvcignJyk7CiAgfSwgW29wZW4sIGluaXRpYWxdKTsKCiAgY29uc3Qgb25QaG90b0NoYW5nZSA9IChlKSA9PiB7CiAgICBjb25zdCBmaWxlID0gZS50YXJnZXQuZmlsZXMgJiYgZS50YXJnZXQuZmlsZXNbMF07CiAgICBlLnRhcmdldC52YWx1ZSA9ICcnOwogICAgaWYgKCFmaWxlKSByZXR1cm47CiAgICBpZiAoIWZpbGUudHlwZS5zdGFydHNXaXRoKCdpbWFnZS8nKSkgewogICAgICBzZXRQaG90b0Vycm9yKCdQbGVhc2UgY2hvb3NlIGFuIGltYWdlIGZpbGUgKEpQRyBvciBQTkcpLicpOwogICAgICByZXR1cm47CiAgICB9CiAgICBpZiAoZmlsZS5zaXplID4gMTAyNCAqIDEwMjQpIHsKICAgICAgc2V0UGhvdG9FcnJvcignSW1hZ2UgaXMgdG9vIGxhcmdlLiBQbGVhc2UgY2hvb3NlIG9uZSB1bmRlciAxIE1CLicpOwogICAgICByZXR1cm47CiAgICB9CiAgICBzZXRQaG90b0Vycm9yKCcnKTsKICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICByZWFkZXIub25sb2FkID0gKCkgPT4gc2V0UGhvdG8ocmVhZGVyLnJlc3VsdCk7CiAgICByZWFkZXIucmVhZEFzRGF0YVVSTChmaWxlKTsKICB9OwoKICBjb25zdCBzZXQgPSAoaykgPT4gKGUpID0+IHsKICAgIHNldEZvcm0oZiA9PiAoeyAuLi5mLCBba106IGUudGFyZ2V0LnZhbHVlIH0pKTsKICAgIGlmIChlcnJvcnNba10pIHNldEVycm9ycyh4ID0+ICh7IC4uLngsIFtrXTogbnVsbCB9KSk7CiAgfTsKICBjb25zdCB0b2dnbGVEYXkgPSAoZGF5KSA9PiBzZXRBdmFpbChhdiA9PiBhdi5pbmNsdWRlcyhkYXkpID8gYXYuZmlsdGVyKGQgPT4gZCAhPT0gZGF5KSA6IFsuLi5hdiwgZGF5XSk7CgogIGNvbnN0IGdlbmVyYXRlUHcgPSAoKSA9PiB7CiAgICBjb25zdCBjaGFycyA9ICdBQkNERUZHSEpLTE1OUFFSU1RVVldYWVphYmNkZWZnaGlqa21ucHFyc3R1dnd4eXoyMzQ1Njc4OSc7CiAgICBsZXQgcHcgPSAnJzsKICAgIGNvbnN0IGFyciA9IG5ldyBVaW50MzJBcnJheSgxMCk7CiAgICBjcnlwdG8uZ2V0UmFuZG9tVmFsdWVzKGFycik7CiAgICBmb3IgKGxldCBpID0gMDsgaSA8IDEwOyBpKyspIHB3ICs9IGNoYXJzW2FycltpXSAlIGNoYXJzLmxlbmd0aF07CiAgICBzZXRQb3J0YWxQdyhwdyk7CiAgICBpZiAocG9ydGFsRXJyb3JzLnBhc3N3b3JkKSBzZXRQb3J0YWxFcnJvcnMocGUgPT4gKHsgLi4ucGUsIHBhc3N3b3JkOiBudWxsIH0pKTsKICB9OwoKICBjb25zdCBkb1NhdmUgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBlID0ge307CiAgICBpZiAoIWZvcm0ubmFtZS50cmltKCkpIGUubmFtZSA9ICdEb2N0b3IgbmFtZSBpcyByZXF1aXJlZCc7CiAgICBpZiAoIWZvcm0uc3BlY2lhbHR5X2lkKSBlLnNwZWNpYWx0eV9pZCA9ICdTcGVjaWFsdHkgaXMgcmVxdWlyZWQnOwogICAgaWYgKCFmb3JtLnJvb20udHJpbSgpKSBlLnJvb20gPSAnUm9vbSAvIGNsaW5pYyBpcyByZXF1aXJlZCc7CiAgICBpZiAoZm9ybS5leHAgPT09ICcnIHx8IGZvcm0uZXhwID09IG51bGwpIGUuZXhwID0gJ1llYXJzIG9mIGV4cGVyaWVuY2UgcmVxdWlyZWQnOwogICAgaWYgKGZvcm0uZmVlID09PSAnJyB8fCBmb3JtLmZlZSA9PSBudWxsKSBlLmZlZSA9ICdDb25zdWx0YXRpb24gZmVlIHJlcXVpcmVkJzsKICAgIHNldEVycm9ycyhlKTsKICAgIGlmIChPYmplY3Qua2V5cyhlKS5sZW5ndGgpIHsgZm9jdXNGaXJzdEVycm9yKCk7IHJldHVybjsgfQoKICAgIHNldFNhdmluZyh0cnVlKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IGJvZHkgPSB7CiAgICAgICAgZnVsbF9uYW1lOiBmb3JtLm5hbWUudHJpbSgpLAogICAgICAgIHNwZWNpYWx0eV9pZDogZm9ybS5zcGVjaWFsdHlfaWQsCiAgICAgICAgc3RhdHVzOiBmb3JtLnN0YXR1cywKICAgICAgICByb29tOiBmb3JtLnJvb20udHJpbSgpLAogICAgICAgIHllYXJzX29mX2V4cGVyaWVuY2U6IE51bWJlcihmb3JtLmV4cCksCiAgICAgICAgY29uc3VsdGF0aW9uX2ZlZTogTnVtYmVyKGZvcm0uZmVlKSwKICAgICAgICBnZW5kZXI6IGZvcm0uZ2VuZGVyIHx8IG51bGwsCiAgICAgICAgYmlvOiBmb3JtLmJpby50cmltKCkgfHwgbnVsbCwKICAgICAgICAvLyBwaG90b191cmwgb25seSBhY2NlcHRzIFVSTHMgKG1heCA1MDAgY2hhcnMpOyBiYXNlNjQgdXBsb2FkcyBzdGF5IGxvY2FsLW9ubHkKICAgICAgICAuLi4ocGhvdG8gJiYgIXBob3RvLnN0YXJ0c1dpdGgoJ2RhdGE6JykgPyB7IHBob3RvX3VybDogcGhvdG8gfSA6IHt9KSwKICAgICAgfTsKICAgICAgY29uc3Qgc2F2ZWQgPSBpc0VkaXQKICAgICAgICA/IGF3YWl0IHVwZGF0ZUFkbWluRG9jdG9yKGluaXRpYWwuaWQsIGJvZHkpCiAgICAgICAgOiBhd2FpdCBjcmVhdGVBZG1pbkRvY3Rvcihib2R5KTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsKICAgICAgICBraW5kOiAnc3VjY2VzcycsCiAgICAgICAgdGl0bGU6IGlzRWRpdCA/ICdEb2N0b3IgdXBkYXRlZCcgOiAnRG9jdG9yIGFkZGVkJywKICAgICAgICBtZXNzYWdlOiBgJHtzYXZlZC5mdWxsX25hbWV9IGhhcyBiZWVuICR7aXNFZGl0ID8gJ3VwZGF0ZWQnIDogJ2FkZGVkIHRvIHRoZSBkaXJlY3RvcnknfS5gLAogICAgICB9KTsKICAgICAgb25TYXZlZCAmJiBvblNhdmVkKHNhdmVkKTsKICAgICAgb25DbG9zZSgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldEVycm9ycyh7IGZvcm06IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnQ291bGQgbm90IHNhdmUgZG9jdG9yLicgfSk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRTYXZpbmcoZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRvR3JhbnRQb3J0YWwgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBwZSA9IHt9OwogICAgaWYgKCFwb3J0YWxFbWFpbC50cmltKCkpIHBlLmVtYWlsID0gJ1BvcnRhbCBlbWFpbCBpcyByZXF1aXJlZCc7CiAgICBlbHNlIGlmICghL15bXlxzQF0rQFteXHNAXStcLlteXHNAXSskLy50ZXN0KHBvcnRhbEVtYWlsKSkgcGUuZW1haWwgPSAnRW50ZXIgYSB2YWxpZCBlbWFpbCBhZGRyZXNzJzsKICAgIGlmICghcG9ydGFsUHcpIHBlLnBhc3N3b3JkID0gJ1Bhc3N3b3JkIGlzIHJlcXVpcmVkJzsKICAgIGVsc2UgaWYgKHBvcnRhbFB3Lmxlbmd0aCA8IDgpIHBlLnBhc3N3b3JkID0gJ1VzZSBhdCBsZWFzdCA4IGNoYXJhY3RlcnMnOwogICAgc2V0UG9ydGFsRXJyb3JzKHBlKTsKICAgIGlmIChPYmplY3Qua2V5cyhwZSkubGVuZ3RoKSByZXR1cm47CgogICAgc2V0UG9ydGFsQnVzeSh0cnVlKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IHRhcmdldElkID0gaXNFZGl0ID8gaW5pdGlhbC5pZCA6IG51bGw7CiAgICAgIC8vIEZvciBhZGQgbW9kZSwgd2UgbmVlZCB0aGUgZG9jdG9yIElEIGZpcnN0IOKAlCBzYXZlIHRoZSBkb2N0b3IsIHRoZW4gZ3JhbnQKICAgICAgbGV0IGRvY3RvcklkID0gdGFyZ2V0SWQ7CiAgICAgIGlmICghZG9jdG9ySWQpIHsKICAgICAgICAvLyBTYXZlIGRvY3RvciBmaXJzdCAod2l0aG91dCBjbG9zaW5nKSwgdGhlbiBncmFudCBwb3J0YWwKICAgICAgICBhd2FpdCBkb1NhdmUoKTsKICAgICAgICByZXR1cm47IC8vIGRvU2F2ZSBjbG9zZXMgdGhlIG1vZGFsOyBwb3J0YWwgbXVzdCBiZSBncmFudGVkIGZyb20gRWRpdAogICAgICB9CiAgICAgIGF3YWl0IGdyYW50UG9ydGFsQWNjZXNzKGRvY3RvcklkLCB7IGVtYWlsOiBwb3J0YWxFbWFpbC50cmltKCkudG9Mb3dlckNhc2UoKSwgcGFzc3dvcmQ6IHBvcnRhbFB3IH0pOwogICAgICBzZXRQb3J0YWxJbmZvKHsgZW1haWw6IHBvcnRhbEVtYWlsLnRyaW0oKS50b0xvd2VyQ2FzZSgpIH0pOwogICAgICBzZXRQb3J0YWxFbWFpbCgnJyk7CiAgICAgIHNldFBvcnRhbFB3KCcnKTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZTogJ1BvcnRhbCBhY2Nlc3MgZ3JhbnRlZCcsIG1lc3NhZ2U6ICdUaGUgZG9jdG9yIGNhbiBub3cgc2lnbiBpbiBhdCB0aGUgRG9jdG9yIHBvcnRhbC4nIH0pOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIHNldFBvcnRhbEVycm9ycyh7IGZvcm06IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnQ291bGQgbm90IGdyYW50IHBvcnRhbCBhY2Nlc3MuJyB9KTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldFBvcnRhbEJ1c3koZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRvUmVzZXRQb3J0YWwgPSBhc3luYyAoKSA9PiB7CiAgICBzZXRQb3J0YWxCdXN5KHRydWUpOwogICAgdHJ5IHsKICAgICAgY29uc3QgcmVzdWx0ID0gYXdhaXQgcmVzZXRQb3J0YWxBY2Nlc3MoaW5pdGlhbC5pZCk7CiAgICAgIHNldFBvcnRhbFB3KHJlc3VsdC5wYXNzd29yZCB8fCAnJyk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdQYXNzd29yZCByZXNldCcsIG1lc3NhZ2U6ICdBIG5ldyB0ZW1wb3JhcnkgcGFzc3dvcmQgd2FzIGdlbmVyYXRlZCDigJQgc2hhcmUgaXQgd2l0aCB0aGUgZG9jdG9yLicgfSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0UG9ydGFsRXJyb3JzKHsgZm9ybTogZXJyIGluc3RhbmNlb2YgQXBpRXJyb3IgPyBlcnIubWVzc2FnZSA6ICdDb3VsZCBub3QgcmVzZXQgcGFzc3dvcmQuJyB9KTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldFBvcnRhbEJ1c3koZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRvUmV2b2tlUG9ydGFsID0gYXN5bmMgKCkgPT4gewogICAgc2V0UG9ydGFsQnVzeSh0cnVlKTsKICAgIHRyeSB7CiAgICAgIGF3YWl0IHJldm9rZVBvcnRhbEFjY2Vzcyhpbml0aWFsLmlkKTsKICAgICAgc2V0UG9ydGFsSW5mbyhudWxsKTsKICAgICAgc2V0U2hvd1Jldm9rZShmYWxzZSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdQb3J0YWwgYWNjZXNzIHJldm9rZWQnLCBtZXNzYWdlOiAnVGhlIGRvY3RvciBjYW4gbm8gbG9uZ2VyIHNpZ24gaW4gYXQgdGhlIERvY3RvciBwb3J0YWwuJyB9KTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzZXRQb3J0YWxFcnJvcnMoeyBmb3JtOiBlcnIgaW5zdGFuY2VvZiBBcGlFcnJvciA/IGVyci5tZXNzYWdlIDogJ0NvdWxkIG5vdCByZXZva2UgcG9ydGFsIGFjY2Vzcy4nIH0pOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0UG9ydGFsQnVzeShmYWxzZSk7CiAgICB9CiAgfTsKCiAgcmV0dXJuICgKICAgIDxNb2RhbAogICAgICBvcGVuPXtvcGVufSBvbkNsb3NlPXtvbkNsb3NlfSBzaXplPSJsZyIKICAgICAgdGl0bGU9e2lzRWRpdCA/ICdFZGl0IGRvY3RvcicgOiAnQWRkIG5ldyBkb2N0b3InfQogICAgICBzdWJ0aXRsZT17aXNFZGl0ID8gYEVkaXRpbmcgJHtpbml0aWFsLmZ1bGxfbmFtZX1gIDogJ0NyZWF0ZSBhIG5ldyBkb2N0b3IgcHJvZmlsZSwgc2NoZWR1bGUsIGFuZCBwb3J0YWwgYWNjZXNzLid9CiAgICAgIGZvb3Rlcj17PD4KICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1zZWNvbmRhcnkiIG9uQ2xpY2s9e29uQ2xvc2V9IGRpc2FibGVkPXtzYXZpbmd9PkNhbmNlbDwvYnV0dG9uPgogICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e2RvU2F2ZX0gZGlzYWJsZWQ9e3NhdmluZ30+e3NhdmluZyA/ICdTYXZpbmfigKYnIDogKGlzRWRpdCA/ICdTYXZlIGNoYW5nZXMnIDogJ0FkZCBkb2N0b3InKX08L2J1dHRvbj4KICAgICAgPC8+fQogICAgPgogICAgICA8ZGl2IGNsYXNzTmFtZT0ic3RhY2sgbWQiPgogICAgICAgIHtlcnJvcnMuZm9ybSAmJiA8ZGl2IGNsYXNzTmFtZT0iZm9ybS1lcnJvciI+PEljb24gbmFtZT0iYWxlcnQtY2lyY2xlIiBzaXplPXsxNH0gLz4ge2Vycm9ycy5mb3JtfTwvZGl2Pn0KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgYWxpZ25JdGVtczogJ2NlbnRlcicsIGdhcDogMTQgfX0+CiAgICAgICAgICB7cGhvdG8KICAgICAgICAgICAgPyA8aW1nIHNyYz17cGhvdG99IGFsdD0iRG9jdG9yIiBzdHlsZT17eyB3aWR0aDogNjQsIGhlaWdodDogNjQsIGJvcmRlclJhZGl1czogJzUwJScsIG9iamVjdEZpdDogJ2NvdmVyJywgYm9yZGVyOiAnMXB4IHNvbGlkIHZhcigtLWJvcmRlciknIH19IC8+CiAgICAgICAgICAgIDogPERvY3RvckF2YXRhciBkb2N0b3I9e3sgbmFtZTogZm9ybS5uYW1lIH19IHNpemU9ezY0fSAvPn0KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxpbnB1dCByZWY9e3Bob3RvSW5wdXRSZWZ9IHR5cGU9ImZpbGUiIGFjY2VwdD0iaW1hZ2UvKiIgc3R5bGU9e3sgZGlzcGxheTogJ25vbmUnIH19IG9uQ2hhbmdlPXtvblBob3RvQ2hhbmdlfSAvPgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZ2FwOiA4IH19PgogICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IHNtIiBvbkNsaWNrPXsoKSA9PiBwaG90b0lucHV0UmVmLmN1cnJlbnQgJiYgcGhvdG9JbnB1dFJlZi5jdXJyZW50LmNsaWNrKCl9PgogICAgICAgICAgICAgICAgPEljb24gbmFtZT0idXBsb2FkIiBzaXplPXsxNH0gLz4gVXBsb2FkIHBob3RvCiAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAge3Bob3RvICYmIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tZ2hvc3Qgc20iIG9uQ2xpY2s9eygpID0+IHNldFBob3RvKCcnKX0+UmVtb3ZlPC9idXR0b24+fQogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtbXV0ZWQiIHN0eWxlPXt7IGZvbnRTaXplOiAxMS41LCBtYXJnaW5Ub3A6IDYgfX0+CiAgICAgICAgICAgICAgT3B0aW9uYWwuIERlZmF1bHRzIHRvIGEgcG9ydHJhaXQgcGhvdG8uIEpQRy9QTkcgdXAgdG8gMSBNQi4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIHtwaG90b0Vycm9yICYmIDxkaXYgc3R5bGU9e3sgZm9udFNpemU6IDEyLCBjb2xvcjogJ3ZhcigtLWVycm9yKScsIG1hcmdpblRvcDogNCB9fT57cGhvdG9FcnJvcn08L2Rpdj59CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzFmciAxZnInLCBnYXA6IDEyIH19PgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJGdWxsIG5hbWUiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMubmFtZX0+CiAgICAgICAgICAgIDxUZXh0SW5wdXQgdmFsdWU9e2Zvcm0ubmFtZX0gb25DaGFuZ2U9e3NldCgnbmFtZScpfSBlcnJvcj17ZXJyb3JzLm5hbWV9IHBsYWNlaG9sZGVyPSJEci4gSnVhbiBEZWxhIENydXoiIC8+CiAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJTcGVjaWFsdHkiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMuc3BlY2lhbHR5X2lkfT4KICAgICAgICAgICAgPFNlbGVjdElucHV0IHZhbHVlPXtmb3JtLnNwZWNpYWx0eV9pZH0gb25DaGFuZ2U9e3NldCgnc3BlY2lhbHR5X2lkJyl9IGVycm9yPXtlcnJvcnMuc3BlY2lhbHR5X2lkfT4KICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPlNlbGVjdCBzcGVjaWFsdHnigKY8L29wdGlvbj4KICAgICAgICAgICAgICB7c3BlY2lhbHRpZXMubWFwKHMgPT4gPG9wdGlvbiBrZXk9e3MuaWR9IHZhbHVlPXtzLmlkfT57cy5uYW1lfTwvb3B0aW9uPil9CiAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJTdGF0dXMiPgogICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2Zvcm0uc3RhdHVzfSBvbkNoYW5nZT17c2V0KCdzdGF0dXMnKX0+CiAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iYXZhaWxhYmxlIj5BdmFpbGFibGU8L29wdGlvbj4KICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSJidXN5Ij5CdXN5IHRvZGF5PC9vcHRpb24+CiAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0ib24tbGVhdmUiPk9uIGxlYXZlPC9vcHRpb24+CiAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJSb29tIC8gY2xpbmljIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLnJvb219PgogICAgICAgICAgICA8VGV4dElucHV0IHZhbHVlPXtmb3JtLnJvb219IG9uQ2hhbmdlPXtzZXQoJ3Jvb20nKX0gZXJyb3I9e2Vycm9ycy5yb29tfSBwbGFjZWhvbGRlcj0iZS5nLiwgQ2FyZGlvIFdpbmcg4oCiIFJtIDQwMiIgLz4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICA8RmllbGQgbGFiZWw9IlllYXJzIG9mIGV4cGVyaWVuY2UiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMuZXhwfT4KICAgICAgICAgICAgPFRleHRJbnB1dCB0eXBlPSJudW1iZXIiIHZhbHVlPXtmb3JtLmV4cH0gb25DaGFuZ2U9e3NldCgnZXhwJyl9IGVycm9yPXtlcnJvcnMuZXhwfSBwbGFjZWhvbGRlcj0iMTAiIC8+CiAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJDb25zdWx0YXRpb24gZmVlICjigrEpIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLmZlZX0+CiAgICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0ibnVtYmVyIiB2YWx1ZT17Zm9ybS5mZWV9IG9uQ2hhbmdlPXtzZXQoJ2ZlZScpfSBlcnJvcj17ZXJyb3JzLmZlZX0gcGxhY2Vob2xkZXI9IjE1MDAiIC8+CiAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJHZW5kZXIiPgogICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2Zvcm0uZ2VuZGVyfSBvbkNoYW5nZT17c2V0KCdnZW5kZXInKX0+CiAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iIj7igJQ8L29wdGlvbj4KICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSJtYWxlIj5NYWxlPC9vcHRpb24+CiAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iZmVtYWxlIj5GZW1hbGU8L29wdGlvbj4KICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSJvdGhlciI+T3RoZXI8L29wdGlvbj4KICAgICAgICAgICAgPC9TZWxlY3RJbnB1dD4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICA8RmllbGQgbGFiZWw9IkJpbyI+CiAgICAgICAgICAgIDxUZXh0QXJlYSB2YWx1ZT17Zm9ybS5iaW99IG9uQ2hhbmdlPXtzZXQoJ2JpbycpfSByb3dzPXsyfSBwbGFjZWhvbGRlcj0iU2hvcnQgcHJvZmVzc2lvbmFsIGJpb+KApiIgLz4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPEZpZWxkIGxhYmVsPSJXZWVrbHkgYXZhaWxhYmlsaXR5IiBoZWxwPSJEYXlzIHRoZSBkb2N0b3IgaXMgYXZhaWxhYmxlIGZvciBjb25zdWx0YXRpb25zIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJjaGlwLWdyb3VwIj4KICAgICAgICAgICAge0RBWVMubWFwKGRheSA9PiAoCiAgICAgICAgICAgICAgPGJ1dHRvbiBrZXk9e2RheX0gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9eydjaGlwJyArIChhdmFpbC5pbmNsdWRlcyhkYXkpID8gJyBvbicgOiAnJyl9IG9uQ2xpY2s9eygpID0+IHRvZ2dsZURheShkYXkpfT4KICAgICAgICAgICAgICAgIHtkYXl9CiAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICkpfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9GaWVsZD4KCiAgICAgICAgey8qIFBvcnRhbCBhY2Nlc3Mg4oCUIGFkbWluLWlzc3VlZCBjcmVkZW50aWFscyBmb3IgdGhlIERvY3RvciBwb3J0YWwuICovfQogICAgICAgIDxkaXYgc3R5bGU9e3sgYm9yZGVyVG9wOiAnMXB4IHNvbGlkIHZhcigtLWJvcmRlciknLCBwYWRkaW5nVG9wOiAxNCB9fT4KICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBhbGlnbkl0ZW1zOiAnY2VudGVyJywgZ2FwOiA4LCBtYXJnaW5Cb3R0b206IDIgfX0+CiAgICAgICAgICAgIDxJY29uIG5hbWU9ImtleS1yb3VuZCIgc2l6ZT17MTR9IHN0eWxlPXt7IGNvbG9yOiAndmFyKC0tcHJpbWFyeSknIH19IC8+CiAgICAgICAgICAgIDxzcGFuIHN0eWxlPXt7IGZvbnRTaXplOiAxMywgZm9udFdlaWdodDogNjAwIH19PkRvY3RvciBwb3J0YWwgYWNjZXNzPC9zcGFuPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICB7cG9ydGFsRXJyb3JzLmZvcm0gJiYgPGRpdiBjbGFzc05hbWU9ImZvcm0tZXJyb3IiIHN0eWxlPXt7IG1hcmdpbjogJzhweCAwJyB9fT48SWNvbiBuYW1lPSJhbGVydC1jaXJjbGUiIHNpemU9ezE0fSAvPiB7cG9ydGFsRXJyb3JzLmZvcm19PC9kaXY+fQogICAgICAgICAge2lzRWRpdCAmJiBwb3J0YWxJbmZvID8gKAogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3RhY2sgbWQiPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idC1tdXRlZCIgc3R5bGU9e3sgZm9udFNpemU6IDEyLCBtYXJnaW46IDAsIGxpbmVIZWlnaHQ6IDEuNSB9fT4KICAgICAgICAgICAgICAgIEFjdGl2ZS4gVGhlIGRvY3RvciBzaWducyBpbiBhdCB0aGUgRG9jdG9yIHBvcnRhbCBhcyA8c3Ryb25nPntwb3J0YWxJbmZvLmVtYWlsfTwvc3Ryb25nPi4KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGdhcDogOCwgZmxleFdyYXA6ICd3cmFwJyB9fT4KICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IHNtIiBvbkNsaWNrPXtkb1Jlc2V0UG9ydGFsfSBkaXNhYmxlZD17cG9ydGFsQnVzeX0+CiAgICAgICAgICAgICAgICAgIHtwb3J0YWxCdXN5ID8gJ1dvcmtpbmfigKYnIDogJ0dlbmVyYXRlIG5ldyBwYXNzd29yZCd9CiAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tZGFuZ2VyLW91dGxpbmUgc20iIG9uQ2xpY2s9eygpID0+IHNldFNob3dSZXZva2UodHJ1ZSl9IGRpc2FibGVkPXtwb3J0YWxCdXN5fT4KICAgICAgICAgICAgICAgICAgPEljb24gbmFtZT0ic2hpZWxkLW9mZiIgc2l6ZT17MTN9IC8+IFJldm9rZSBwb3J0YWwgYWNjZXNzCiAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICB7cG9ydGFsUHcgJiYgKAogICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBwYWRkaW5nOiAxMCwgYmFja2dyb3VuZDogJ3ZhcigtLWJnLW11dGVkKScsIGJvcmRlclJhZGl1czogOCwgZm9udFNpemU6IDEyLjUgfX0+CiAgICAgICAgICAgICAgICAgIFRlbXBvcmFyeSBwYXNzd29yZCDigJQgZ2l2ZSB0aGlzIHRvIHRoZSBkb2N0b3I6IDxjb2RlPntwb3J0YWxQd308L2NvZGU+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICApfQogICAgICAgICAgICAgIHtzaG93UmV2b2tlICYmICgKICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgcGFkZGluZzogMTIsIGJvcmRlcjogJzFweCBzb2xpZCB2YXIoLS1lcnJvciknLCBib3JkZXJSYWRpdXM6IDggfX0+CiAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZm9udFNpemU6IDEzLCBmb250V2VpZ2h0OiA2MDAsIG1hcmdpbkJvdHRvbTogNCB9fT5SZXZva2UgcG9ydGFsIGFjY2Vzcz88L2Rpdj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtbXV0ZWQiIHN0eWxlPXt7IGZvbnRTaXplOiAxMi41LCBtYXJnaW5Cb3R0b206IDggfX0+CiAgICAgICAgICAgICAgICAgICAgVGhpcyB3aWxsIGltbWVkaWF0ZWx5IHByZXZlbnQge2luaXRpYWwuZnVsbF9uYW1lfSBmcm9tIGxvZ2dpbmcgaW4gdG8gdGhlIGRvY3RvciBwb3J0YWwuIFRoZWlyIGRpcmVjdG9yeSBwcm9maWxlIHN0YXlzIGluIHBsYWNlLgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGdhcDogOCB9fT4KICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1naG9zdCBzbSIgb25DbGljaz17KCkgPT4gc2V0U2hvd1Jldm9rZShmYWxzZSl9PkNhbmNlbDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLWRhbmdlciBzbSIgb25DbGljaz17ZG9SZXZva2VQb3J0YWx9IGRpc2FibGVkPXtwb3J0YWxCdXN5fT5SZXZva2UgYWNjZXNzPC9idXR0b24+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICApIDogKAogICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idC1tdXRlZCIgc3R5bGU9e3sgZm9udFNpemU6IDEyLCBtYXJnaW46ICcwIDAgMTBweCcsIGxpbmVIZWlnaHQ6IDEuNSB9fT4KICAgICAgICAgICAgICAgIHtpc0VkaXQKICAgICAgICAgICAgICAgICAgPyAnVGhpcyBkb2N0b3IgaGFzIG5vIHBvcnRhbCBhY2NvdW50IHlldCDigJQgZ3JhbnQgb25lIGJlbG93LicKICAgICAgICAgICAgICAgICAgOiAnQ3JlYXRlIHRoZSBsb2dpbiB0aGUgZG9jdG9yIHdpbGwgdXNlIGF0IHRoZSBEb2N0b3IgcG9ydGFsLiBMZWF2ZSBib3RoIGZpZWxkcyBibGFuayB0byBhZGQgdGhlIHByb2ZpbGUgd2l0aG91dCBwb3J0YWwgYWNjZXNzLiBJdCBjYW4gYmUgZ3JhbnRlZCBsYXRlciBmcm9tIEVkaXQuJ30KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAxMiB9fT4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iUG9ydGFsIGVtYWlsIiBlcnJvcj17cG9ydGFsRXJyb3JzLmVtYWlsfT4KICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCB0eXBlPSJlbWFpbCIgaWNvbj0ibWFpbCIgcGxhY2Vob2xkZXI9ImRvY3RvckBtZWRpY2FjYXJlLnBoIiB2YWx1ZT17cG9ydGFsRW1haWx9IGVycm9yPXtwb3J0YWxFcnJvcnMuZW1haWx9CiAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9e2UgPT4geyBzZXRQb3J0YWxFbWFpbChlLnRhcmdldC52YWx1ZSk7IGlmIChwb3J0YWxFcnJvcnMuZW1haWwpIHNldFBvcnRhbEVycm9ycyhwZSA9PiAoeyAuLi5wZSwgZW1haWw6IG51bGwgfSkpOyB9fSAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iUGFzc3dvcmQiIGVycm9yPXtwb3J0YWxFcnJvcnMucGFzc3dvcmR9IGhlbHA9eyFwb3J0YWxFcnJvcnMucGFzc3dvcmQgJiYgJ01pbmltdW0gOCBjaGFyYWN0ZXJzLiBTaGFyZSBpdCB3aXRoIHRoZSBkb2N0b3Igc2VjdXJlbHkuJ30+CiAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBnYXA6IDggfX0+CiAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCB0eXBlPSJ0ZXh0IiBzdHlsZT17eyBmbGV4OiAxIH19IHZhbHVlPXtwb3J0YWxQd30gZXJyb3I9e3BvcnRhbEVycm9ycy5wYXNzd29yZH0KICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXtlID0+IHsgc2V0UG9ydGFsUHcoZS50YXJnZXQudmFsdWUpOyBpZiAocG9ydGFsRXJyb3JzLnBhc3N3b3JkKSBzZXRQb3J0YWxFcnJvcnMocGUgPT4gKHsgLi4ucGUsIHBhc3N3b3JkOiBudWxsIH0pKTsgfX0KICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJNaW4gOCBjaGFyYWN0ZXJzIiAvPgogICAgICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBzdHlsZT17eyBmbGV4U2hyaW5rOiAwIH19IG9uQ2xpY2s9e2dlbmVyYXRlUHd9PkdlbmVyYXRlPC9idXR0b24+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICB7aXNFZGl0ICYmICgKICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IHNtIiBvbkNsaWNrPXtkb0dyYW50UG9ydGFsfSBkaXNhYmxlZD17cG9ydGFsQnVzeX0gc3R5bGU9e3sgbWFyZ2luVG9wOiA4IH19PgogICAgICAgICAgICAgICAgICB7cG9ydGFsQnVzeSA/ICdXb3JraW5n4oCmJyA6ICdHcmFudCBwb3J0YWwgYWNjZXNzJ30KICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgKX0KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L01vZGFsPgogICk7Cn0KCmV4cG9ydCB7IERvY3RvckZvcm1Nb2RhbCB9Owo=
+// DoctorFormModal — add/edit doctor + portal access (restored prototype UI,
+// real API). Props: open, onClose, initial? (doctor row — edit mode),
+// onSaved(savedDoctor).
+import { useEffect, useRef, useState } from 'react';
+import {
+  DoctorAvatar, Field, Icon, Modal, SelectInput, TextInput, TextArea, useStore,
+} from '../shared/components.jsx';
+import {
+  createAdminDoctor, updateAdminDoctor, grantPortalAccess,
+  resetPortalAccess, revokePortalAccess, ApiError,
+} from '../shared/api.js';
+import { apiOptional } from '../shared/api.js';
+import { focusFirstError } from './helpers.js';
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+function DoctorFormModal({ open, onClose, initial, onSaved }) {
+  const store = useStore();
+  const isEdit = !!initial;
+  const [form, setForm] = useState({
+    name: '', specialty_id: '', status: 'available', room: '',
+    exp: '', fee: '', gender: '', bio: '',
+  });
+  const [specialties, setSpecialties] = useState([]);
+  const [avail, setAvail] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  // Portal access
+  const [portalEmail, setPortalEmail] = useState('');
+  const [portalPw, setPortalPw] = useState('');
+  const [portalErrors, setPortalErrors] = useState({});
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [portalInfo, setPortalInfo] = useState(null);
+  const [showRevoke, setShowRevoke] = useState(false);
+  const [photo, setPhoto] = useState('');
+  const [photoError, setPhotoError] = useState('');
+  const photoInputRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    apiOptional('/doctors/specialties', { auth: false }).then((d) => {
+      setSpecialties(d.specialties || []);
+    });
+    if (initial) {
+      setForm({
+        name: initial.full_name || '',
+        specialty_id: initial.specialty_id || '',
+        status: initial.status || 'available',
+        room: initial.room || '',
+        exp: initial.years_of_experience ?? '',
+        fee: initial.consultation_fee ?? '',
+        gender: initial.gender || '',
+        bio: initial.bio || '',
+      });
+      setPortalInfo(initial.doctor_accounts?.email || initial.portal_email
+        ? { email: initial.doctor_accounts?.email || initial.portal_email }
+        : null);
+    } else {
+      setForm({ name: '', specialty_id: '', status: 'available', room: '', exp: '', fee: '', gender: '', bio: '' });
+      setPortalInfo(null);
+    }
+    setAvail(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+    setErrors({});
+    setPortalEmail('');
+    setPortalPw('');
+    setPortalErrors({});
+    setShowRevoke(false);
+    setPhoto(initial?.photo_url || '');
+    setPhotoError('');
+  }, [open, initial]);
+
+  const onPhotoChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please choose an image file (JPG or PNG).');
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      setPhotoError('Image is too large. Please choose one under 1 MB.');
+      return;
+    }
+    setPhotoError('');
+    const reader = new FileReader();
+    reader.onload = () => setPhoto(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const set = (k) => (e) => {
+    setForm(f => ({ ...f, [k]: e.target.value }));
+    if (errors[k]) setErrors(x => ({ ...x, [k]: null }));
+  };
+  const toggleDay = (day) => setAvail(av => av.includes(day) ? av.filter(d => d !== day) : [...av, day]);
+
+  const generatePw = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let pw = '';
+    const arr = new Uint32Array(10);
+    crypto.getRandomValues(arr);
+    for (let i = 0; i < 10; i++) pw += chars[arr[i] % chars.length];
+    setPortalPw(pw);
+    if (portalErrors.password) setPortalErrors(pe => ({ ...pe, password: null }));
+  };
+
+  const doSave = async () => {
+    const e = {};
+    if (!form.name.trim()) e.name = 'Doctor name is required';
+    if (!form.specialty_id) e.specialty_id = 'Specialty is required';
+    if (!form.room.trim()) e.room = 'Room / clinic is required';
+    if (form.exp === '' || form.exp == null) e.exp = 'Years of experience required';
+    if (form.fee === '' || form.fee == null) e.fee = 'Consultation fee required';
+    setErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      const body = {
+        full_name: form.name.trim(),
+        specialty_id: form.specialty_id,
+        status: form.status,
+        room: form.room.trim(),
+        years_of_experience: Number(form.exp),
+        consultation_fee: Number(form.fee),
+        gender: form.gender || null,
+        bio: form.bio.trim() || null,
+        // photo_url only accepts URLs (max 500 chars); base64 uploads stay local-only
+        ...(photo && !photo.startsWith('data:') ? { photo_url: photo } : {}),
+      };
+      const saved = isEdit
+        ? await updateAdminDoctor(initial.id, body)
+        : await createAdminDoctor(body);
+      store.pushToast({
+        kind: 'success',
+        title: isEdit ? 'Doctor updated' : 'Doctor added',
+        message: `${saved.full_name} has been ${isEdit ? 'updated' : 'added to the directory'}.`,
+      });
+      onSaved && onSaved(saved);
+      onClose();
+    } catch (err) {
+      setErrors({ form: err instanceof ApiError ? err.message : 'Could not save doctor.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const doGrantPortal = async () => {
+    const pe = {};
+    if (!portalEmail.trim()) pe.email = 'Portal email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(portalEmail)) pe.email = 'Enter a valid email address';
+    if (!portalPw) pe.password = 'Password is required';
+    else if (portalPw.length < 8) pe.password = 'Use at least 8 characters';
+    setPortalErrors(pe);
+    if (Object.keys(pe).length) return;
+
+    setPortalBusy(true);
+    try {
+      const targetId = isEdit ? initial.id : null;
+      // For add mode, we need the doctor ID first — save the doctor, then grant
+      let doctorId = targetId;
+      if (!doctorId) {
+        // Save doctor first (without closing), then grant portal
+        await doSave();
+        return; // doSave closes the modal; portal must be granted from Edit
+      }
+      await grantPortalAccess(doctorId, { email: portalEmail.trim().toLowerCase(), password: portalPw });
+      setPortalInfo({ email: portalEmail.trim().toLowerCase() });
+      setPortalEmail('');
+      setPortalPw('');
+      store.pushToast({ kind: 'success', title: 'Portal access granted', message: 'The doctor can now sign in at the Doctor portal.' });
+    } catch (err) {
+      setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not grant portal access.' });
+    } finally {
+      setPortalBusy(false);
+    }
+  };
+
+  const doResetPortal = async () => {
+    setPortalBusy(true);
+    try {
+      const result = await resetPortalAccess(initial.id);
+      setPortalPw(result.password || '');
+      store.pushToast({ kind: 'success', title: 'Password reset', message: 'A new temporary password was generated — share it with the doctor.' });
+    } catch (err) {
+      setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not reset password.' });
+    } finally {
+      setPortalBusy(false);
+    }
+  };
+
+  const doRevokePortal = async () => {
+    setPortalBusy(true);
+    try {
+      await revokePortalAccess(initial.id);
+      setPortalInfo(null);
+      setShowRevoke(false);
+      store.pushToast({ kind: 'success', title: 'Portal access revoked', message: 'The doctor can no longer sign in at the Doctor portal.' });
+    } catch (err) {
+      setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not revoke portal access.' });
+    } finally {
+      setPortalBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open={open} onClose={onClose} size="lg"
+      title={isEdit ? 'Edit doctor' : 'Add new doctor'}
+      subtitle={isEdit ? `Editing ${initial.full_name}` : 'Create a new doctor profile, schedule, and portal access.'}
+      footer={<>
+        <button className="btn btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
+        <button className="btn btn-primary" onClick={doSave} disabled={saving}>{saving ? 'Saving…' : (isEdit ? 'Save changes' : 'Add doctor')}</button>
+      </>}
+    >
+      <div className="stack md">
+        {errors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {errors.form}</div>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {photo
+            ? <img src={photo} alt="Doctor" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
+            : <DoctorAvatar doctor={{ name: form.name }} size={64} />}
+          <div>
+            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
+                <Icon name="upload" size={14} /> Upload photo
+              </button>
+              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
+            </div>
+            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
+              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
+            </div>
+            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <Field label="Full name" required error={errors.name}>
+            <TextInput value={form.name} onChange={set('name')} error={errors.name} placeholder="Dr. Juan Dela Cruz" />
+          </Field>
+          <Field label="Specialty" required error={errors.specialty_id}>
+            <SelectInput value={form.specialty_id} onChange={set('specialty_id')} error={errors.specialty_id}>
+              <option value="">Select specialty…</option>
+              {specialties.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </SelectInput>
+          </Field>
+          <Field label="Status">
+            <SelectInput value={form.status} onChange={set('status')}>
+              <option value="available">Available</option>
+              <option value="busy">Busy today</option>
+              <option value="on-leave">On leave</option>
+            </SelectInput>
+          </Field>
+          <Field label="Room / clinic" required error={errors.room}>
+            <TextInput value={form.room} onChange={set('room')} error={errors.room} placeholder="e.g., Cardio Wing • Rm 402" />
+          </Field>
+          <Field label="Years of experience" required error={errors.exp}>
+            <TextInput type="number" value={form.exp} onChange={set('exp')} error={errors.exp} placeholder="10" />
+          </Field>
+          <Field label="Consultation fee (₱)" required error={errors.fee}>
+            <TextInput type="number" value={form.fee} onChange={set('fee')} error={errors.fee} placeholder="1500" />
+          </Field>
+          <Field label="Gender">
+            <SelectInput value={form.gender} onChange={set('gender')}>
+              <option value="">—</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </SelectInput>
+          </Field>
+          <Field label="Bio">
+            <TextArea value={form.bio} onChange={set('bio')} rows={2} placeholder="Short professional bio…" />
+          </Field>
+        </div>
+        <Field label="Weekly availability" help="Days the doctor is available for consultations">
+          <div className="chip-group">
+            {DAYS.map(day => (
+              <button key={day} type="button" className={'chip' + (avail.includes(day) ? ' on' : '')} onClick={() => toggleDay(day)}>
+                {day}
+              </button>
+            ))}
+          </div>
+        </Field>
+
+        {/* Portal access — admin-issued credentials for the Doctor portal. */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+            <Icon name="key-round" size={14} style={{ color: 'var(--primary)' }} />
+            <span style={{ fontSize: 13, fontWeight: 600 }}>Doctor portal access</span>
+          </div>
+          {portalErrors.form && <div className="form-error" style={{ margin: '8px 0' }}><Icon name="alert-circle" size={14} /> {portalErrors.form}</div>}
+          {isEdit && portalInfo ? (
+            <div className="stack md">
+              <p className="t-muted" style={{ fontSize: 12, margin: 0, lineHeight: 1.5 }}>
+                Active. The doctor signs in at the Doctor portal as <strong>{portalInfo.email}</strong>.
+              </p>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button type="button" className="btn btn-secondary sm" onClick={doResetPortal} disabled={portalBusy}>
+                  {portalBusy ? 'Working…' : 'Generate new password'}
+                </button>
+                <button type="button" className="btn btn-danger-outline sm" onClick={() => setShowRevoke(true)} disabled={portalBusy}>
+                  <Icon name="shield-off" size={13} /> Revoke portal access
+                </button>
+              </div>
+              {portalPw && (
+                <div style={{ padding: 10, background: 'var(--bg-muted)', borderRadius: 8, fontSize: 12.5 }}>
+                  Temporary password — give this to the doctor: <code>{portalPw}</code>
+                </div>
+              )}
+              {showRevoke && (
+                <div style={{ padding: 12, border: '1px solid var(--error)', borderRadius: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Revoke portal access?</div>
+                  <div className="t-muted" style={{ fontSize: 12.5, marginBottom: 8 }}>
+                    This will immediately prevent {initial.full_name} from logging in to the doctor portal. Their directory profile stays in place.
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button className="btn btn-ghost sm" onClick={() => setShowRevoke(false)}>Cancel</button>
+                    <button className="btn btn-danger sm" onClick={doRevokePortal} disabled={portalBusy}>Revoke access</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <p className="t-muted" style={{ fontSize: 12, margin: '0 0 10px', lineHeight: 1.5 }}>
+                {isEdit
+                  ? 'This doctor has no portal account yet — grant one below.'
+                  : 'Create the login the doctor will use at the Doctor portal. Leave both fields blank to add the profile without portal access. It can be granted later from Edit.'}
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <Field label="Portal email" error={portalErrors.email}>
+                  <TextInput type="email" icon="mail" placeholder="doctor@medicacare.ph" value={portalEmail} error={portalErrors.email}
+                    onChange={e => { setPortalEmail(e.target.value); if (portalErrors.email) setPortalErrors(pe => ({ ...pe, email: null })); }} />
+                </Field>
+                <Field label="Password" error={portalErrors.password} help={!portalErrors.password && 'Minimum 8 characters. Share it with the doctor securely.'}>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <TextInput type="text" style={{ flex: 1 }} value={portalPw} error={portalErrors.password}
+                      onChange={e => { setPortalPw(e.target.value); if (portalErrors.password) setPortalErrors(pe => ({ ...pe, password: null })); }}
+                      placeholder="Min 8 characters" />
+                    <button type="button" className="btn btn-secondary" style={{ flexShrink: 0 }} onClick={generatePw}>Generate</button>
+                  </div>
+                </Field>
+              </div>
+              {isEdit && (
+                <button type="button" className="btn btn-secondary sm" onClick={doGrantPortal} disabled={portalBusy} style={{ marginTop: 8 }}>
+                  {portalBusy ? 'Working…' : 'Grant portal access'}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+export { DoctorFormModal };
