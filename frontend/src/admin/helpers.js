@@ -125,7 +125,7 @@ function buildDoctorScheduleHTML(doctor, appts, dateStr) {
   </div>
   <div class="doctor-block">
     <div>
-      <h3 class="doc-name">${esc(docName)}${leaveChip}</h3>
+      <h3 class="doc-name">${esc(docName)} ${leaveChip}</h3>
       <p class="doc-sub">${esc(specialty)} · ${esc(room)} · Consultation fee: ₱${esc(fee)}${clinicDays}</p>
     </div>
   </div>
