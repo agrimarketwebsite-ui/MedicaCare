@@ -1,16 +1,15 @@
 // PatientMessages — patient (split from screens-patient.jsx)
 import { useEffect, useState } from 'react';
 import { AppShell, Badge, EmptyState, Field, Icon, PageHeader, PageSpinner, TextArea, TextInput, useStore } from '../shared/components.jsx';
-import { CURRENT_PATIENT, formatDate } from '../shared/data.js';
 
 import { localToday, focusFirstError } from './helpers.js';
 
 // ---------- My messages (patient portal — dedicated page) ----------
 // "Message the clinic" used to be a card at the bottom of Help & support; it
 // now has its own page (sidebar: My messages) so conversations don't compete
-// with the FAQs. Submissions land on the admin console's Patient messages page
-// as open tickets, and staff replies come back here as green "Staff reply:"
-// boxes inside each ticket's thread.
+// with the FAQs. Submissions are kept in the portal (no patient-facing
+// messages API endpoint exists yet — staff replies arrive once a staff
+// messaging endpoint is connected).
 function PatientMessages() {
   const store = useStore();
   const me = store.currentPatient || window.CURRENT_PATIENT;
@@ -21,7 +20,8 @@ function PatientMessages() {
 
   const [msgForm, setMsgForm] = useState({ subject: '', message: '' });
   const [msgErrors, setMsgErrors] = useState({});
-  const myTickets = (store.tickets || []).filter(t => t.patientId === me.id);
+  const meId = me.id || me.patient_id;
+  const myTickets = (store.tickets || []).filter(t => String(t.patientId) === String(meId));
   const updateMsg = (k, v) => { setMsgForm(f => ({ ...f, [k]: v })); if (msgErrors[k]) setMsgErrors(e => ({ ...e, [k]: null })); };
 
   const submitMsg = (e) => {
@@ -35,8 +35,8 @@ function PatientMessages() {
     if (Object.keys(errs).length) { focusFirstError(); return; }
     store.setTickets([{
       id: 'tkt' + Date.now(),
-      patientId: me.id,
-      name: me.name,
+      patientId: meId,
+      name: me.name || me.full_name,
       subject: msgForm.subject.trim(),
       message: m,
       status: 'open',
@@ -44,7 +44,6 @@ function PatientMessages() {
       reply: '',
       repliedAt: null,
     }, ...(store.tickets || [])]);
-    store.pushActivity(me.name, 'Sent a message', `"${msgForm.subject.trim()}"`);
     setMsgForm({ subject: '', message: '' });
     store.pushToast({ title: 'Message sent', msg: 'Our staff will reply here in your portal.' });
   };
@@ -64,7 +63,6 @@ function PatientMessages() {
           thread: [...(x.thread || []), { id: x.id + '-fu' + Date.now(), from: 'patient', text, date: localToday() }],
         }
       : x));
-    store.pushActivity(me.name, 'Sent a follow-up message', `"${t.subject}"`);
     store.pushToast({ title: 'Follow-up sent', msg: 'Our staff will reply here in your portal.' });
     setFuId(null); setFuText(''); setFuError('');
   };
