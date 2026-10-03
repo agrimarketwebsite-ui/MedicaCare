@@ -23,7 +23,7 @@ function toAppointmentDTO(row) {
   delete rest.doctors;
   const out = decryptRow(rest, APPT_READ_ENC_FIELDS);
   out.patient = patients
-    ? { id: patients.id, full_name: patients.full_name, email: patients.email }
+    ? { id: patients.id, full_name: patients.full_name, email: patients.email, phone: patients.phone }
     : null;
   out.doctor = doctors
     ? { id: doctors.id, full_name: doctors.full_name, specialty_name: doctors.specialties?.name ?? null }
