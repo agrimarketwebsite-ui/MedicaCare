@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import {
   Badge, EmptyState, Field, Icon, Modal, PageSpinner, SelectInput,
-  TextInput, TextArea, useStore,
+  TextInput, useStore,
 } from '../shared/components.jsx';
 import { formatDate } from '../shared/data.js';
 import {
@@ -90,7 +90,7 @@ function PatientRecordsModal({ patient, onClose }) {
         })),
       });
       setLabs(l => [rec, ...l]);
-      store.pushToast({ kind: 'success', title: 'Lab result saved', message: `${rec.test_name} was added to ${patient.full_name}'s medical records.` });
+      store.pushToast({ title: 'Lab result saved', msg: `${rec.test_name} was added to ${patient.full_name}'s medical records.` });
       setAdding(false);
     } catch (err) {
       setLabErrors({ form: errMsg(err, 'Could not save lab result.') });
@@ -103,9 +103,9 @@ function PatientRecordsModal({ patient, onClose }) {
     try {
       await deleteAdminLab(l.id);
       setLabs(ls => ls.filter(x => x.id !== l.id));
-      store.pushToast({ kind: 'success', title: 'Lab result removed', message: `${l.test_name} was deleted from ${patient.full_name}'s records.` });
+      store.pushToast({ title: 'Lab result removed', msg: `${l.test_name} was deleted from ${patient.full_name}'s records.` });
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Delete failed', message: errMsg(err, 'Could not delete lab result.') });
+      store.pushToast({ kind: 'error', title: 'Delete failed', msg: errMsg(err, 'Could not delete lab result.') });
     }
   };
 
@@ -131,7 +131,7 @@ function PatientRecordsModal({ patient, onClose }) {
         instructions: medForm.instructions.trim() || undefined,
       });
       setMeds(m => [rec, ...m]);
-      store.pushToast({ kind: 'success', title: 'Medication saved', message: `${rec.name} was added to ${patient.full_name}'s medical records.` });
+      store.pushToast({ title: 'Medication saved', msg: `${rec.name} was added to ${patient.full_name}'s medical records.` });
       setAdding(false);
     } catch (err) {
       setMedErrors({ form: errMsg(err, 'Could not save medication.') });
@@ -144,9 +144,9 @@ function PatientRecordsModal({ patient, onClose }) {
     try {
       await deleteAdminMed(m.id);
       setMeds(ms => ms.filter(x => x.id !== m.id));
-      store.pushToast({ kind: 'success', title: 'Medication removed', message: `${m.name} was deleted from ${patient.full_name}'s records.` });
+      store.pushToast({ title: 'Medication removed', msg: `${m.name} was deleted from ${patient.full_name}'s records.` });
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Delete failed', message: errMsg(err, 'Could not delete medication.') });
+      store.pushToast({ kind: 'error', title: 'Delete failed', msg: errMsg(err, 'Could not delete medication.') });
     }
   };
 
