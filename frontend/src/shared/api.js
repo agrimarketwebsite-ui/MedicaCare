@@ -354,6 +354,316 @@ export const createMedication = (body) =>
 /** GET /api/ratings/doctor → { ratings, avg_rating, rating_count }. */
 export const getDoctorFeedback = () => api('/ratings/doctor');
 
+// ---------------------------------------------------------------------------
+// Admin Console (Phase 6) — lahat ay requireRole('admin') sa backend.
+// Base path: /api/admin (API_BASE_URL ay '/api' na).
+//
+// Assumed envelope shapes (backend implements the same; ang api() ay
+// nag-u-unwrap ng `data`): list endpoints na may page/limit ay bumabalik ng
+// { data: { <key>, total, page, limit } } — ang total ay nasa data, hindi sa meta.
+// ---------------------------------------------------------------------------
+
+/** Build a query string mula sa plain object (skip null/undefined/''). */
+function qs(params = {}) {
+  const parts = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null && v !== '')
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+  return parts.length ? `?${parts.join('&')}` : '';
+}
+
+/** GET /api/admin/patients?q=&page=&limit= → { patients, total, page, limit }. */
+export const getAdminPatients = (q, page = 1, limit = 15) =>
+  apiWithMeta(`/admin/patients${qs({ q, page, limit })}`).then(({ data }) => ({
+    patients: data.patients || [],
+    total: data.total ?? (data.patients || []).length,
+  }));
+
+/** POST /api/admin/patients → 201 { patient }. */
+export const createAdminPatient = (body) =>
+  api('/admin/patients', { method: 'POST', body }).then((d) => d.patient);
+
+/** GET /api/admin/patients/:id → { patient }. */
+export const getAdminPatient = (id) =>
+  api(`/admin/patients/${encodeURIComponent(id)}`).then((d) => d.patient);
+
+/** PUT /api/admin/patients/:id → 200 { patient }. */
+export const updateAdminPatient = (id, body) =>
+  api(`/admin/patients/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.patient);
+
+/** DELETE /api/admin/patients/:id → 204. */
+export const deleteAdminPatient = (id) =>
+  api(`/admin/patients/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/admin/doctors?q=&page=&limit= → { doctors, total, page, limit }. */
+export const getAdminDoctors = (q, page = 1, limit = 15) =>
+  apiWithMeta(`/admin/doctors${qs({ q, page, limit })}`).then(({ data }) => ({
+    doctors: data.doctors || [],
+    total: data.total ?? (data.doctors || []).length,
+  }));
+
+/** POST /api/admin/doctors → 201 { doctor }. */
+export const createAdminDoctor = (body) =>
+  api('/admin/doctors', { method: 'POST', body }).then((d) => d.doctor);
+
+/** GET /api/admin/doctors/:id → { doctor }. */
+export const getAdminDoctor = (id) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}`).then((d) => d.doctor);
+
+/** PUT /api/admin/doctors/:id → 200 { doctor }. */
+export const updateAdminDoctor = (id, body) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.doctor);
+
+/** DELETE /api/admin/doctors/:id → 204. */
+export const deleteAdminDoctor = (id) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/admin/doctors/:id/availability → { availability }. */
+export const getAdminDoctorAvailability = (id) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/availability`).then((d) => d.availability || []);
+
+/** POST /api/admin/doctors/:id/availability → 201 { availability }. */
+export const createAdminDoctorAvailability = (id, body) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/availability`, { method: 'POST', body }).then((d) => d.availability);
+
+/** PUT /api/admin/doctors/:id/availability/:availId → 200 { availability }. */
+export const updateAdminDoctorAvailability = (id, availId, body) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/availability/${encodeURIComponent(availId)}`, {
+    method: 'PUT', body,
+  }).then((d) => d.availability);
+
+/** DELETE /api/admin/doctors/:id/availability/:availId → 204. */
+export const deleteAdminDoctorAvailability = (id, availId) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/availability/${encodeURIComponent(availId)}`, {
+    method: 'DELETE',
+  });
+
+/** POST /api/admin/doctors/:id/portal-access { email, password } → 201 { portal_access }. */
+export const grantDoctorAccess = (id, { email, password }) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/portal-access`, {
+    method: 'POST', body: { email, password },
+  }).then((d) => d.portal_access);
+
+/** POST /api/admin/doctors/:id/portal-access/reset → 200 { portal_access, password } (server-generated). */
+export const resetDoctorPassword = (id) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/portal-access/reset`, {
+    method: 'POST',
+  });
+
+/** DELETE /api/admin/doctors/:id/portal-access → 204. */
+export const revokeDoctorAccess = (id) =>
+  api(`/admin/doctors/${encodeURIComponent(id)}/portal-access`, { method: 'DELETE' });
+
+/** GET /api/admin/appointments?date=&doctor_id=&status=&page=&limit= → { appointments, total }. */
+export const getAdminAppointments = (filters = {}) =>
+  apiWithMeta(`/admin/appointments${qs({
+    date: filters.date,
+    doctor_id: filters.doctor_id,
+    status: filters.status,
+    page: filters.page || 1,
+    limit: filters.limit || 15,
+  })}`).then(({ data }) => ({
+    appointments: data.appointments || [],
+    total: data.total ?? (data.appointments || []).length,
+  }));
+
+/** POST /api/admin/appointments → 201 { appointment }. */
+export const createAdminAppointment = (body) =>
+  api('/admin/appointments', { method: 'POST', body }).then((d) => d.appointment);
+
+/** GET /api/admin/appointments/:id → { appointment }. */
+export const getAdminAppointment = (id) =>
+  api(`/admin/appointments/${encodeURIComponent(id)}`).then((d) => d.appointment);
+
+/** PUT /api/admin/appointments/:id → 200 { appointment }. */
+export const updateAdminAppointment = (id, body) =>
+  api(`/admin/appointments/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.appointment);
+
+/** POST /api/admin/appointments/:id/status { status } → 200 { appointment }. */
+export const setAdminAppointmentStatus = (id, { status }) =>
+  api(`/admin/appointments/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH', body: { status },
+  }).then((d) => d.appointment);
+
+/** POST /api/admin/appointments/:id/complete { notes } → 200 { appointment }. */
+export const completeAdminAppointment = (id, { notes }) =>
+  api(`/admin/appointments/${encodeURIComponent(id)}/complete`, {
+    method: 'POST', body: { notes },
+  }).then((d) => d.appointment);
+
+/** DELETE /api/admin/appointments/:id → 204. */
+export const deleteAdminAppointment = (id) =>
+  api(`/admin/appointments/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/admin/records/labs?patient_id= → { lab_results }. */
+export const getAdminLabs = (patientId) =>
+  api(`/admin/records/labs${qs({ patient_id: patientId })}`).then((d) => d.lab_results || []);
+
+/** POST /api/admin/records/labs → 201 { lab_result }. */
+export const createAdminLab = (body) =>
+  api('/admin/records/labs', { method: 'POST', body }).then((d) => d.lab_result);
+
+/** PUT /api/admin/records/labs/:id → 200 { lab_result }. */
+export const updateAdminLab = (id, body) =>
+  api(`/admin/records/labs/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.lab_result);
+
+/** DELETE /api/admin/records/labs/:id → 204. */
+export const deleteAdminLab = (id) =>
+  api(`/admin/records/labs/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/admin/records/medications?patient_id= → { medications }. */
+export const getAdminMeds = (patientId) =>
+  api(`/admin/records/medications${qs({ patient_id: patientId })}`).then((d) => d.medications || []);
+
+/** POST /api/admin/records/medications → 201 { medication }. */
+export const createAdminMed = (body) =>
+  api('/admin/records/medications', { method: 'POST', body }).then((d) => d.medication);
+
+/** PUT /api/admin/records/medications/:id → 200 { medication }. */
+export const updateAdminMed = (id, body) =>
+  api(`/admin/records/medications/${encodeURIComponent(id)}`, { method: 'PUT', body }).then((d) => d.medication);
+
+/** DELETE /api/admin/records/medications/:id → 204. */
+export const deleteAdminMed = (id) =>
+  api(`/admin/records/medications/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+/** GET /api/admin/stories?status= → { stories }. */
+export const getAdminStories = (status) =>
+  api(`/admin/stories${qs({ status })}`).then((d) => d.stories || []);
+
+/** PATCH /api/admin/stories/:id/approve → 200 { story }. */
+export const approveStory = (id) =>
+  api(`/admin/stories/${encodeURIComponent(id)}/approve`, { method: 'PATCH' }).then((d) => d.story);
+
+/** PATCH /api/admin/stories/:id/reject → 200 { story }. */
+export const rejectStory = (id) =>
+  api(`/admin/stories/${encodeURIComponent(id)}/reject`, { method: 'PATCH' }).then((d) => d.story);
+
+/** PATCH /api/admin/stories/:id/unpublish → 200 { story }. */
+export const unpublishStory = (id) =>
+  api(`/admin/stories/${encodeURIComponent(id)}/unpublish`, { method: 'PATCH' }).then((d) => d.story);
+
+/** GET /api/admin/tickets?status= → { tickets }. */
+export const getAdminTickets = (status) =>
+  api(`/admin/tickets${qs({ status })}`).then((d) => d.tickets || []);
+
+/** GET /api/admin/tickets/:id → { ticket, messages } (thread). */
+export const getAdminTicket = (id) =>
+  api(`/admin/tickets/${encodeURIComponent(id)}`);
+
+/** POST /api/admin/tickets/:id/reply { body } → 201 { message }. */
+export const replyTicket = (id, { body }) =>
+  api(`/admin/tickets/${encodeURIComponent(id)}/reply`, {
+    method: 'POST', body: { body },
+  }).then((d) => d.message);
+
+/** PATCH /api/admin/tickets/:id/resolve → 200 { ticket }. */
+export const resolveTicket = (id) =>
+  api(`/admin/tickets/${encodeURIComponent(id)}/resolve`, { method: 'PATCH' }).then((d) => d.ticket);
+
+/** GET /api/admin/contact → { messages } (support/contact inbox). */
+export const getAdminContact = () =>
+  api('/admin/contact').then((d) => d.messages || []);
+
+/** PATCH /api/admin/contact/:id/handled → 200 { message }. */
+export const markContactHandled = (id) =>
+  api(`/admin/contact/${encodeURIComponent(id)}/handled`, { method: 'PATCH' }).then((d) => d.message);
+
+/** GET /api/admin/settings/clinic → { clinic_info }. */
+export const getClinicInfo = () =>
+  api('/admin/settings/clinic').then((d) => d.clinic_info || {});
+
+/** PUT /api/admin/settings/clinic → 200 { clinic_info }. */
+export const updateClinicInfo = (body) =>
+  api('/admin/settings/clinic', { method: 'PUT', body }).then((d) => d.clinic_info || {});
+
+/** GET /api/admin/settings/app → { app_settings }. */
+export const getAppSettings = () =>
+  api('/admin/settings/app').then((d) => d.app_settings || {});
+
+/** PUT /api/admin/settings/app → 200 { app_settings }. */
+export const updateAppSettings = (body) =>
+  api('/admin/settings/app', { method: 'PUT', body }).then((d) => d.app_settings || {});
+
+/** GET /api/admin/activity?actor=&action=&from=&to=&page=&limit= → { entries }, meta. */
+export const getAdminActivity = (filters = {}) =>
+  apiWithMeta(`/admin/activity${qs({
+    actor: filters.actor,
+    action: filters.action,
+    from: filters.from,
+    to: filters.to,
+    page: filters.page || 1,
+    limit: filters.limit || 20,
+  })}`).then(({ data }) => ({
+    entries: data.entries || [],
+    total: data.total ?? (data.entries || []).length,
+  }));
+
+/**
+ * GET /api/admin/reports/stats → { stats, byDay }.
+ * Assumed shape (backend implements the same):
+ *   { stats: { patients, doctors, appointments, appointmentsToday,
+ *              pendingStories, openTickets },
+ *     byDay: [{ label, value }] } — appointments per day, last 7 days.
+ */
+export const getReportStats = () => api('/admin/reports/stats');
+
+/**
+ * GET /api/admin/reports/specialties → { breakdown }.
+ * Assumed shape: { breakdown: [{ specialty, doctors, appointments }] }.
+ */
+export const getSpecialtyBreakdown = () =>
+  api('/admin/reports/specialties').then((d) => d.breakdown || []);
+
+/**
+ * GET /api/admin/reports/busiest-doctors → { doctors }.
+ * Assumed shape: { doctors: [{ id, full_name, specialty_name, appointment_count }] }.
+ */
+export const getBusiestDoctors = () =>
+  api('/admin/reports/busiest-doctors').then((d) => d.doctors || []);
+
+/** GET /api/admin/notifications?patient_id= → { notifications }. */
+export const getAdminNotifications = (patientId) =>
+  api(`/admin/notifications${qs({ patient_id: patientId })}`).then((d) => d.notifications || []);
+
+/** POST /api/admin/notifications → 201 { notification }. */
+export const createAdminNotification = (body) =>
+  api('/admin/notifications', { method: 'POST', body }).then((d) => d.notification);
+
+/**
+ * CSV export — GET /api/admin/reports/export.csv.
+ * Hindi ito pwedeng dumaan sa api() (blob, hindi JSON envelope), kaya direktang
+ * fetch gamit ang memory-only access token (tulad ng silentRefresh).
+ * @returns {Promise<{ filename: string }>} pagkatapos ma-download ng browser.
+ */
+export async function exportCsvReport() {
+  const res = await fetch(`${API_BASE_URL}/admin/reports/export.csv`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { ...(getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}) },
+  });
+  if (!res.ok) {
+    let message = `Export failed (HTTP ${res.status})`;
+    try {
+      const body = await res.json();
+      if (body?.message) message = body.message;
+    } catch { /* non-JSON error body */ }
+    throw new ApiError(res.status, message, 'EXPORT_FAILED');
+  }
+  const blob = await res.blob();
+  const filename =
+    (res.headers.get('content-disposition') || '').match(/filename="([^"]+)"/)?.[1] ||
+    'medicacare-report.csv';
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return { filename };
+}
+
 export { API_BASE_URL };
 export default {
   api, apiOptional, apiWithMeta, silentRefresh, bootstrapSession,
@@ -368,6 +678,24 @@ export default {
   getMedicalRecords, createMedicalRecord, updateMedicalRecord,
   getLabResults, createLabResult, getMedications, createMedication,
   getDoctorFeedback,
+  // Admin Console (Phase 6)
+  getAdminPatients, createAdminPatient, getAdminPatient, updateAdminPatient, deleteAdminPatient,
+  getAdminDoctors, createAdminDoctor, getAdminDoctor, updateAdminDoctor, deleteAdminDoctor,
+  getAdminDoctorAvailability, createAdminDoctorAvailability,
+  updateAdminDoctorAvailability, deleteAdminDoctorAvailability,
+  grantDoctorAccess, resetDoctorPassword, revokeDoctorAccess,
+  getAdminAppointments, createAdminAppointment, getAdminAppointment,
+  updateAdminAppointment, setAdminAppointmentStatus, completeAdminAppointment, deleteAdminAppointment,
+  getAdminLabs, createAdminLab, updateAdminLab, deleteAdminLab,
+  getAdminMeds, createAdminMed, updateAdminMed, deleteAdminMed,
+  getAdminStories, approveStory, rejectStory, unpublishStory,
+  getAdminTickets, getAdminTicket, replyTicket, resolveTicket,
+  getAdminContact, markContactHandled,
+  getClinicInfo, updateClinicInfo, getAppSettings, updateAppSettings,
+  getAdminActivity,
+  getReportStats, getSpecialtyBreakdown, getBusiestDoctors,
+  getAdminNotifications, createAdminNotification,
+  exportCsvReport,
 };
 
 
