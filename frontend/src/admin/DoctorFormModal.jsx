@@ -1,220 +1,269 @@
-// DoctorFormModal — admin (split from screens-admin.jsx)
-import { useEffect, useRef, useState } from 'react';
-import { DoctorAvatar, Field, Icon, Modal, SelectInput, TextInput, useStore } from '../shared/components.jsx';
-import { SPECIALTIES, randomInt } from '../shared/data.js';
-import { focusFirstError } from './helpers.js';
+// DoctorFormModal — add/edit doctor + portal access management (Phase 6).
+// Props: open, onClose, initial? (doctor row — kapag may laman, edit mode),
+// onSaved(savedDoctor).
+//
+// Doctor row shape (tulad ng GET /api/doctors): id, full_name,
+// specialty_name, specialty_id, status ('active'/'inactive'),
+// years_of_experience, consultation_fee, room, gender, photo_url,
+// avg_rating, rating_count. Portal access: inaasahan ang
+// `portal_email` / `has_portal_access` sa row (backend contract); kung wala,
+// ipinapalagay na walang portal account hangga't hindi naka-grant.
+import { useEffect, useState } from 'react';
+import {
+  ConfirmModal, Field, Modal, SelectInput, TextArea, TextInput, useStore,
+} from '../shared/components.jsx';
+import {
+  createAdminDoctor, grantDoctorAccess, resetDoctorPassword,
+  revokeDoctorAccess, updateAdminDoctor, ApiError,
+} from '../shared/api.js';
 
-function DoctorFormModal({ open, onClose, doctor, account, onSave, onRevoke }) {
-  const isEdit = !!doctor;
+const EMPTY = {
+  full_name: '',
+  specialty: '',
+  status: 'active',
+  years_experience: '',
+  consultation_fee: '',
+  room: '',
+  gender: '',
+  bio: '',
+};
+
+function DoctorFormModal({ open, onClose, initial, onSaved }) {
   const store = useStore();
-  const [form, setForm] = useState({ name: '', specialty: 'Cardiology', status: 'available', room: '', exp: '', fee: '' });
-  const [errors, setErrors] = useState({});
-  const [avail, setAvail] = useState(['Mon','Tue','Wed','Thu','Fri']);
-  const [photo, setPhoto] = useState('');
-  const [photoError, setPhotoError] = useState('');
-  const photoInputRef = useRef(null);
-  // Portal access — admin-issued credentials the doctor signs in with at the
-  // Doctor portal. On Add (or Edit without an account) both fields together
-  // grant access; on Edit with an account, a typed password resets it.
-  const [accessEmail, setAccessEmail] = useState('');
-  const [accessPw, setAccessPw] = useState('');
-  const [accessErrors, setAccessErrors] = useState({});
+  const [form, setForm] = useState(EMPTY);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const editing = Boolean(initial?.id);
+
+  // --- portal access state ---
+  const [grantEmail, setGrantEmail] = useState('');
+  const [grantPassword, setGrantPassword] = useState('');
+  const [tempPassword, setTempPassword] = useState('');
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [portalError, setPortalError] = useState('');
+  const [confirmRevoke, setConfirmRevoke] = useState(false);
+
   useEffect(() => {
-    if (open) {
-      setForm(doctor ? { name: doctor.name, specialty: doctor.specialty, status: doctor.status, room: doctor.room, exp: doctor.exp, fee: doctor.fee } : { name: '', specialty: 'Cardiology', status: 'available', room: '', exp: '', fee: '' });
-      setAvail(doctor && Array.isArray(doctor.avail) && doctor.avail.length ? [...doctor.avail] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
-      setPhoto(doctor?.photo || '');
-      setPhotoError('');
-      setErrors({});
-      setAccessEmail(account ? account.email : '');
-      setAccessPw('');
-      setAccessErrors({});
+    if (!open) return;
+    setForm(initial ? {
+      full_name: initial.full_name || '',
+      specialty: initial.specialty_name || initial.specialty || '',
+      status: initial.status || 'active',
+      years_experience: initial.years_of_experience ?? initial.years_experience ?? '',
+      consultation_fee: initial.consultation_fee ?? '',
+      room: initial.room || '',
+      gender: initial.gender || '',
+      bio: initial.bio || '',
+    } : EMPTY);
+    setError('');
+    setSaving(false);
+    setGrantEmail(initial?.portal_email || '');
+    setGrantPassword('');
+    setTempPassword('');
+    setPortalError('');
+    setPortalBusy(false);
+    setConfirmRevoke(false);
+  }, [open, initial]);
+
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const hasPortal = Boolean(initial?.has_portal_access || initial?.portal_email);
+
+  const doSave = async () => {
+    if (!form.full_name.trim()) { setError('Full name is required.'); return; }
+    if (!form.specialty.trim()) { setError('Specialty is required.'); return; }
+    setSaving(true);
+    setError('');
+    try {
+      const body = {
+        full_name: form.full_name.trim(),
+        specialty_name: form.specialty.trim(),
+        status: form.status,
+        years_of_experience: form.years_experience === '' ? null : Number(form.years_experience),
+        consultation_fee: form.consultation_fee === '' ? null : Number(form.consultation_fee),
+        room: form.room.trim() || null,
+        gender: form.gender || null,
+        bio: form.bio.trim() || null,
+      };
+      const saved = editing
+        ? await updateAdminDoctor(initial.id, body)
+        : await createAdminDoctor(body);
+      store.pushToast({
+        kind: 'success',
+        title: editing ? 'Doctor updated' : 'Doctor added',
+        message: `${saved.full_name} has been ${editing ? 'updated' : 'added to the directory'}.`,
+      });
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not save the doctor. Please try again.');
+    } finally {
+      setSaving(false);
     }
-  }, [open, doctor, account]);
-  const onPhotoChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = ''; // allow re-selecting the same file
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('Please choose an image file (JPG or PNG).');
-      return;
-    }
-    if (file.size > 1024 * 1024) {
-      setPhotoError('Image is too large. Please choose one under 1 MB.');
-      return;
-    }
-    setPhotoError('');
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result);
-    reader.readAsDataURL(file);
-  };
-  // Unambiguous charset (no I/l/1/O/0) so a generated password is easy to
-  // re-type when the admin shares it with the doctor
-  const generatePw = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-    // randomInt rejection-samples, so every character of the password is
-    // equally likely (a plain `n % chars.length` would skew the tail chars)
-    let pw = '';
-    for (let i = 0; i < 10; i++) pw += chars[randomInt(chars.length)];
-    setAccessPw(pw);
-    if (accessErrors.password) setAccessErrors(ae => ({ ...ae, password: null }));
   };
 
-  const submit = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = 'Doctor name is required';
-    if (!form.room.trim()) e.room = 'Room / clinic is required';
-    if (!form.exp) e.exp = 'Years of experience required';
-    if (!form.fee) e.fee = 'Consultation fee required';
-    if (!avail.length) e.avail = 'Select at least one available day';
-    // Portal access validation — optional: blank fields mean "no account yet"
-    // (it can be granted later from Edit). On Edit with an account, a typed
-    // password means "reset it"; blank keeps the current password.
-    const ae = {};
-    const granting = !isEdit || !account;
-    if (granting) {
-      const email = accessEmail.trim();
-      if (email || accessPw) {
-        if (!email) ae.email = 'Portal email is required';
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ae.email = 'Enter a valid email address';
-        else if (store.users.some(u => u.email.toLowerCase() === email.toLowerCase())) ae.email = 'That email is already used by another account';
-        if (!accessPw) ae.password = 'Password is required';
-        else if (accessPw.length < 8) ae.password = 'Use at least 8 characters';
-      }
-    } else if (accessPw && accessPw.length < 8) {
-      ae.password = 'Use at least 8 characters';
+  const portalToast = (title, message) => store.pushToast({ kind: 'success', title, message });
+
+  const doGrant = async () => {
+    if (!grantEmail.trim() || !grantPassword) { setPortalError('Enter an email and a password to grant access.'); return; }
+    setPortalBusy(true);
+    setPortalError('');
+    try {
+      const saved = await grantDoctorAccess(initial.id, { email: grantEmail.trim(), password: grantPassword });
+      portalToast('Portal access granted', `Login credentials were created for ${saved.email}.`);
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setPortalError(err instanceof ApiError ? err.message : 'Could not grant portal access.');
+    } finally {
+      setPortalBusy(false);
     }
-    setAccessErrors(ae);
-    setErrors(e);
-    if (Object.keys(e).length || Object.keys(ae).length) { focusFirstError(); return; }
-    // Access payload for the parent to apply to store.users (grant/reset)
-    let access = null;
-    if (granting && accessEmail.trim() && accessPw) {
-      access = { mode: 'grant', email: accessEmail.trim().toLowerCase(), password: accessPw };
-    } else if (!granting && account && accessPw) {
-      access = { mode: 'reset', password: accessPw };
-    }
-    onSave({ ...form, avail, photo }, access);
   };
-  const toggleDay = (day) => setAvail(av => av.includes(day) ? av.filter(d => d !== day) : [...av, day]);
+
+  const doResetPassword = async () => {
+    setPortalBusy(true);
+    setPortalError('');
+    try {
+      // Ang server ang nagge-generate ng temporary password — ipinapakita
+      // ito para maibigay ng admin sa doctor (hindi sine-save sa modal).
+      const data = await resetDoctorPassword(initial.id);
+      setTempPassword(data?.password || '');
+      portalToast('Password reset', 'Give the temporary password below to the doctor.');
+    } catch (err) {
+      setPortalError(err instanceof ApiError ? err.message : 'Could not reset the password.');
+    } finally {
+      setPortalBusy(false);
+    }
+  };
+
+  const doRevoke = async () => {
+    setPortalBusy(true);
+    setPortalError('');
+    try {
+      const saved = await revokeDoctorAccess(initial.id);
+      portalToast('Portal access revoked', 'The doctor can no longer log in to the doctor portal.');
+      setConfirmRevoke(false);
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setPortalError(err instanceof ApiError ? err.message : 'Could not revoke portal access.');
+    } finally {
+      setPortalBusy(false);
+    }
+  };
 
   return (
     <Modal
-      open={open} onClose={onClose} size="lg"
-      title={isEdit ? 'Edit doctor' : 'Add new doctor'}
-      subtitle={isEdit ? 'Update the doctor\'s profile, availability, and portal access.' : 'Create a new doctor profile, schedule, and portal access.'}
-      footer={<>
-        <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={submit}>{isEdit ? 'Save changes' : 'Add doctor'}</button>
-      </>}
+      open={open}
+      onClose={onClose}
+      title={editing ? 'Edit doctor' : 'Add doctor'}
+      subtitle={editing ? `Editing ${initial?.full_name || ''}` : 'Add a new doctor to the directory.'}
+      icon="stethoscope"
+      size="lg"
+      footer={
+        <>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="btn btn-primary" onClick={doSave} disabled={saving}>
+            {saving ? 'Saving…' : editing ? 'Save changes' : 'Add doctor'}
+          </button>
+        </>
+      }
     >
-      <div className="stack md">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {photo
-            ? <img src={photo} alt="Doctor" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
-            : <DoctorAvatar doctor={{ name: form.name }} size={64} />}
-          <div>
-            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
-                <Icon name="upload" size={14} /> Upload photo
-              </button>
-              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
-            </div>
-            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
-              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
-            </div>
-            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <Field label="Full name" required error={errors.name}>
-            <TextInput value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} error={errors.name} placeholder="Dr. Juan Dela Cruz" />
-          </Field>
-          <Field label="Specialty" required>
-            <SelectInput value={form.specialty} onChange={e => setForm(f => ({ ...f, specialty: e.target.value }))}>
-              {window.SPECIALTIES.map(s => <option key={s}>{s}</option>)}
-            </SelectInput>
-          </Field>
-          <Field label="Status">
-            <SelectInput value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
-              <option value="available">Available</option>
-              <option value="busy">Busy today</option>
-              <option value="on-leave">On leave</option>
-            </SelectInput>
-          </Field>
-          <Field label="Room / clinic" required error={errors.room}>
-            <TextInput value={form.room} onChange={e => setForm(f => ({ ...f, room: e.target.value }))} error={errors.room} placeholder="e.g., Cardio Wing • Rm 402" />
-          </Field>
-          <Field label="Years of experience" required error={errors.exp}>
-            <TextInput type="number" value={form.exp} onChange={e => setForm(f => ({ ...f, exp: e.target.value }))} error={errors.exp} placeholder="10" />
-          </Field>
-          <Field label="Consultation fee (₱)" required error={errors.fee}>
-            <TextInput type="number" value={form.fee} onChange={e => setForm(f => ({ ...f, fee: e.target.value }))} error={errors.fee} placeholder="1500" />
-          </Field>
-        </div>
-        <Field label="Weekly availability" error={errors.avail} help={!errors.avail && 'Days the doctor is available for consultations'}>
-          <div className="chip-group">
-            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => (
-              <button key={day} type="button" className={'chip' + (avail.includes(day) ? ' on' : '')} onClick={() => toggleDay(day)}>
-                {day}
-              </button>
-            ))}
-          </div>
+      {error && <div className="form-error" role="alert">{error}</div>}
+      <div className="form-grid">
+        <Field label="Full name" required>
+          <TextInput value={form.full_name} onChange={set('full_name')} placeholder="Dr. Maria Santos" maxLength={120} />
         </Field>
-
-        {/* Portal access — admin-issued credentials for the Doctor portal.
-            The portal itself is login-only: doctors never self-register. */}
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-            <Icon name="key-round" size={14} style={{ color: 'var(--primary)' }} />
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Doctor portal access</span>
-          </div>
-          <p className="t-muted" style={{ fontSize: 12, margin: '0 0 10px', lineHeight: 1.5 }}>
-            {isEdit && account
-              ? 'Active. The doctor signs in at the Doctor portal with the email below. Reset the password here if needed.'
-              : 'Create the login the doctor will use at the Doctor portal. Leave both fields blank to add the profile without portal access. It can be granted later from Edit.'}
-          </p>
-          {isEdit && account ? (
-            <div className="stack md">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <Field label="Portal email" help="Issued with the account and cannot be changed here.">
-                  <TextInput value={account.email} disabled />
-                </Field>
-                <Field label="New password" error={accessErrors.password} help={!accessErrors.password && 'Leave blank to keep the current password.'}>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <TextInput type="text" style={{ flex: 1 }} value={accessPw} error={accessErrors.password}
-                      onChange={e => { setAccessPw(e.target.value); if (accessErrors.password) setAccessErrors(ae => ({ ...ae, password: null })); }}
-                      placeholder="Min 8 characters" />
-                    <button type="button" className="btn btn-secondary" style={{ flexShrink: 0 }} onClick={generatePw}>Generate</button>
-                  </div>
-                </Field>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <button type="button" className="btn btn-danger-outline sm" onClick={() => onRevoke(account)}>
-                  <Icon name="shield-off" size={13} /> Revoke portal access
-                </button>
-                <span className="t-muted" style={{ fontSize: 11.5 }}>Removes the doctor's login. It can be granted again later.</span>
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <Field label="Portal email" error={accessErrors.email} help={!accessErrors.email && 'Used to sign in at the Doctor portal.'}>
-                <TextInput type="email" icon="mail" placeholder="doctor@medicacare.ph" value={accessEmail} error={accessErrors.email}
-                  onChange={e => { setAccessEmail(e.target.value); if (accessErrors.email) setAccessErrors(ae => ({ ...ae, email: null })); }} />
-              </Field>
-              <Field label="Password" error={accessErrors.password} help={!accessErrors.password && 'Minimum 8 characters. Share it with the doctor securely.'}>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <TextInput type="text" style={{ flex: 1 }} value={accessPw} error={accessErrors.password}
-                    onChange={e => { setAccessPw(e.target.value); if (accessErrors.password) setAccessErrors(ae => ({ ...ae, password: null })); }}
-                    placeholder="Min 8 characters" />
-                  <button type="button" className="btn btn-secondary" style={{ flexShrink: 0 }} onClick={generatePw}>Generate</button>
-                </div>
-              </Field>
-            </div>
-          )}
-        </div>
+        <Field label="Specialty" required>
+          <TextInput value={form.specialty} onChange={set('specialty')} placeholder="e.g. Cardiology" maxLength={120} />
+        </Field>
+        <Field label="Status">
+          <SelectInput value={form.status} onChange={set('status')}>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </SelectInput>
+        </Field>
+        <Field label="Years of experience">
+          <TextInput type="number" min="0" max="80" value={form.years_experience} onChange={set('years_experience')} />
+        </Field>
+        <Field label="Consultation fee (₱)">
+          <TextInput type="number" min="0" step="1" value={form.consultation_fee} onChange={set('consultation_fee')} />
+        </Field>
+        <Field label="Room">
+          <TextInput value={form.room} onChange={set('room')} placeholder="e.g. Room 204" maxLength={40} />
+        </Field>
+        <Field label="Gender">
+          <SelectInput value={form.gender} onChange={set('gender')}>
+            <option value="">—</option>
+            <option value="male">male</option>
+            <option value="female">female</option>
+            <option value="other">other</option>
+          </SelectInput>
+        </Field>
+        <Field label="Bio">
+          <TextArea value={form.bio} onChange={set('bio')} rows={3} maxLength={2000} placeholder="Short professional bio…" />
+        </Field>
       </div>
+
+      {/* ---------- Portal access ---------- */}
+      {editing && (
+        <div className="card" style={{ marginTop: 20 }}>
+          <div className="card-body">
+            <h4 style={{ margin: '0 0 4px' }}>Doctor portal access</h4>
+            <p className="t-muted" style={{ fontSize: 13, margin: '0 0 12px' }}>
+              {hasPortal
+                ? `This doctor can log in to the doctor portal${initial.portal_email ? ` as ${initial.portal_email}` : ''}.`
+                : 'This doctor has no portal account yet — grant one so they can log in to the doctor portal.'}
+            </p>
+            {portalError && <div className="form-error" role="alert">{portalError}</div>}
+            {hasPortal ? (
+              <>
+                {tempPassword ? (
+                  <div style={{ marginBottom: 12, padding: '10px 12px', borderRadius: 8, background: 'var(--success-soft, #d1fae5)', border: '1px solid var(--border)' }}>
+                    <div className="t-muted" style={{ fontSize: 12, marginBottom: 4 }}>Temporary password — give this to the doctor:</div>
+                    <code style={{ fontSize: 16, fontWeight: 700, userSelect: 'all' }}>{tempPassword}</code>
+                  </div>
+                ) : (
+                  <p className="t-muted" style={{ fontSize: 13, margin: '0 0 12px' }}>
+                    Generate a temporary password for this doctor's portal login.
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button className="btn btn-secondary sm" onClick={doResetPassword} disabled={portalBusy}>
+                    {portalBusy ? 'Working…' : 'Generate new password'}
+                  </button>
+                  <button className="btn btn-danger sm" onClick={() => setConfirmRevoke(true)} disabled={portalBusy}>
+                    Revoke access
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="form-grid">
+                  <Field label="Portal email" required>
+                    <TextInput type="email" value={grantEmail} onChange={(e) => setGrantEmail(e.target.value)} placeholder="doctor@medicacare.ph" />
+                  </Field>
+                  <Field label="Password" required>
+                    <TextInput type="password" value={grantPassword} onChange={(e) => setGrantPassword(e.target.value)} placeholder="Min. 8 chars, letter + number" />
+                  </Field>
+                </div>
+                <button className="btn btn-secondary sm" onClick={doGrant} disabled={portalBusy}>
+                  {portalBusy ? 'Working…' : 'Grant portal access'}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <ConfirmModal
+        open={confirmRevoke}
+        onClose={() => setConfirmRevoke(false)}
+        onConfirm={doRevoke}
+        loading={portalBusy}
+        title="Revoke portal access?"
+        message={`This will immediately prevent ${initial?.full_name || 'this doctor'} from logging in to the doctor portal. Their directory profile stays in place.`}
+        confirmLabel="Revoke access"
+      />
     </Modal>
   );
 }

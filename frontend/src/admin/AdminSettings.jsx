@@ -1,135 +1,191 @@
-// AdminSettings — admin (split from screens-admin.jsx)
+// AdminSettings — clinic info + app settings (Phase 6).
+// Two independent forms:
+//   clinic_info: { clinic_name, phone, email, address, hours }
+//   app_settings: { auto_confirm_appointments (toggle),
+//                   slot_interval_minutes (select), ... }
 import { useEffect, useState } from 'react';
-import { AppShell, Field, PageHeader, PageSpinner, SelectInput, StoreProvider, TextInput, useStore } from '../shared/components.jsx';
-import { HOSPITAL } from '../shared/data.js';
-import { focusFirstError } from './helpers.js';
+import {
+  AppShell, ErrorState, Field, PageHeader, PageSpinner,
+  SelectInput, TextArea, TextInput, useStore,
+} from '../shared/components.jsx';
+import {
+  getAppSettings, getClinicInfo, updateAppSettings, updateClinicInfo, ApiError,
+} from '../shared/api.js';
 
-// ---------- Settings ----------
 function AdminSettings() {
   const store = useStore();
-  // Simulated fetch — centered circle spinner while "loading", same 600ms
-  // pattern as the patient Book/Profile pages
-  const [pageLoading, setPageLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setPageLoading(false), 600); return () => clearTimeout(t); }, []);
-  // Live from the store — clinic info is synced to the public website and
-  // preferences drive the patient booking flow (see StoreProvider)
-  const [clinic, setClinic] = useState({ ...store.clinic });
-  const [prefs, setPrefs] = useState({ ...store.prefs });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [clinic, setClinic] = useState({ clinic_name: '', phone: '', email: '', address: '', hours: '' });
+  const [appCfg, setAppCfg] = useState({ auto_confirm_appointments: false, slot_interval_minutes: 30 });
   const [savingClinic, setSavingClinic] = useState(false);
-  const [savingPrefs, setSavingPrefs] = useState(false);
-  // Inline field error (§19/§46): empty clinic name is shown next to the
-  // field itself, not only as a toast
-  const [clinicError, setClinicError] = useState('');
-  const updateClinic = (k, v) => setClinic(f => ({ ...f, [k]: v }));
-  const updatePref = (k, v) => setPrefs(f => ({ ...f, [k]: v }));
+  const [savingApp, setSavingApp] = useState(false);
 
-  const saveClinic = (e) => {
-    e.preventDefault();
-    if (!clinic.name.trim()) {
-      setClinicError('Clinic name is required');
-      focusFirstError();
-      return;
-    }
-    setSavingClinic(true);
-    setTimeout(() => {
-      // Syncs window.HOSPITAL live — the public website reflects this on the
-      // very next page view (nav brand, footer, contact page, receipts)
-      store.setClinic({ ...clinic });
-      setSavingClinic(false);
-      store.pushToast({ title: 'Clinic info saved', msg: 'The public website now shows the updated details.' });
-    }, 500);
-  };
-
-  const savePrefs = (e) => {
-    e.preventDefault();
-    setSavingPrefs(true);
-    setTimeout(() => {
-      store.setPrefs({ ...prefs });
-      setSavingPrefs(false);
-      store.pushToast({
-        title: 'Preferences saved',
-        msg: prefs.autoConfirm
-          ? 'New patient bookings will be confirmed instantly.'
-          : 'New patient bookings will wait for staff review.',
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [c, a] = await Promise.all([getClinicInfo(), getAppSettings()]);
+      setClinic({
+        clinic_name: c.clinic_name || '',
+        phone: c.phone || '',
+        email: c.email || '',
+        address: c.address || '',
+        hours: c.hours || '',
       });
-    }, 500);
+      setAppCfg({
+        auto_confirm_appointments: Boolean(a.auto_confirm_appointments),
+        slot_interval_minutes: Number(a.slot_interval_minutes ?? 30),
+      });
+    } catch (err) {
+      setError(err.message || 'Could not load settings.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (pageLoading) {
-    return (
-      <AppShell current="settings">
-        <div className="page"><PageSpinner /></div>
-      </AppShell>
-    );
-  }
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const saveClinic = async () => {
+    setSavingClinic(true);
+    try {
+      const saved = await updateClinicInfo({
+        clinic_name: clinic.clinic_name.trim(),
+        phone: clinic.phone.trim() || null,
+        email: clinic.email.trim() || null,
+        address: clinic.address.trim() || null,
+        hours: clinic.hours.trim() || null,
+      });
+      store.pushToast({ kind: 'success', title: 'Clinic info saved', message: 'Public pages will show the updated details.' });
+      setClinic((prev) => ({ ...prev, ...saved }));
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setSavingClinic(false);
+    }
+  };
+
+  const saveApp = async () => {
+    setSavingApp(true);
+    try {
+      const saved = await updateAppSettings({
+        auto_confirm_appointments: appCfg.auto_confirm_appointments,
+        slot_interval_minutes: appCfg.slot_interval_minutes,
+      });
+      store.pushToast({ kind: 'success', title: 'App settings saved', message: 'Booking behavior was updated.' });
+      setAppCfg((prev) => ({ ...prev, ...saved }));
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setSavingApp(false);
+    }
+  };
 
   return (
     <AppShell current="settings">
-      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+      <div className="page">
         <PageHeader
           title="Settings"
-          subtitle="Clinic information and appointment preferences."
-          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Settings' }]}
+          subtitle="Clinic information and booking behavior."
+          breadcrumbs={[{ label: 'Admin', to: '/admin/dashboard' }, { label: 'Settings' }]}
         />
 
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-header"><h2 className="h-section">Clinic information</h2></div>
-          <form onSubmit={saveClinic}>
-            <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <Field label="Clinic name" required error={clinicError}>
-                  <TextInput value={clinic.name} onChange={e => { updateClinic('name', e.target.value); if (clinicError) setClinicError(''); }} error={clinicError} />
-                </Field>
-                <Field label="Contact number" required>
-                  <TextInput type="tel" value={clinic.phone} onChange={e => updateClinic('phone', e.target.value)} icon="phone" />
-                </Field>
-                <Field label="Email" required>
-                  <TextInput type="email" value={clinic.email} onChange={e => updateClinic('email', e.target.value)} icon="mail" />
-                </Field>
-                <Field label="Address">
-                  <TextInput value={clinic.address} onChange={e => updateClinic('address', e.target.value)} />
-                </Field>
+        {loading ? (
+          <PageSpinner />
+        ) : error ? (
+          <ErrorState title="Could not load settings" message={error} onRetry={load} />
+        ) : (
+          <>
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-body">
+                <h3 style={{ margin: '0 0 12px' }}>Clinic info</h3>
+                <div className="form-grid">
+                  <Field label="Clinic name">
+                    <TextInput
+                      value={clinic.clinic_name}
+                      onChange={(e) => setClinic((c) => ({ ...c, clinic_name: e.target.value }))}
+                      maxLength={160}
+                    />
+                  </Field>
+                  <Field label="Phone">
+                    <TextInput
+                      value={clinic.phone}
+                      onChange={(e) => setClinic((c) => ({ ...c, phone: e.target.value }))}
+                      maxLength={40}
+                    />
+                  </Field>
+                  <Field label="Email">
+                    <TextInput
+                      type="email"
+                      value={clinic.email}
+                      onChange={(e) => setClinic((c) => ({ ...c, email: e.target.value }))}
+                      maxLength={160}
+                    />
+                  </Field>
+                  <Field label="Hours">
+                    <TextInput
+                      value={clinic.hours}
+                      onChange={(e) => setClinic((c) => ({ ...c, hours: e.target.value }))}
+                      placeholder="e.g. Mon–Sat, 8:00 AM – 6:00 PM"
+                      maxLength={160}
+                    />
+                  </Field>
+                  <Field label="Address">
+                    <TextArea
+                      value={clinic.address}
+                      onChange={(e) => setClinic((c) => ({ ...c, address: e.target.value }))}
+                      rows={2}
+                      maxLength={500}
+                    />
+                  </Field>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <button className="btn btn-primary" onClick={saveClinic} disabled={savingClinic}>
+                    {savingClinic ? 'Saving…' : 'Save clinic info'}
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="card-footer">
-              <button type="submit" className={`btn btn-primary ${savingClinic ? 'btn-loading' : ''}`}>Save changes</button>
-            </div>
-          </form>
-        </div>
 
-        <div className="card">
-          <div className="card-header"><h2 className="h-section">Appointment preferences</h2></div>
-          <form onSubmit={savePrefs}>
-            <div className="card-body stack lg">
-              <label className="checkbox">
-                <input type="checkbox" checked={prefs.emailNewAppointments} onChange={e => updatePref('emailNewAppointments', e.target.checked)} />
-                <span>Email admins when a new appointment is booked</span>
-              </label>
-              <label className="checkbox">
-                <input type="checkbox" checked={prefs.remindPatients} onChange={e => updatePref('remindPatients', e.target.checked)} />
-                <span>Send patients a reminder email the day before their visit</span>
-              </label>
-              <label className="checkbox">
-                <input type="checkbox" checked={prefs.autoConfirm} onChange={e => updatePref('autoConfirm', e.target.checked)} />
-                <span>Auto-confirm pending appointments (skip manual review)</span>
-              </label>
-              <Field label="Appointment slot interval" help="Time slots offered on the patient booking form. Hourly shows :00 slots only. The booking grid runs on 30-minute granularity.">
-                <SelectInput value={prefs.slotInterval} onChange={e => updatePref('slotInterval', e.target.value)}>
-                  <option value="15">Every 15 minutes</option>
-                  <option value="30">Every 30 minutes</option>
-                  <option value="60">Every 1 hour</option>
-                </SelectInput>
-              </Field>
+            <div className="card">
+              <div className="card-body">
+                <h3 style={{ margin: '0 0 12px' }}>Booking behavior</h3>
+                <Field
+                  label="Auto-confirm appointments"
+                  help="When on, new patient bookings are confirmed immediately instead of waiting as pending."
+                >
+                  <SelectInput
+                    value={appCfg.auto_confirm_appointments ? 'on' : 'off'}
+                    onChange={(e) => setAppCfg((a) => ({ ...a, auto_confirm_appointments: e.target.value === 'on' }))}
+                    style={{ maxWidth: 220 }}
+                  >
+                    <option value="on">On — auto-confirm</option>
+                    <option value="off">Off — bookings start as pending</option>
+                  </SelectInput>
+                </Field>
+                <Field
+                  label="Slot interval"
+                  help="Length of each bookable time slot in minutes."
+                >
+                  <SelectInput
+                    value={String(appCfg.slot_interval_minutes)}
+                    onChange={(e) => setAppCfg((a) => ({ ...a, slot_interval_minutes: Number(e.target.value) }))}
+                    style={{ maxWidth: 220 }}
+                  >
+                    {[15, 20, 30, 45, 60].map((m) => (
+                      <option key={m} value={String(m)}>{m} minutes</option>
+                    ))}
+                  </SelectInput>
+                </Field>
+                <div style={{ marginTop: 12 }}>
+                  <button className="btn btn-primary" onClick={saveApp} disabled={savingApp}>
+                    {savingApp ? 'Saving…' : 'Save app settings'}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="card-footer">
-              <button type="submit" className={`btn btn-primary ${savingPrefs ? 'btn-loading' : ''}`}>Save preferences</button>
-            </div>
-          </form>
-        </div>
-
-        <p className="t-muted" style={{ fontSize: 12, marginTop: 12 }}>
-          Settings are saved in this browser and applied instantly — clinic info updates the public website, and preferences drive the patient booking flow.
-        </p>
+          </>
+        )}
       </div>
     </AppShell>
   );

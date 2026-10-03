@@ -1,268 +1,206 @@
-// AppointmentModals — admin (split from screens-admin.jsx)
+// AppointmentModals — admin appointment create/edit + status change (Phase 6).
+// AppointmentFormModal(props: open, onClose, initial?, onSaved)
+//   Fields: patient_id, doctor_id, date, start_time, reason. Ang patient at
+//   doctor dropdowns ay kino-load ng modal mismo (limit 100) para
+//   self-contained ito.
+// AppointmentStatusModal(props: open, onClose, appointment, onSaved)
+//   Status picker + notes. Kapag 'completed' → completeAdminAppointment
+//   (kailangan ng notes, min. 10 chars); ibang status → setAdminAppointmentStatus.
 import { useEffect, useState } from 'react';
-import { Field, Modal, SelectInput, StatusBadge, TextArea, useStore } from '../shared/components.jsx';
-import { AVAILABILITY_TEMPLATE, CURRENT_ADMIN, findDoctor, findPatient, formatDate, getSlotsFor, isClinicDay, isSlotTaken, slotFitsInterval, statusMeta } from '../shared/data.js';
-import { focusFirstError } from './helpers.js';
+import { Field, Modal, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
+import {
+  completeAdminAppointment, createAdminAppointment, getAdminDoctors,
+  getAdminPatients, setAdminAppointmentStatus, updateAdminAppointment, ApiError,
+} from '../shared/api.js';
 
-// ---------- Edit / reschedule appointment (staff) ----------
-// Patients can reschedule from their portal; staff get the same here instead
-// of the old delete-and-recreate (which lost the doctor's notes). Slots use
-// the same live availability — booked slots are disabled and the appointment's
-// own slot stays selectable.
-function AppointmentEditModal({ appointment, onClose }) {
-  const store = useStore();
-  const [form, setForm] = useState({ doctorId: '', date: '', time: '', reason: '' });
-  const [errors, setErrors] = useState({});
+const STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'no-show'];
+
+function useDirectory(open) {
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   useEffect(() => {
-    if (appointment) {
-      setForm({ doctorId: appointment.doctorId, date: appointment.date, time: appointment.time, reason: appointment.reason });
-      setErrors({});
-    }
-  }, [appointment]);
-  if (!appointment) return null;
-
-  const dates = Object.keys(AVAILABILITY_TEMPLATE);
-  // An appointment may sit on a date outside the rolling template — keep it
-  // selectable so staff can keep or move it
-  if (appointment.date && !dates.includes(appointment.date)) dates.unshift(appointment.date);
-  const interval = (store.prefs || {}).slotInterval || '30';
-  const slotTimes = getSlotsFor(form.doctorId, form.date, store.appointments, appointment.id)
-    .filter(([t, ok]) => ok && slotFitsInterval(t, interval))
-    .map(([t]) => t);
-  if (form.time && !slotTimes.includes(form.time)) slotTimes.unshift(form.time);
-  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); };
-
-  const submit = () => {
-    const e = {};
-    if (!form.doctorId) e.doctorId = 'Please select a doctor';
-    if (!form.date) e.date = 'Please pick a date';
-    if (!form.time) e.time = 'Please pick a time slot';
-    if (!form.reason.trim()) e.reason = 'Reason for visit is required';
-    if (!e.doctorId && !e.date && !e.time && isSlotTaken(form.doctorId, form.date, form.time, store.appointments, appointment.id)) {
-      e.time = 'That slot is already booked for this doctor.';
-    }
-    setErrors(e);
-    if (Object.keys(e).length) { focusFirstError(); return; }
-    store.setAppointments(store.appointments.map(a => a.id === appointment.id ? { ...a, ...form, reason: form.reason.trim() } : a));
-    store.pushActivity(CURRENT_ADMIN.name, 'Updated appointment',
-      `Ref ${appointment.id.toUpperCase()} → ${window.formatDate(form.date)} at ${form.time}`);
-    store.pushToast({ title: 'Appointment updated', msg: `Ref ${appointment.id.toUpperCase()} moved to ${window.formatDate(form.date)} at ${form.time}.` });
-    onClose();
-  };
-
-  return (
-    <Modal
-      open
-      onClose={onClose}
-      title="Edit appointment"
-      subtitle={`Ref ${appointment.id.toUpperCase()} · ${window.findPatient(appointment.patientId)?.name || 'Patient'}`}
-      icon="pencil"
-      size="md"
-      footer={<>
-        <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={submit}>Save changes</button>
-      </>}
-    >
-      <div className="stack md">
-        <Field label="Doctor" required error={errors.doctorId}>
-          <SelectInput value={form.doctorId} onChange={e => {
-            const prev = form.doctorId;
-            set('doctorId', e.target.value);
-            // Switching doctors invalidates the previously chosen slot
-            if (e.target.value !== prev) setForm(f => ({ ...f, date: '', time: '' }));
-          }} error={errors.doctorId}>
-            <option value="">Select a doctor…</option>
-            {store.doctors.map(d => <option key={d.id} value={d.id}>{d.name} ({d.specialty})</option>)}
-          </SelectInput>
-        </Field>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <Field label="Date" required error={errors.date}>
-            <SelectInput value={form.date} onChange={e => { set('date', e.target.value); setForm(f => ({ ...f, time: '' })); }} error={errors.date}>
-              {dates.map(d => (
-                <option key={d} value={d}>
-                  {window.formatDate(d)}{AVAILABILITY_TEMPLATE[d] ? ` (${AVAILABILITY_TEMPLATE[d].day})` : ''}{form.doctorId && !isClinicDay(form.doctorId, d) ? ' — not a clinic day' : ''}
-                </option>
-              ))}
-            </SelectInput>
-          </Field>
-          <Field label="Time slot" required error={errors.time} help={!errors.time && 'Already-booked slots are disabled.'}>
-            <SelectInput value={form.time} onChange={e => set('time', e.target.value)} error={errors.time} disabled={!form.date}>
-              <option value="">{form.date ? 'Select a time…' : 'Pick a date first'}</option>
-              {slotTimes.map(t => <option key={t} value={t}>{t}</option>)}
-            </SelectInput>
-          </Field>
-        </div>
-        <Field label="Reason for visit" required error={errors.reason}>
-          <TextArea value={form.reason} onChange={e => set('reason', e.target.value)} error={errors.reason} maxLength={500} />
-        </Field>
-      </div>
-    </Modal>
-  );
+    if (!open) return;
+    let cancelled = false;
+    getAdminPatients('', 1, 100).then((r) => { if (!cancelled) setPatients(r.patients); }).catch(() => {});
+    getAdminDoctors('', 1, 100).then((r) => { if (!cancelled) setDoctors(r.doctors); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [open]);
+  return { patients, doctors };
 }
 
-function AppointmentFormModal({ open, onClose, onSave }) {
+function AppointmentFormModal({ open, onClose, initial, onSaved }) {
   const store = useStore();
-  const [form, setForm] = useState({ patientId: '', doctorId: '', date: '', time: '', reason: '' });
-  const [errors, setErrors] = useState({});
+  const editing = Boolean(initial?.id);
+  const { patients, doctors } = useDirectory(open);
+  const [form, setForm] = useState({ patient_id: '', doctor_id: '', date: '', start_time: '', reason: '' });
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
-    if (open) {
-      setForm({ patientId: '', doctorId: '', date: '', time: '', reason: '' });
-      setErrors({});
-    }
-  }, [open]);
+    if (!open) return;
+    setForm(initial ? {
+      patient_id: initial.patient?.id || initial.patient_id || '',
+      doctor_id: initial.doctor?.id || initial.doctor_id || '',
+      date: (initial.appointment_date || '').slice(0, 10),
+      start_time: (initial.start_time || '').slice(0, 5),
+      reason: initial.reason || '',
+    } : { patient_id: '', doctor_id: '', date: '', start_time: '', reason: '' });
+    setError('');
+    setSaving(false);
+  }, [open, initial]);
 
-  const dates = Object.keys(AVAILABILITY_TEMPLATE);
-  // Live availability — reflects slots already booked by patients or staff
-  const interval = (store.prefs || {}).slotInterval || '30';
-  const slots = getSlotsFor(form.doctorId, form.date, store.appointments)
-    .filter(s => s[1]).map(([t]) => t).filter(t => slotFitsInterval(t, interval));
-  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: null })); };
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = () => {
-    const e = {};
-    if (!form.patientId) e.patientId = 'Please select a patient';
-    if (!form.doctorId) e.doctorId = 'Please select a doctor';
-    if (!form.date) e.date = 'Please pick a date';
-    if (!form.time) e.time = 'Please pick a time slot';
-    if (!form.reason.trim()) e.reason = 'Reason for visit is required';
-    else if (form.reason.trim().length < 10) e.reason = 'Please provide a bit more detail (10+ characters)';
-    // Duplicate-booking guard: one active appointment per doctor+date+time
-    if (!e.patientId && !e.doctorId && !e.date && !e.time && isSlotTaken(form.doctorId, form.date, form.time, store.appointments)) {
-      e.time = 'That slot is already booked for this doctor.';
+  const doSave = async () => {
+    if (!form.patient_id) { setError('Choose a patient.'); return; }
+    if (!form.doctor_id) { setError('Choose a doctor.'); return; }
+    if (!form.date) { setError('Choose a date.'); return; }
+    if (!form.start_time) { setError('Choose a start time.'); return; }
+    setSaving(true);
+    setError('');
+    try {
+      const body = {
+        patient_id: form.patient_id,
+        doctor_id: form.doctor_id,
+        appointment_date: form.date,
+        start_time: form.start_time,
+        reason: form.reason.trim() || null,
+      };
+      const saved = editing
+        ? await updateAdminAppointment(initial.id, body)
+        : await createAdminAppointment(body);
+      store.pushToast({
+        kind: 'success',
+        title: editing ? 'Appointment updated' : 'Appointment created',
+        message: `Appointment ${saved.reference_code || saved.appointment_ref || ''} has been ${editing ? 'updated' : 'booked'}.`.trim(),
+      });
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not save the appointment. Please try again.');
+    } finally {
+      setSaving(false);
     }
-    setErrors(e);
-    if (Object.keys(e).length) { focusFirstError(); return; }
-    onSave(form);
   };
 
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title="New appointment"
-      subtitle="Book a consultation on behalf of a patient."
-      size="md"
-      footer={<>
-        <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={submit}>Create appointment</button>
-      </>}
+      title={editing ? 'Edit appointment' : 'New appointment'}
+      subtitle={editing ? `Appointment ${initial?.reference_code || initial?.appointment_ref || ''}` : 'Book an appointment on behalf of a patient.'}
+      icon="calendar-plus"
+      footer={
+        <>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="btn btn-primary" onClick={doSave} disabled={saving}>
+            {saving ? 'Saving…' : editing ? 'Save changes' : 'Book appointment'}
+          </button>
+        </>
+      }
     >
-      <div className="stack md">
-        <Field label="Patient" required error={errors.patientId}>
-          <SelectInput value={form.patientId} onChange={e => set('patientId', e.target.value)} error={errors.patientId}>
-            <option value="">Select a patient…</option>
-            {store.patients.map(p => <option key={p.id} value={p.id}>{p.name} ({p.phone})</option>)}
+      {error && <div className="form-error" role="alert">{error}</div>}
+      <div className="form-grid">
+        <Field label="Patient" required>
+          <SelectInput value={form.patient_id} onChange={set('patient_id')} disabled={editing}>
+            <option value="">— Select patient —</option>
+            {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name}</option>)}
           </SelectInput>
         </Field>
-        <Field label="Doctor" required error={errors.doctorId}>
-          <SelectInput value={form.doctorId} onChange={e => {
-            const prev = form.doctorId;
-            set('doctorId', e.target.value);
-            // Switching doctors invalidates the previously chosen slot
-            if (e.target.value !== prev) setForm(f => ({ ...f, date: '', time: '' }));
-          }} error={errors.doctorId}>
-            <option value="">Select a doctor…</option>
-            {store.doctors.map(d => <option key={d.id} value={d.id}>{d.name} ({d.specialty})</option>)}
+        <Field label="Doctor" required>
+          <SelectInput value={form.doctor_id} onChange={set('doctor_id')}>
+            <option value="">— Select doctor —</option>
+            {doctors.map((d) => <option key={d.id} value={d.id}>{d.full_name}{d.specialty_name ? ` — ${d.specialty_name}` : ''}</option>)}
           </SelectInput>
         </Field>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <Field label="Date" required error={errors.date}>
-            <SelectInput value={form.date} onChange={e => { set('date', e.target.value); set('time', ''); }} error={errors.date}>
-              <option value="">Select a date…</option>
-              {dates.map(d => (
-                <option key={d} value={d}>
-                  {window.formatDate(d)} ({AVAILABILITY_TEMPLATE[d].day}){form.doctorId && !isClinicDay(form.doctorId, d) ? ' — not a clinic day' : ''}
-                </option>
-              ))}
-            </SelectInput>
-          </Field>
-          <Field label="Time slot" required error={errors.time} help={!errors.time && 'Only available slots are listed.'}>
-            <SelectInput value={form.time} onChange={e => set('time', e.target.value)} error={errors.time} disabled={!form.date}>
-              <option value="">{form.date ? 'Select a time…' : 'Pick a date first'}</option>
-              {slots.map(t => <option key={t} value={t}>{t}</option>)}
-            </SelectInput>
-          </Field>
-        </div>
-        <Field label="Reason for visit" required error={errors.reason}>
-          <TextArea
-            placeholder="e.g., Follow-up on blood pressure medication"
-            value={form.reason}
-            onChange={e => set('reason', e.target.value)}
-            error={errors.reason}
-            maxLength={500}
-          />
+        <Field label="Date" required>
+          <TextInput type="date" value={form.date} onChange={set('date')} />
+        </Field>
+        <Field label="Start time" required>
+          <TextInput type="time" value={form.start_time} onChange={set('start_time')} />
+        </Field>
+        <Field label="Reason">
+          <TextArea value={form.reason} onChange={set('reason')} rows={2} maxLength={500} placeholder="Reason for visit…" />
         </Field>
       </div>
     </Modal>
   );
 }
 
-function AppointmentDetailsModal({ appointment, onClose }) {
-  const appt = appointment;
-  const doctor = appt ? window.findDoctor(appt.doctorId) : null;
-  const patient = appt ? window.findPatient(appt.patientId) : null;
+function AppointmentStatusModal({ open, onClose, appointment, onSaved }) {
+  const store = useStore();
+  const [status, setStatus] = useState('confirmed');
+  const [notes, setNotes] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setStatus(appointment?.status || 'confirmed');
+    setNotes('');
+    setError('');
+    setSaving(false);
+  }, [open, appointment]);
+
+  if (!appointment) return null;
+  const who = appointment.patient?.full_name || appointment.booked_for || 'Patient';
+
+  const doSave = async () => {
+    if (status === 'completed' && notes.trim().length < 10) {
+      setError('Visit notes are required to complete a visit (at least 10 characters).');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      const saved = status === 'completed'
+        ? await completeAdminAppointment(appointment.id, { notes: notes.trim() })
+        : await setAdminAppointmentStatus(appointment.id, { status });
+      store.pushToast({
+        kind: 'success',
+        title: 'Status updated',
+        message: `${who}'s appointment is now ${status}.`,
+      });
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not update the status. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <Modal
-      open={!!appt}
+      open={open}
       onClose={onClose}
-      title={appt ? `Appointment ${appt.id.toUpperCase()}` : 'Appointment'}
-      subtitle="Full appointment details."
-      icon="calendar-days"
-      size="md"
-      footer={<button className="btn btn-secondary" onClick={onClose}>Close</button>}
+      title="Change status"
+      subtitle={`${who} · ${(appointment.appointment_date || '').slice(0, 10)}`}
+      icon="refresh-cw"
+      footer={
+        <>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="btn btn-primary" onClick={doSave} disabled={saving}>
+            {saving ? 'Saving…' : 'Update status'}
+          </button>
+        </>
+      }
     >
-      {appt && (
-        <div className="stack md">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <StatusBadge status={appt.status} />
-            <span className="t-muted" style={{ fontSize: 12 }}>Created {window.formatDate(appt.createdAt)}</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div>
-              <div className="t-help">Patient</div>
-              <div style={{ fontWeight: 600 }}>{patient ? patient.name : 'Unknown'}</div>
-              <div className="t-muted" style={{ fontSize: 12.5 }}>{patient ? patient.phone : '—'}</div>
-            </div>
-            <div>
-              <div className="t-help">Doctor</div>
-              <div style={{ fontWeight: 600 }}>{doctor ? doctor.name : 'Unknown'}</div>
-              <div className="t-muted" style={{ fontSize: 12.5 }}>{doctor ? `${doctor.specialty} · ${doctor.room}` : '—'}</div>
-            </div>
-            <div>
-              <div className="t-help">Date & time</div>
-              <div style={{ fontWeight: 600 }}>{window.formatDate(appt.date)} · {appt.time}</div>
-            </div>
-            <div>
-              <div className="t-help">Status</div>
-              <div style={{ fontWeight: 600 }}>{window.statusMeta(appt.status).label}</div>
-            </div>
-            {appt.bookedFor && (!patient || appt.bookedFor !== patient.name) && (
-              <div>
-                <div className="t-help">Booked for</div>
-                <div style={{ fontWeight: 600 }}>{appt.bookedFor}</div>
-              </div>
-            )}
-          </div>
-          <div>
-            <div className="t-help">Reason for visit</div>
-            <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.reason}</div>
-          </div>
-          {appt.additionalNotes && (
-            <div>
-              <div className="t-help">Patient's additional notes</div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.additionalNotes}</div>
-            </div>
-          )}
-          {appt.notes && (
-            <div>
-              <div className="t-help">Doctor's notes</div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.notes}</div>
-            </div>
-          )}
-        </div>
-      )}
+      {error && <div className="form-error" role="alert">{error}</div>}
+      <Field label="Status" required>
+        <SelectInput value={status} onChange={(e) => setStatus(e.target.value)}>
+          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+        </SelectInput>
+      </Field>
+      <Field
+        label="Visit notes"
+        required={status === 'completed'}
+        help={status === 'completed' ? 'Required when completing a visit — saved to the consultation record.' : 'Optional notes for this status change.'}
+      >
+        <TextArea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={2000} />
+      </Field>
     </Modal>
   );
 }
 
-export { AppointmentEditModal, AppointmentFormModal, AppointmentDetailsModal };
+export { AppointmentFormModal, AppointmentStatusModal };

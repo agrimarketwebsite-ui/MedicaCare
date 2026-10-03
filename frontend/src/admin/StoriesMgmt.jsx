@@ -1,160 +1,146 @@
-// StoriesMgmt — admin (split from screens-admin.jsx)
+// StoriesMgmt — patient story moderation (Phase 6).
+// Status filter (SelectInput sa table-toolbar) + approve / reject / unpublish.
+// Story shape: { id, title, body, patient_name?, status, created_at }.
 import { useEffect, useState } from 'react';
-import { AppShell, EmptyState, Icon, PageHeader, PatientAvatar, useStore } from '../shared/components.jsx';
-import { CURRENT_ADMIN, findPatient, formatDate } from '../shared/data.js';
-import { localToday } from './helpers.js';
+import {
+  AppShell, Badge, EmptyState, ErrorState, Icon, PageHeader,
+  SelectInput, SkeletonRows, useStore,
+} from '../shared/components.jsx';
+import { approveStory, getAdminStories, rejectStory, unpublishStory, ApiError } from '../shared/api.js';
 
-// ---------- Patient stories (public testimonial moderation) ----------
-// Portal submissions land here as pending; approved ones are shown on the
-// public "What patients say" carousel under the display name only. Staff see
-// the author's account identity for verification; the public site does not.
-function StoryRow({ t, actions }) {
-  const author = window.findPatient(t.patientId);
-  return (
-    <div className="list-item" style={{ alignItems: 'flex-start' }}>
-      <PatientAvatar person={author} size={28} />
-      <div className="list-item-body">
-        <div className="list-item-title">"{t.quote}"</div>
-        <div className="list-item-sub">
-          Shows as "{t.displayName}" · submitted {window.formatDate(t.createdAt)}
-          {t.reviewedAt ? ` · reviewed ${window.formatDate(t.reviewedAt)}` : ''}
-          {author ? ` · ${author.name}${author.email ? `, ${author.email}` : ''}` : ''}
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{actions}</div>
-    </div>
-  );
+function statusBadge(status) {
+  if (status === 'approved') return <Badge kind="success">Approved</Badge>;
+  if (status === 'rejected') return <Badge kind="danger">Rejected</Badge>;
+  return <Badge kind="neutral">Pending</Badge>;
 }
 
 function StoriesMgmt() {
   const store = useStore();
-  // Simulated fetch — skeleton header + rows while "loading", same 600ms
-  // pattern as the other admin list pages
+  const [status, setStatus] = useState('pending');
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
-  const [query, setQuery] = useState('');
-  const q = query.trim().toLowerCase();
-  // Search spans the quote, display name, and the patient's account identity
-  const matches = (t) => {
-    if (!q) return true;
-    const author = window.findPatient(t.patientId);
-    return `${t.quote} ${t.displayName} ${author ? author.name : ''}`.toLowerCase().includes(q);
+  const [error, setError] = useState('');
+  const [stories, setStories] = useState([]);
+  const [busyId, setBusyId] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const list = await getAdminStories(status);
+      setStories(list);
+    } catch (err) {
+      setError(err.message || 'Could not load stories.');
+    } finally {
+      setLoading(false);
+    }
   };
-  const pending = store.testimonials.filter(t => t.status === 'pending').filter(matches);
-  const approved = store.testimonials.filter(t => t.status === 'approved').filter(matches);
-  const rejected = store.testimonials.filter(t => t.status === 'rejected').filter(matches);
 
-  // Skeleton rows mirroring the StoryRow layout (avatar + quote + meta line)
-  const storySkeletons = (count) => Array.from({ length: count }).map((_, i) => (
-    <div key={i} className="list-item" aria-hidden="true">
-      <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
-      <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <span className="skel" style={{ height: 11, width: '70%' }} />
-        <span className="skel" style={{ height: 10, width: '85%' }} />
-      </div>
-      <span className="skel" style={{ width: 74, height: 22, borderRadius: 'var(--r-pill)', flexShrink: 0 }} />
-    </div>
-  ));
+  useEffect(() => { load(); }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const setStatus = (id, status) => {
-    store.setTestimonials(store.testimonials.map(t => t.id === id ? { ...t, status, reviewedAt: localToday() } : t));
-    const story = store.testimonials.find(x => x.id === id);
-    store.pushActivity(CURRENT_ADMIN.name,
-      status === 'approved' ? 'Story approved' : status === 'pending' ? 'Story unpublished' : 'Story rejected',
-      story ? `"${story.displayName}"` : '');
-    store.pushToast({
-      title: status === 'approved' ? 'Story approved' : status === 'pending' ? 'Story unpublished' : 'Story rejected',
-      msg: status === 'approved' ? 'It is now shown on the public website.' : status === 'pending' ? 'It is back in the review queue.' : 'It will not appear on the public website.',
-    });
+  const act = async (id, fn, title, message) => {
+    setBusyId(id);
+    try {
+      await fn(id);
+      store.pushToast({ kind: 'success', title, message });
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Action failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setBusyId(null);
+    }
   };
 
   return (
     <AppShell current="stories">
-      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+      <div className="page">
         <PageHeader
           title="Patient stories"
-          subtitle={loading
-            ? <span className="skel" aria-hidden="true" style={{ width: 340, maxWidth: '100%', height: 14 }} />
-            : `${pending.length} waiting for review · ${approved.length} shown on the public website`}
-          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Patient stories' }]}
+          subtitle="Moderate patient testimonials shown on the public site."
+          breadcrumbs={[{ label: 'Admin', to: '/admin/dashboard' }, { label: 'Patient stories' }]}
         />
 
-        <div className="card" style={{ marginBottom: 16 }}>
+        <div className="card">
           <div className="table-toolbar">
-            <div className="input-group search">
-              <Icon name="search" size={16} className="input-icon" />
-              <input className="input" style={{ paddingLeft: 38 }} placeholder="Search by quote, display name, or patient…" aria-label="Search stories by quote, display name, or patient" value={query} onChange={e => setQuery(e.target.value)} />
-            </div>
-            <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--text)' }}>{pending.length + approved.length + rejected.length}</strong> matching
-            </div>
+            <SelectInput
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              aria-label="Filter stories by status"
+              style={{ maxWidth: 190 }}
+            >
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="">All</option>
+            </SelectInput>
           </div>
-        </div>
 
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-header">
-            <h2 className="h-section">Waiting for review</h2>
-          </div>
-          <div>
-            {loading ? (
-              storySkeletons(2)
-            ) : pending.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState
-                  icon="message-square"
-                  title="No stories waiting for review"
-                  message="Stories submitted from the patient portal (Help & support) appear here for approval before they are shown on the public website."
-                />
-              </div>
-            ) : pending.map(t => (
-              <StoryRow key={t.id} t={t} actions={<>
-                <button className="btn btn-primary sm" onClick={() => setStatus(t.id, 'approved')}>Approve</button>
-                <button className="btn btn-danger-outline sm" onClick={() => setStatus(t.id, 'rejected')}>Reject</button>
-              </>} />
-            ))}
-          </div>
+          {loading ? (
+            <table className="table" aria-hidden="true">
+              <tbody><SkeletonRows rows={6} cols={4} /></tbody>
+            </table>
+          ) : error ? (
+            <ErrorState title="Could not load stories" message={error} onRetry={load} />
+          ) : stories.length === 0 ? (
+            <EmptyState
+              icon="message-square"
+              title="No stories found"
+              message={status === 'pending' ? 'New patient submissions will appear here for review.' : 'Try a different status filter.'}
+            />
+          ) : (
+            <table className="table">
+              <thead>
+                <tr><th>Story</th><th>Patient</th><th>Submitted</th><th>Status</th><th></th></tr>
+              </thead>
+              <tbody>
+                {stories.map((s) => (
+                  <tr key={s.id}>
+                    <td>
+                      <strong>{s.title || 'Untitled'}</strong>
+                      <div className="t-muted" style={{ fontSize: 13, marginTop: 4, maxWidth: 420 }}>
+                        {(s.body || '').slice(0, 140)}{(s.body || '').length > 140 ? '…' : ''}
+                      </div>
+                    </td>
+                    <td className="t-muted">{s.patient_name || '—'}</td>
+                    <td className="t-muted">{(s.created_at || '').slice(0, 10)}</td>
+                    <td>{statusBadge(s.status)}</td>
+                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      {s.status === 'pending' && (
+                        <>
+                          <button
+                            className="btn btn-secondary sm"
+                            disabled={busyId === s.id}
+                            onClick={() => act(s.id, approveStory, 'Story approved', 'The story is now visible on the public site.')}
+                          >
+                            <Icon name="check" size={14} /> Approve
+                          </button>
+                          <button
+                            className="btn btn-ghost sm"
+                            disabled={busyId === s.id}
+                            onClick={() => act(s.id, rejectStory, 'Story rejected', 'The story was rejected.')}
+                          >
+                            <Icon name="x" size={14} /> Reject
+                          </button>
+                        </>
+                      )}
+                      {s.status === 'approved' && (
+                        <button
+                          className="btn btn-ghost sm"
+                          disabled={busyId === s.id}
+                          onClick={() => act(s.id, unpublishStory, 'Story unpublished', 'The story was removed from the public site.')}
+                        >
+                          <Icon name="eye-off" size={14} /> Unpublish
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-header">
-            <h2 className="h-section">Approved & shown publicly</h2>
-          </div>
-          <div>
-            {loading ? (
-              storySkeletons(1)
-            ) : approved.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState
-                  icon="globe"
-                  title="Nothing published yet"
-                  message="Approved stories appear on the public website's What patients say carousel."
-                />
-              </div>
-            ) : approved.map(t => (
-              <StoryRow key={t.id} t={t} actions={
-                <button className="btn btn-secondary sm" onClick={() => setStatus(t.id, 'pending')}>Unpublish</button>
-              } />
-            ))}
-          </div>
-        </div>
-
-        {rejected.length > 0 && (
-          <div className="card">
-            <div className="card-header">
-              <h2 className="h-section">Not published</h2>
-            </div>
-            <div>
-              {rejected.map(t => (
-                <StoryRow key={t.id} t={t} actions={
-                  <button className="btn btn-secondary sm" onClick={() => setStatus(t.id, 'pending')}>Restore to review</button>
-                } />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </AppShell>
   );
 }
 
-export { StoryRow, StoriesMgmt };
+export { StoriesMgmt };

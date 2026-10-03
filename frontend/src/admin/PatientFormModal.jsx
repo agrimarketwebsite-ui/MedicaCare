@@ -1,102 +1,135 @@
-// PatientFormModal — admin (split from screens-admin.jsx)
-import { useEffect, useRef, useState } from 'react';
-import { Field, Icon, Modal, PatientAvatar, SelectInput, TextInput } from '../shared/components.jsx';
-import { focusFirstError } from './helpers.js';
+// PatientFormModal — add/edit patient (Phase 6, admin registry).
+// Props: open, onClose, initial? (patient row — kapag may laman, edit mode),
+// onSaved(savedPatient).
+import { useEffect, useState } from 'react';
+import { Field, Modal, SelectInput, TextArea, TextInput, useStore } from '../shared/components.jsx';
+import { createAdminPatient, updateAdminPatient, ApiError } from '../shared/api.js';
 
-function PatientFormModal({ open, onClose, patient, onSave }) {
-  const isEdit = !!patient;
-  const [form, setForm] = useState({ name: '', email: '', phone: '', gender: 'M', age: '' });
-  const [errors, setErrors] = useState({});
-  const [photo, setPhoto] = useState('');
-  const [photoError, setPhotoError] = useState('');
-  const photoInputRef = useRef(null);
+const BLOOD_TYPES = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
+const GENDERS = ['', 'male', 'female', 'other'];
+
+const EMPTY = {
+  full_name: '',
+  email: '',
+  phone: '',
+  password: '',
+  gender: '',
+  date_of_birth: '',
+  blood_type: '',
+  allergies: '',
+  address: '',
+  emergency_contact: '',
+};
+
+function PatientFormModal({ open, onClose, initial, onSaved }) {
+  const store = useStore();
+  const [form, setForm] = useState(EMPTY);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const editing = Boolean(initial?.id);
+
   useEffect(() => {
-    if (open) {
-      setForm(patient ? { name: patient.name, email: patient.email || '', phone: patient.phone, gender: patient.gender, age: patient.age } : { name: '', email: '', phone: '', gender: 'M', age: '' });
-      setPhoto(patient?.photo || '');
-      setPhotoError('');
-      setErrors({});
-    }
-  }, [open, patient]);
-  const onPhotoChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = ''; // allow re-selecting the same file
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('Please choose an image file (JPG or PNG).');
-      return;
-    }
-    if (file.size > 1024 * 1024) {
-      setPhotoError('Image is too large. Please choose one under 1 MB.');
-      return;
-    }
-    setPhotoError('');
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result);
-    reader.readAsDataURL(file);
-  };
+    if (!open) return;
+    setForm(initial
+      ? { ...EMPTY, ...initial, password: '', date_of_birth: (initial.date_of_birth || '').slice(0, 10) }
+      : EMPTY);
+    setError('');
+    setSaving(false);
+  }, [open, initial]);
 
-  const submit = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email';
-    if (!form.phone.trim()) e.phone = 'Phone is required';
-    if (!form.age) e.age = 'Age is required';
-    setErrors(e);
-    if (Object.keys(e).length) { focusFirstError(); return; }
-    onSave({ ...form, photo });
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const doSave = async () => {
+    if (!form.full_name.trim()) { setError('Full name is required.'); return; }
+    if (!form.email.trim()) { setError('Email is required.'); return; }
+    if (!editing && !form.password) { setError('Set an initial password for the new patient.'); return; }
+    setSaving(true);
+    setError('');
+    try {
+      const body = {
+        full_name: form.full_name.trim(),
+        email: form.email.trim().toLowerCase(),
+        phone: form.phone.trim() || null,
+        gender: form.gender || null,
+        date_of_birth: form.date_of_birth || null,
+        blood_type: form.blood_type || null,
+        allergies: form.allergies.trim() || null,
+        address: form.address.trim() || null,
+        emergency_contact: form.emergency_contact.trim() || null,
+      };
+      if (!editing) body.password = form.password;
+      const saved = editing
+        ? await updateAdminPatient(initial.id, body)
+        : await createAdminPatient(body);
+      store.pushToast({
+        kind: 'success',
+        title: editing ? 'Patient updated' : 'Patient added',
+        message: `${saved.full_name} has been ${editing ? 'updated' : 'added to the registry'}.`,
+      });
+      onSaved?.(saved);
+      onClose();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not save the patient. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={isEdit ? 'Edit patient' : 'Add new patient'}
-      subtitle={isEdit ? 'Update the patient\'s information below.' : 'Enter the new patient\'s details to create a record.'}
-      size="md"
-      footer={<>
-        <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary" onClick={submit}>{isEdit ? 'Save changes' : 'Add patient'}</button>
-      </>}
+      title={editing ? 'Edit patient' : 'Add patient'}
+      subtitle={editing ? `Editing ${initial?.full_name || ''}` : 'Register a new patient in the directory.'}
+      icon="user-plus"
+      footer={
+        <>
+          <button className="btn btn-ghost" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="btn btn-primary" onClick={doSave} disabled={saving}>
+            {saving ? 'Saving…' : editing ? 'Save changes' : 'Add patient'}
+          </button>
+        </>
+      }
     >
-      <div className="stack md">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {photo
-            ? <img src={photo} alt="Patient" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
-            : <PatientAvatar person={{ name: form.name }} size={64} />}
-          <div>
-            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
-                <Icon name="upload" size={14} /> Upload photo
-              </button>
-              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
-            </div>
-            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
-              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
-            </div>
-            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
-          </div>
-        </div>
-        <Field label="Full name" required error={errors.name}>
-          <TextInput value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} error={errors.name} placeholder="e.g., Juan dela Cruz" />
+      {error && <div className="form-error" role="alert">{error}</div>}
+      <div className="form-grid">
+        <Field label="Full name" required>
+          <TextInput value={form.full_name} onChange={set('full_name')} placeholder="Juan Dela Cruz" maxLength={120} />
         </Field>
-        <Field label="Email" error={errors.email} help="Optional but recommended for reminders">
-          <TextInput type="email" icon="mail" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} error={errors.email} placeholder="patient@example.com" />
+        <Field label="Email" required>
+          <TextInput type="email" value={form.email} onChange={set('email')} placeholder="patient@example.com" maxLength={160} />
         </Field>
-        <Field label="Phone" required error={errors.phone}>
-          <TextInput type="tel" icon="phone" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} error={errors.phone} placeholder="+63 917 000 0000" />
+        <Field label="Phone">
+          <TextInput value={form.phone} onChange={set('phone')} placeholder="+63 900 000 0000" maxLength={20} />
         </Field>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <Field label="Gender">
-            <SelectInput value={form.gender} onChange={e => setForm(f => ({ ...f, gender: e.target.value }))}>
-              <option value="M">Male</option><option value="F">Female</option><option value="O">Other</option>
-            </SelectInput>
+        {!editing && (
+          <Field label="Password" required help="Initial password — the patient can change it later.">
+            <TextInput type="password" value={form.password} onChange={set('password')} placeholder="Min. 8 chars, letter + number" />
           </Field>
-          <Field label="Age" required error={errors.age}>
-            <TextInput type="number" value={form.age} onChange={e => setForm(f => ({ ...f, age: e.target.value }))} error={errors.age} placeholder="0" />
-          </Field>
-        </div>
+        )}
+        <Field label="Gender">
+          <SelectInput value={form.gender} onChange={set('gender')}>
+            <option value="">—</option>
+            {GENDERS.filter(Boolean).map(g => <option key={g} value={g}>{g}</option>)}
+          </SelectInput>
+        </Field>
+        <Field label="Date of birth">
+          <TextInput type="date" value={form.date_of_birth} onChange={set('date_of_birth')} />
+        </Field>
+        <Field label="Blood type">
+          <SelectInput value={form.blood_type} onChange={set('blood_type')}>
+            {BLOOD_TYPES.map(b => <option key={b} value={b}>{b || '—'}</option>)}
+          </SelectInput>
+        </Field>
+        <Field label="Allergies">
+          <TextInput value={form.allergies} onChange={set('allergies')} placeholder="e.g. Penicillin" maxLength={255} />
+        </Field>
+        <Field label="Address">
+          <TextArea value={form.address} onChange={set('address')} rows={2} placeholder="Street, barangay, city" maxLength={500} />
+        </Field>
+        <Field label="Emergency contact">
+          <TextInput value={form.emergency_contact} onChange={set('emergency_contact')} placeholder="Name + phone number" maxLength={255} />
+        </Field>
       </div>
     </Modal>
   );

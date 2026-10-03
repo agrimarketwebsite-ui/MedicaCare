@@ -1,173 +1,227 @@
-// TicketsMgmt — admin (split from screens-admin.jsx)
+// TicketsMgmt — support tickets (Phase 6).
+// List (open/resolved filter) + thread view + reply box + resolve button.
+// Ticket shape: { id, subject, status, patient: { full_name }, created_at,
+//   messages: [{ id, sender, body, created_at }] }.
 import { useEffect, useState } from 'react';
-import { AppShell, Badge, EmptyState, Field, Icon, Modal, PageHeader, PatientAvatar, TextArea, useStore } from '../shared/components.jsx';
-import { CURRENT_ADMIN, findPatient, formatDate } from '../shared/data.js';
-import { localToday, focusFirstError } from './helpers.js';
+import {
+  AppShell, Badge, EmptyState, ErrorState, Icon, PageHeader,
+  SelectInput, SkeletonRows, TextArea, useStore,
+} from '../shared/components.jsx';
+import { getAdminTicket, getAdminTickets, replyTicket, resolveTicket, ApiError } from '../shared/api.js';
 
-// ---------- Patient messages (support tickets) ----------
-// Patients send questions from the portal's Help & support page ("Message the
-// clinic"); they land here as open tickets. Staff reply once — the reply shows
-// in the patient's portal and the ticket is marked resolved (same loop as the
-// patient stories moderation flow).
 function TicketsMgmt() {
   const store = useStore();
+  const [status, setStatus] = useState('open');
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 600); return () => clearTimeout(t); }, []);
-  const [replyFor, setReplyFor] = useState(null);
-  const [replyText, setReplyText] = useState('');
-  const [replyError, setReplyError] = useState('');
-  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const [tickets, setTickets] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [thread, setThread] = useState(null);
+  const [threadLoading, setThreadLoading] = useState(false);
+  const [reply, setReply] = useState('');
+  const [busy, setBusy] = useState(false);
 
-  const open = store.tickets.filter(t => t.status === 'open');
-  const resolved = store.tickets.filter(t => t.status === 'resolved');
-
-  const startReply = (t) => { setReplyFor(t); setReplyText(''); setReplyError(''); };
-
-  const sendReply = () => {
-    const text = replyText.trim();
-    if (text.length < 10) { setReplyError('Please write a reply (10+ characters).'); focusFirstError(); return; }
-    setSending(true);
-    setTimeout(() => {
-      store.setTickets(store.tickets.map(t => t.id === replyFor.id
-        ? {
-            ...t,
-            status: 'resolved',
-            reply: text,
-            repliedAt: localToday(),
-            // Conversation history after the first message — the patient's
-            // follow-ups stay visible above the new reply in their portal
-            thread: [...(t.thread || []), { id: t.id + '-s' + Date.now(), from: 'staff', text, date: localToday() }],
-          }
-        : t));
-      store.pushActivity(CURRENT_ADMIN.name, 'Replied to patient message', `"${replyFor.subject}"`);
-      store.pushToast({ title: 'Reply sent', msg: `${replyFor.name || 'The patient'} will see your response in their portal.` });
-      setSending(false);
-      setReplyFor(null);
-    }, 600);
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const list = await getAdminTickets(status);
+      setTickets(list);
+      if (list.length > 0 && !list.some((t) => t.id === selectedId)) {
+        setSelectedId(list[0].id);
+      } else if (list.length === 0) {
+        setSelectedId(null);
+        setThread(null);
+      }
+    } catch (err) {
+      setError(err.message || 'Could not load tickets.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const rowSkeletons = (count) => Array.from({ length: count }).map((_, i) => (
-    <div key={i} className="list-item" aria-hidden="true">
-      <span className="skel" style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }} />
-      <div className="list-item-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <span className="skel" style={{ height: 11, width: '55%' }} />
-        <span className="skel" style={{ height: 10, width: '80%' }} />
-      </div>
-      <span className="skel" style={{ width: 74, height: 22, borderRadius: 'var(--r-pill)', flexShrink: 0 }} />
-    </div>
-  ));
+  useEffect(() => { load(); }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const TicketRow = ({ t, actions, children }) => {
-    const author = window.findPatient(t.patientId);
-    return (
-      <div className="list-item" style={{ alignItems: 'flex-start' }}>
-        <PatientAvatar person={author} size={28} />
-        <div className="list-item-body">
-          <div className="list-item-title">{t.subject}</div>
-          {/* Override the one-line ellipsis: the message body is the content here */}
-          <div className="list-item-sub" style={{ whiteSpace: 'normal', overflow: 'visible', lineHeight: 1.5 }}>
-            {t.message}
-          </div>
-          {(t.thread || []).some(m => m.from === 'patient') && (
-            <div className="list-item-sub" style={{ marginTop: 4 }}>
-              {t.thread.filter(m => m.from === 'patient').length} patient follow-up{t.thread.filter(m => m.from === 'patient').length === 1 ? '' : 's'}. See reply history
-            </div>
-          )}
-          <div className="list-item-sub" style={{ marginTop: 4 }}>
-            {t.name || (author ? author.name : 'Patient')} · sent {window.formatDate(t.createdAt)}
-            {t.repliedAt ? ` · replied ${window.formatDate(t.repliedAt)}` : ''}
-          </div>
-          {children}
-        </div>
-        <div style={{ flexShrink: 0 }}>{actions}</div>
-      </div>
-    );
+  useEffect(() => {
+    if (!selectedId) { setThread(null); return; }
+    let cancelled = false;
+    setThreadLoading(true);
+    setReply('');
+    getAdminTicket(selectedId)
+      .then((t) => { if (!cancelled) setThread(t); })
+      .catch((err) => {
+        if (!cancelled) store.pushToast({ kind: 'error', title: 'Could not load ticket', message: err.message });
+      })
+      .finally(() => { if (!cancelled) setThreadLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const doReply = async () => {
+    if (!reply.trim() || !selectedId) return;
+    setBusy(true);
+    try {
+      await replyTicket(selectedId, { body: reply.trim() });
+      const t = await getAdminTicket(selectedId);
+      setThread(t);
+      setReply('');
+      store.pushToast({ kind: 'success', title: 'Reply sent', message: 'Your reply was added to the ticket.' });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Reply failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setBusy(false);
+    }
   };
+
+  const doResolve = async () => {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      const updated = await resolveTicket(selectedId);
+      store.pushToast({ kind: 'success', title: 'Ticket resolved', message: 'The ticket was marked as resolved.' });
+      setTickets((prev) => prev.map((t) => (t.id === selectedId ? updated : t)));
+      setThread(updated);
+      load();
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Action failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const messages = thread?.messages || [];
 
   return (
     <AppShell current="tickets">
-      <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
+      <div className="page">
         <PageHeader
           title="Patient messages"
-          subtitle={loading
-            ? <span className="skel" aria-hidden="true" style={{ width: 280, maxWidth: '100%', height: 14 }} />
-            : `${open.length} awaiting a reply · ${resolved.length} resolved`}
-          breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Patient messages' }]}
+          subtitle="Support tickets from patients."
+          breadcrumbs={[{ label: 'Admin', to: '/admin/dashboard' }, { label: 'Patient messages' }]}
         />
 
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-header"><h2 className="h-section">Open</h2></div>
-          <div>
-            {loading ? rowSkeletons(2) : open.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState icon="inbox" title="No open messages"
-                  message="Messages sent from the patient portal's Help & support page appear here." />
-              </div>
-            ) : open.map(t => (
-              <TicketRow key={t.id} t={t}
-                actions={<button className="btn btn-primary sm" onClick={() => startReply(t)}><Icon name="reply" size={13} /> Reply</button>} />
-            ))}
-          </div>
-        </div>
-
         <div className="card">
-          <div className="card-header"><h2 className="h-section">Resolved</h2></div>
-          <div>
-            {loading ? rowSkeletons(1) : resolved.length === 0 ? (
-              <div style={{ padding: '8px 20px 16px' }}>
-                <EmptyState icon="check-circle-2" title="Nothing resolved yet" message="Replied messages move here." />
-              </div>
-            ) : resolved.map(t => (
-              <TicketRow key={t.id} t={t}
-                actions={<Badge kind="success" dot={false}>Replied</Badge>}>
-                {t.reply && (
-                  <div style={{ marginTop: 8, fontSize: 12.5, lineHeight: 1.5, background: 'var(--success-soft)', border: '1px solid var(--success-border)', borderRadius: 6, padding: '8px 10px', color: 'var(--success-text)' }}>
-                    <strong>Our reply:</strong> {t.reply}
-                  </div>
-                )}
-              </TicketRow>
-            ))}
+          <div className="table-toolbar">
+            <SelectInput
+              value={status}
+              onChange={(e) => { setStatus(e.target.value); setSelectedId(null); }}
+              aria-label="Filter tickets by status"
+              style={{ maxWidth: 190 }}
+            >
+              <option value="open">Open</option>
+              <option value="resolved">Resolved</option>
+              <option value="">All</option>
+            </SelectInput>
           </div>
+
+          {loading ? (
+            <table className="table" aria-hidden="true">
+              <tbody><SkeletonRows rows={6} cols={4} /></tbody>
+            </table>
+          ) : error ? (
+            <ErrorState title="Could not load tickets" message={error} onRetry={load} />
+          ) : tickets.length === 0 ? (
+            <EmptyState
+              icon="inbox"
+              title="No tickets found"
+              message={status === 'open' ? 'There are no open tickets. Nice.' : 'Try a different status filter.'}
+            />
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 0 }}>
+              {/* ---------- list ---------- */}
+              <div style={{ borderRight: '1px solid var(--border)' }}>
+                {tickets.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedId(t.id)}
+                    className="ticket-row"
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'left',
+                      padding: '12px 16px', border: 'none', borderBottom: '1px solid var(--border)',
+                      background: t.id === selectedId ? 'var(--surface-muted)' : 'transparent',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{t.subject || 'Support ticket'}</div>
+                    <div className="t-muted" style={{ fontSize: 12.5, marginTop: 2 }}>
+                      {t.patient?.full_name || '—'} · {(t.created_at || '').slice(0, 10)}
+                    </div>
+                    <div style={{ marginTop: 6 }}>
+                      <Badge kind={t.status === 'open' ? 'danger' : 'success'}>{t.status}</Badge>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* ---------- thread ---------- */}
+              <div style={{ padding: 16 }}>
+                {threadLoading ? (
+                  <div className="t-muted" style={{ textAlign: 'center', padding: 32 }}>Loading thread…</div>
+                ) : !thread ? (
+                  <EmptyState icon="message-circle" title="Select a ticket" message="Choose a ticket on the left to read its thread." />
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <h3 style={{ margin: 0 }}>{thread.subject || 'Support ticket'}</h3>
+                      {thread.status === 'open' && (
+                        <button className="btn btn-secondary sm" onClick={doResolve} disabled={busy}>
+                          <Icon name="check" size={14} /> Resolve
+                        </button>
+                      )}
+                    </div>
+                    <div className="thread" style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+                      {messages.length === 0 && (
+                        <div className="t-muted" style={{ fontSize: 13 }}>No messages yet.</div>
+                      )}
+                      {messages.map((m) => {
+                        const mine = m.sender === 'admin' || m.sender_role === 'admin';
+                        return (
+                          <div
+                            key={m.id}
+                            style={{
+                              alignSelf: mine ? 'flex-end' : 'flex-start',
+                              maxWidth: '80%',
+                              background: mine ? 'var(--primary)' : 'var(--surface-muted)',
+                              color: mine ? '#fff' : 'var(--text)',
+                              borderRadius: 10,
+                              padding: '8px 12px',
+                              fontSize: 13.5,
+                            }}
+                          >
+                            <div style={{ whiteSpace: 'pre-wrap' }}>{m.body}</div>
+                            <div style={{ fontSize: 11, opacity: 0.75, marginTop: 4 }}>
+                              {(m.sender || 'patient')} · {(m.created_at || '').slice(0, 16).replace('T', ' ')}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {thread.status === 'open' ? (
+                      <div>
+                        <TextArea
+                          value={reply}
+                          onChange={(e) => setReply(e.target.value)}
+                          rows={3}
+                          placeholder="Write a reply…"
+                          aria-label="Reply to ticket"
+                        />
+                        <div style={{ marginTop: 8, textAlign: 'right' }}>
+                          <button className="btn btn-primary sm" onClick={doReply} disabled={busy || !reply.trim()}>
+                            {busy ? 'Sending…' : 'Send reply'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="t-muted" style={{ fontSize: 13 }}>
+                        <Icon name="check-circle" size={13} /> This ticket is resolved.
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      <Modal
-        open={!!replyFor}
-        onClose={() => setReplyFor(null)}
-        title="Reply to patient"
-        subtitle={replyFor ? `${replyFor.name || 'Patient'} · "${replyFor.subject}"` : ''}
-        icon="reply" iconKind="info"
-        footer={<>
-          <button className="btn btn-secondary" onClick={() => setReplyFor(null)} disabled={sending}>Cancel</button>
-          <button className={`btn btn-primary ${sending ? 'btn-loading' : ''}`} onClick={sendReply}>Send reply &amp; resolve</button>
-        </>}
-      >
-        {replyFor && (
-          <div className="stack md">
-            <div style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: 6, padding: '10px 12px', fontSize: 13, lineHeight: 1.55 }}>
-              {replyFor.message}
-            </div>
-            {(replyFor.thread || []).map(m => (
-              <div key={m.id} style={{
-                borderRadius: 6, padding: '8px 10px', fontSize: 12.5, lineHeight: 1.55,
-                border: '1px solid ' + (m.from === 'staff' ? 'var(--success-border)' : 'var(--border)'),
-                background: m.from === 'staff' ? 'var(--success-soft)' : 'var(--surface-muted)',
-                color: m.from === 'staff' ? 'var(--success-text)' : 'var(--text-secondary)',
-              }}>
-                <strong>{m.from === 'staff' ? 'Previous staff reply' : 'Patient follow-up'}:</strong> {m.text}
-                {m.date && <div className="t-help" style={{ marginTop: 2 }}>{window.formatDate(m.date)}</div>}
-              </div>
-            ))}
-            <Field label="Your reply" required error={replyError}
-              help="The patient sees this in their portal; sending also marks the message resolved.">
-              <TextArea rows={4} value={replyText}
-                onChange={e => { setReplyText(e.target.value); if (replyError) setReplyError(''); }}
-                error={replyError} maxLength={500}
-                placeholder="e.g., Your HMO covers the annual physical exam. Just present your card at the counter." />
-            </Field>
-          </div>
-        )}
-      </Modal>
     </AppShell>
   );
 }
