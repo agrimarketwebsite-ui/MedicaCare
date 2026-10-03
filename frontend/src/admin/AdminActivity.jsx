@@ -3,8 +3,9 @@
 // human-readable actions, 6-per-page client pagination.
 // Real API: getAdminActivity (fetched once at limit 100, filtered and
 // paginated client-side).
-// Entry shape: { id, actor_name, actor_role, action, entity_type, entity_id,
-//   details, created_at }.
+// Entry shape: { id, actor, action, detail, created_at } — actor is a
+// name/email string, action is a snake_case code (e.g. 'doctor.create',
+// 'auth.login.success'), detail is a human-readable string.
 import { useEffect, useState } from 'react';
 import {
   AppShell, EmptyState, ErrorState, Icon, PageHeader, Pagination,
@@ -14,8 +15,8 @@ import { localToday } from './helpers.js';
 
 const PAGE = 6;
 
-// snake_case action codes → human readable, e.g. 'patient.created' →
-// 'Patient created', 'doctor.access.granted' → 'Doctor access granted'.
+// snake_case action codes → human readable, e.g. 'auth.login.success' →
+// 'Auth login success', 'doctor.create' → 'Doctor create'.
 const humanAction = (action) =>
   String(action || '').replace(/[._]/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
 
@@ -43,17 +44,30 @@ function AdminActivity() {
 
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Filters: text search (action/detail/actor) + "who did it" chips.
+  // Filters: text search (action/detail/actor) + "who did it" chips. Console
+  // actions are written by the signed-in admin (staff). Auth events carry the
+  // account kind in the detail ("patient:<id>", "doctor:<id>", "admin:<id>"),
+  // which is how doctor/patient actions are recognized. Anything unrecognized
+  // falls back to staff, since the only writer outside auth events is the
+  // console — same fallback rule as the prototype's roleOf.
+  const roleOf = (e) => {
+    if (String(e.action || '').startsWith('auth.')) {
+      const kind = /^([a-z]+):/.exec(e.detail || '')?.[1];
+      if (kind === 'doctor') return 'doctor';
+      if (kind === 'patient') return 'patient';
+    }
+    return 'staff';
+  };
   const filtered = entries.filter((e) => {
-    if (who !== 'all' && (e.actor_role || '') !== who) return false;
+    if (who !== 'all' && roleOf(e) !== who) return false;
     if (!query) return true;
-    const hay = `${e.action || ''} ${e.details || ''} ${e.actor_name || ''}`.toLowerCase();
+    const hay = `${e.action || ''} ${e.detail || ''} ${e.actor || ''}`.toLowerCase();
     return hay.includes(query.trim().toLowerCase());
   });
   const filtersActive = who !== 'all' || query.trim() !== '';
   const whoFilters = [
     ['all', 'All'],
-    ['admin', 'Staff'],
+    ['staff', 'Staff'],
     ['doctor', 'Doctors'],
     ['patient', 'Patients'],
   ];
@@ -122,8 +136,8 @@ function AdminActivity() {
                 const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
                 // Today's entries show just the time; older ones get the date too
                 const label = dayISO === todayISO ? time : `${window.formatDate(dayISO)} · ${time}`;
-                const actor = e.actor_name || 'System';
-                const detail = e.details || (e.entity_type ? `${e.entity_type}${e.entity_id ? ` · ${e.entity_id}` : ''}` : '');
+                const actor = e.actor || 'System';
+                const detail = e.detail || '';
                 return (
                   <div key={e.id} className="list-item">
                     <div className="avatar">{window.initials(actor)}</div>
