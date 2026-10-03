@@ -1,50 +1,52 @@
-// DoctorWeekView — doctor (Phase 5)
-// Week schedule (Mon–Sun) + sariling weekly availability editor.
-// Ang availability ang pinagmumulan ng fn_available_slots — ang pagbabago
-// dito ay direktang nakakaapekto sa patient booking.
+// DoctorWeekView — doctor portal
+// This week (Mon–Sun grid) + weekly availability editor. The availability
+// is the source of fn_available_slots — changes here directly affect
+// patient booking.
 import { useEffect, useState } from 'react';
 import {
-  AppShell, ConfirmModal, EmptyState, ErrorState, Field, Icon, Modal, PageHeader,
+  AppShell, ConfirmModal, EmptyState, ErrorState, Field, Icon, Modal, navigate, PageHeader,
   PageSpinner, SelectInput, TextInput, useStore,
 } from '../shared/components.jsx';
 import {
   createDoctorAvailability, deleteDoctorAvailability, getDoctorAvailability,
   getDoctorWeek, updateDoctorAvailability, ApiError,
 } from '../shared/api.js';
-import { addDays, fmtDayShort, localToday, mondayOf, WEEKDAY_LABELS } from './helpers.js';
+import { fmtDayShort, getWeekDays, localToday, mondayOf, WEEKDAY_LABELS } from './helpers.js';
 import { WeekGrid } from './WeekGrid.jsx';
+import { formatDate } from '../shared/data.js';
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 function DoctorWeekView() {
   const store = useStore();
-  const [weekStart, setWeekStart] = useState(() => mondayOf(localToday()));
-  const [week, setWeek] = useState({ week_start: null, week_end: null, appointments: [] });
+  const today = localToday();
+  const weekDays = getWeekDays();
+  const weekLabel = `${formatDate(weekDays[0])} – ${formatDate(weekDays[6])}`;
+  const [mine, setMine] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selected, setSelected] = useState(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   // Availability editor state
   const [avail, setAvail] = useState([]);
   const [availLoading, setAvailLoading] = useState(true);
   const [availError, setAvailError] = useState('');
   const [editorOpen, setEditorOpen] = useState(false);
-  const [editing, setEditing] = useState(null); // availability entry o null (new)
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ weekday: 1, start_time: '08:00', end_time: '17:00' });
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null); // availability entry o null
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const loadWeek = (start) => {
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError('');
-    getDoctorWeek(start)
+    getDoctorWeek(mondayOf(today))
       .then((d) => {
         if (cancelled) return;
-        setWeek(d);
-        setWeekStart(d.week_start);
+        setMine(d.appointments || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -53,9 +55,7 @@ function DoctorWeekView() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  };
-
-  useEffect(() => loadWeek(mondayOf(localToday())), []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadAvail = () => {
     let cancelled = false;
@@ -69,8 +69,7 @@ function DoctorWeekView() {
 
   useEffect(loadAvail, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const goWeek = (delta) => loadWeek(addDays(weekStart, delta * 7));
-  const goToday = () => loadWeek(mondayOf(localToday()));
+  const weekCount = mine.filter(a => weekDays.includes(a.appointment_date)).length;
 
   const openNew = () => {
     setEditing(null);
@@ -136,35 +135,32 @@ function DoctorWeekView() {
       <div className="page">
         <PageHeader
           title="This week"
-          subtitle="Your appointments for the week, plus your weekly availability."
-          breadcrumbs={[{ label: 'Home', to: '/doctor' }, { label: 'This week' }]}
-          actions={
-            <>
-              <button className="btn btn-ghost sm" onClick={() => goWeek(-1)}><Icon name="chevron-left" size={14} /> Prev</button>
-              <button className="btn btn-ghost sm" onClick={goToday}>This week</button>
-              <button className="btn btn-ghost sm" onClick={() => goWeek(1)}>Next <Icon name="chevron-right" size={14} /></button>
-            </>
-          }
+          subtitle={weekLabel}
+          breadcrumbs={[{ label: 'Doctor portal', to: '/doctor/dashboard' }, { label: 'This week' }]}
+          actions={<button className="btn btn-secondary" onClick={() => navigate('/doctor/dashboard')}><Icon name="calendar-check" size={14} /> Today's schedule</button>}
         />
 
         <div className="card" style={{ marginBottom: 16 }}>
-          <div className="card-body">
+          <div className="card-header">
+            <h2 className="h-section">Week view</h2>
+            <span className="t-muted" style={{ fontSize: 12 }}>
+              {loading ? '…' : `${weekCount} appointment${weekCount === 1 ? '' : 's'} · today's column is highlighted`}
+            </span>
+          </div>
+          <div className="card-body compact">
             {loading ? (
               <PageSpinner />
             ) : error ? (
-              <ErrorState title="Could not load week" message={error} onRetry={() => loadWeek(weekStart)} />
+              <ErrorState title="Could not load week" message={error} onRetry={() => setRetryKey(k => k + 1)} />
             ) : (
-              <WeekGrid
-                weekStart={week.week_start}
-                weekEnd={week.week_end}
-                appointments={week.appointments}
-                selectedId={selected?.id}
-                onSelect={setSelected}
-                today={localToday()}
-              />
+              <WeekGrid mine={mine} weekDays={weekDays} today={today} />
             )}
           </div>
         </div>
+
+        <p className="t-help" style={{ margin: '0 0 16px' }}>
+          Full detail (time · patient · status) shows on hover over each appointment chip.
+        </p>
 
         <div className="card">
           <div className="card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -202,20 +198,6 @@ function DoctorWeekView() {
             )}
           </div>
         </div>
-
-        {selected && (
-          <div className="card" style={{ marginTop: 16 }}>
-            <div className="card-body" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 200 }}>
-                <strong>{selected.patient?.full_name || selected.booked_for || 'Patient'}</strong>
-                <div className="t-muted" style={{ fontSize: 12.5 }}>
-                  {fmtDayShort(selected.appointment_date)} · {selected.reason || '—'} · Ref {selected.reference_code}
-                </div>
-              </div>
-              <button className="btn btn-secondary sm" onClick={() => setSelected(null)}>Clear selection</button>
-            </div>
-          </div>
-        )}
       </div>
 
       <Modal
