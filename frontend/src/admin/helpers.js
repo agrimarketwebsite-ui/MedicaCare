@@ -1,1 +1,142 @@
-Ly8gU2hhcmVkIGhlbHBlcnMg4oCUIGFkbWluIGNvbnNvbGUuCmltcG9ydCB7IGRvd25sb2FkRmlsZSwgZm9ybWF0RGF0ZSwgZm9ybWF0RGF5UmFuZ2UsIHN0YXR1c01ldGEgfSBmcm9tICcuLi9zaGFyZWQvZGF0YS5qcyc7CgovLyBDU1YgZXhwb3J0IGhlbHBlcnMgKGRvd25sb2FkRmlsZSBpcyB0aGUgc2hhcmVkIGhlbHBlciBmcm9tIGRhdGEuanMpCi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpmdW5jdGlvbiBjc3ZDZWxsKHYpIHsKICBsZXQgcyA9IFN0cmluZyh2ID09IG51bGwgPyAnJyA6IHYpOwogIC8vIEEgbGVhZGluZyA9LCArLCAtLCBALCBUQUIgb3IgQ1IgbWFrZXMgRXhjZWwvTGlicmVPZmZpY2UgdHJlYXQgdGhlIGNlbGwgYXMKICAvLyBhIGZvcm11bGEg4oCUIHByZWZpeCBpdCB3aXRoIGFuIGFwb3N0cm9waGUgc28gZXhwb3J0ZWQgZnJlZS10ZXh0IGZpZWxkcwogIC8vIChwYXRpZW50IG5hbWUsIHJlYXNvbiBmb3IgdmlzaXQsIG1lc3NhZ2Ugc3ViamVjdOKApikgc3RheSBpbmVydCB0ZXh0LgogIGlmICgvXls9K1wtQFx0XHJdLy50ZXN0KHMpKSBzID0gIiciICsgczsKICByZXR1cm4gL1siLFxuXS8udGVzdChzKSA/ICciJyArIHMucmVwbGFjZSgvIi9nLCAnIiInKSArICciJyA6IHM7Cn0KCi8vIHJvd3MgPSBhcnJheSBvZiBhcnJheXM7IGZpcnN0IHJvdyBpcyB0aGUgaGVhZGVyLiBCT00ga2VlcHMgRXhjZWwgaGFwcHkgd2l0aCDigrEuCmZ1bmN0aW9uIGRvd25sb2FkQ1NWKGZpbGVuYW1lLCByb3dzKSB7CiAgY29uc3QgY3N2ID0gcm93cy5tYXAociA9PiByLm1hcChjc3ZDZWxsKS5qb2luKCcsJykpLmpvaW4oJ1xyXG4nKTsKICBkb3dubG9hZEZpbGUoZmlsZW5hbWUsICfvu78nICsgY3N2LCAndGV4dC9jc3Y7Y2hhcnNldD11dGYtOCcpOwp9CgovLyBMb2NhbCAobm90IFVUQykgWVlZWS1NTS1ERCBzbyAidG9kYXkiIG1hdGNoZXMgdGhlIHVzZXIncyB0aW1lem9uZQpmdW5jdGlvbiBsb2NhbFRvZGF5KCkgewogIGNvbnN0IG4gPSBuZXcgRGF0ZSgpOwogIGNvbnN0IHBhZCA9ICh4KSA9PiBTdHJpbmcoeCkucGFkU3RhcnQoMiwgJzAnKTsKICByZXR1cm4gYCR7bi5nZXRGdWxsWWVhcigpfS0ke3BhZChuLmdldE1vbnRoKCkgKyAxKX0tJHtwYWQobi5nZXREYXRlKCkpfWA7Cn0KCi8vIEFmdGVyIGlubGluZSB2YWxpZGF0aW9uIGZhaWxzLCBtb3ZlIGZvY3VzIHRvIHRoZSBmaXJzdCBpbnZhbGlkIGZpZWxkIHNvCi8vIGtleWJvYXJkIGFuZCBzY3JlZW4tcmVhZGVyIHVzZXJzIGxhbmQgc3RyYWlnaHQgb24gd2hhdCBuZWVkcyBmaXhpbmcuCi8vIFRoZSBzaGFyZWQgVGV4dElucHV0L1RleHRBcmVhL1NlbGVjdElucHV0IGNhcnJ5IGFuIC5lcnJvciBjbGFzcyB3aGVuZXZlcgovLyB0aGVpciBlcnJvciBwcm9wIGlzIHNldC4KZnVuY3Rpb24gZm9jdXNGaXJzdEVycm9yKCkgewogIGNvbnN0IGVsID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignLmlucHV0LmVycm9yLCAudGV4dGFyZWEuZXJyb3IsIC5zZWxlY3QuZXJyb3InKTsKICBpZiAoZWwpIGVsLmZvY3VzKCk7Cn0KCi8vIFByaW50YWJsZSBkYWlseSBzY2hlZHVsZSBmb3Igb25lIGRvY3RvciAoc3RhZmYgcHJpbnQgdGhlIGRheSdzIHBhdGllbnQKLy8gbGlzdCBmb3IgZG9jdG9ycyB3aG8gYXJlIG5vdCBhdCBhIHdvcmtzdGF0aW9uKS4gVGhlIEhUTUwgaXMgcmVuZGVyZWQgaW50bwovLyBhIGhpZGRlbiBwcmludCBpZnJhbWUg4oCUIHRoZSBicm93c2VyJ3MgcHJpbnQgZGlhbG9nIHRoZW4gb2ZmZXJzCi8vICJTYXZlIGFzIFBERiIgYXMgdGhlIGRlc3RpbmF0aW9uLgpmdW5jdGlvbiBlc2MocykgewogIHJldHVybiBTdHJpbmcocyA9PSBudWxsID8gJycgOiBzKQogICAgLnJlcGxhY2UoLyYvZywgJyZhbXA7JykucmVwbGFjZSgvPC9nLCAnJmx0OycpLnJlcGxhY2UoLz4vZywgJyZndDsnKQogICAgLnJlcGxhY2UoLyIvZywgJyZxdW90OycpOwp9CgpmdW5jdGlvbiBidWlsZERvY3RvclNjaGVkdWxlSFRNTChkb2N0b3IsIGFwcHRzLCBkYXRlU3RyKSB7CiAgY29uc3QgY291bnQgPSAocykgPT4gYXBwdHMuZmlsdGVyKGEgPT4gYS5zdGF0dXMgPT09IHMpLmxlbmd0aDsKICBjb25zdCByb3dzID0gYXBwdHMubGVuZ3RoID8gYXBwdHMubWFwKChhLCBpKSA9PiB7CiAgICBjb25zdCBwTmFtZSA9IGEucGF0aWVudD8uZnVsbF9uYW1lIHx8IGEuYm9va2VkX2ZvciB8fCAnVW5rbm93biBwYXRpZW50JzsKICAgIGNvbnN0IHBFbWFpbCA9IGEucGF0aWVudD8uZW1haWwgfHwgJ+KAlCc7CiAgICByZXR1cm4gYDx0cj4KICAgICAgPHRkIGNsYXNzPSJjLW51bSI+JHtpICsgMX08L3RkPgogICAgICA8dGQgY2xhc3M9ImMtdGltZSI+PHN0cm9uZz4ke2VzYygoYS5zdGFydF90aW1lIHx8ICcnKS5zbGljZSgwLCA1KSl9PC9zdHJvbmc+PC90ZD4KICAgICAgPHRkIGNsYXNzPSJjLXBhdGllbnQiPjxzdHJvbmc+JHtlc2MocE5hbWUpfTwvc3Ryb25nPjxzcGFuIGNsYXNzPSJzdWIiPiR7ZXNjKHBFbWFpbCl9PC9zcGFuPjwvdGQ+CiAgICAgIDx0ZD4ke2VzYyhhLnJlYXNvbiB8fCAn4oCUJyl9PC90ZD4KICAgICAgPHRkPiR7ZXNjKChzdGF0dXNNZXRhKGEuc3RhdHVzKSB8fCB7fSkubGFiZWwgfHwgYS5zdGF0dXMpfTwvdGQ+CiAgICA8L3RyPmA7CiAgfSkuam9pbignJykgOiAnPHRyIGNsYXNzPSJlbXB0eSI+PHRkIGNvbHNwYW49IjUiPk5vIGFwcG9pbnRtZW50cyBzY2hlZHVsZWQgZm9yIHRoaXMgZGF5LjwvdGQ+PC90cj4nOwogIGNvbnN0IHN0YW1wID0gYCR7Zm9ybWF0RGF0ZShsb2NhbFRvZGF5KCkpfSBhdCAke25ldyBEYXRlKCkudG9Mb2NhbGVUaW1lU3RyaW5nKCdlbi1VUycsIHsgaG91cjogJ251bWVyaWMnLCBtaW51dGU6ICcyLWRpZ2l0JyB9KX1gOwogIGNvbnN0IGRvY05hbWUgPSBkb2N0b3IuZnVsbF9uYW1lIHx8ICdEb2N0b3InOwogIGNvbnN0IHNwZWNpYWx0eSA9IGRvY3Rvci5zcGVjaWFsdGllcz8ubmFtZSB8fCBkb2N0b3Iuc3BlY2lhbHR5X25hbWUgfHwgJyc7CiAgcmV0dXJuIGA8IWRvY3R5cGUgaHRtbD4KPGh0bWw+CjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij48dGl0bGU+RHIuICR7ZXNjKGRvY05hbWUucmVwbGFjZSgvXkRyXC5ccyovLCAnJykpfSDigJQgc2NoZWR1bGUgJHtlc2MoZm9ybWF0RGF0ZShkYXRlU3RyKSl9PC90aXRsZT4KPHN0eWxlPgogIEBwYWdlIHsgc2l6ZTogQTQ7IG1hcmdpbjogMTRtbTsgfQogICogeyBib3gtc2l6aW5nOiBib3JkZXItYm94OyB9CiAgYm9keSB7IGZvbnQtZmFtaWx5OiAnU2Vnb2UgVUknLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBjb2xvcjogIzAwMDAwMDsgYmFja2dyb3VuZDogI2ZmZmZmZjsgZm9udC1zaXplOiAxMnB4OyBtYXJnaW46IDA7IH0KICAubGV0dGVyaGVhZCB7IGRpc3BsYXk6IGZsZXg7IGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjsgYWxpZ24taXRlbXM6IGZsZXgtc3RhcnQ7IGJvcmRlci1ib3R0b206IDJweCBzb2xpZCAjMDAwMDAwOyBwYWRkaW5nLWJvdHRvbTogMTBweDsgfQogIC5icmFuZCB7IG1hcmdpbjogMCAwIDNweDsgZm9udC1zaXplOiAyMXB4OyBmb250LXdlaWdodDogNzAwOyBsZXR0ZXItc3BhY2luZzogLjNweDsgfQogIC5kb2MtbGFiZWwgeyBtYXJnaW46IDAgMCA0cHg7IHRleHQtYWxpZ246IHJpZ2h0OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGxldHRlci1zcGFjaW5nOiAyLjVweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgfQogIC5kb2MtdGltZSB7IG1hcmdpbjogMDsgdGV4dC1hbGlnbjogcmlnaHQ7IGNvbG9yOiAjMDAwMDAwOyBmb250LXNpemU6IDEwcHg7IH0KICAuZG9jdG9yLWJsb2NrIHsgZGlzcGxheTogZmxleDsganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuOyBhbGlnbi1pdGVtczogY2VudGVyOyBtYXJnaW46IDE4cHggMCAycHg7IH0KICAuZG9jLW5hbWUgeyBtYXJnaW46IDA7IGZvbnQtc2l6ZTogMTZweDsgZm9udC13ZWlnaHQ6IDcwMDsgfQogIC5kb2Mtc3ViIHsgbWFyZ2luOiAzcHggMCAwOyBjb2xvcjogIzAwMDAwMDsgZm9udC1zaXplOiAxMXB4OyB9CiAgLmRhdGUtbGluZSB7IG1hcmdpbjogMCAwIDE0cHg7IGZvbnQtc2l6ZTogMTIuNXB4OyBmb250LXdlaWdodDogNjAwOyB9CiAgLnN1bW1hcnkgeyBkaXNwbGF5OiBmbGV4OyBnYXA6IDhweDsgbWFyZ2luOiAwIDAgMTRweDsgfQogIC5zdGF0IHsgZmxleDogMTsgYm9yZGVyOiAxcHggc29saWQgIzAwMDAwMDsgYm9yZGVyLXJhZGl1czogNnB4OyBwYWRkaW5nOiA3cHggMTBweDsgfQogIC5zdGF0IC5uIHsgZGlzcGxheTogYmxvY2s7IGZvbnQtc2l6ZTogMTdweDsgZm9udC13ZWlnaHQ6IDcwMDsgbGluZS1oZWlnaHQ6IDEuMjsgfQogIC5zdGF0IC5sIHsgZm9udC1zaXplOiA5LjVweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IC42cHg7IH0KICB0YWJsZSB7IGJvcmRlci1jb2xsYXBzZTogY29sbGFwc2U7IHdpZHRoOiAxMDAlOyBmb250LXNpemU6IDExLjVweDsgfQogIHRoZWFkIHsgZGlzcGxheTogdGFibGUtaGVhZGVyLWdyb3VwOyB9CiAgdHIgeyBwYWdlLWJyZWFrLWluc2lkZTogYXZvaWQ7IH0KICB0aCB7IHRleHQtYWxpZ246IGxlZnQ7IHBhZGRpbmc6IDZweCA5cHg7IGZvbnQtc2l6ZTogMTAuNXB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogLjZweDsgYm9yZGVyLWJvdHRvbTogMnB4IHNvbGlkICMwMDAwMDA7IH0KICB0ZCB7IHBhZGRpbmc6IDhweCA5cHg7IGJvcmRlci1ib3R0b206IDFweCBzb2xpZCAjMDAwMDAwOyB2ZXJ0aWNhbC1hbGlnbjogdG9wOyB9CiAgLmMtbnVtIHsgd2lkdGg6IDIycHg7IH0KICAuYy10aW1lIHsgd2hpdGUtc3BhY2U6IG5vd3JhcDsgd2lkdGg6IDcycHg7IH0KICAuYy1wYXRpZW50IC5zdWIgeyBkaXNwbGF5OiBibG9jazsgZm9udC1zaXplOiAxMHB4OyBtYXJnaW4tdG9wOiAxcHg7IH0KICAuZW1wdHkgdGQgeyB0ZXh0LWFsaWduOiBjZW50ZXI7IHBhZGRpbmc6IDI0cHg7IGNvbG9yOiAjNjY2OyB9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CiAgPGRpdiBjbGFzcz0ibGV0dGVyaGVhZCI+CiAgICA8ZGl2PgogICAgICA8cCBjbGFzcz0iYnJhbmQiPk1lZGljYUNhcmU8L3A+CiAgICA8L2Rpdj4KICAgIDxkaXY+CiAgICAgIDxwIGNsYXNzPSJkb2MtbGFiZWwiPkRhaWx5IFNjaGVkdWxlPC9wPgogICAgICA8cCBjbGFzcz0iZG9jLXRpbWUiPiR7ZXNjKHN0YW1wKX08L3A+CiAgICA8L2Rpdj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJkb2N0b3ItYmxvY2siPgogICAgPGRpdj4KICAgICAgPHAgY2xhc3M9ImRvYy1uYW1lIj4ke2VzYyhkb2NOYW1lKX08L3A+CiAgICAgIDxwIGNsYXNzPSJkb2Mtc3ViIj4ke2VzYyhzcGVjaWFsdHkpfSR7ZG9jdG9yLnJvb20gPyBgIMK3ICR7ZXNjKGRvY3Rvci5yb29tKX1gIDogJyd9PC9wPgogICAgPC9kaXY+CiAgPC9kaXY+CiAgPHAgY2xhc3M9ImRhdGUtbGluZSI+JHtlc2MoZm9ybWF0RGF0ZShkYXRlU3RyKSl9PC9wPgogIDxkaXYgY2xhc3M9InN1bW1hcnkiPgogICAgPGRpdiBjbGFzcz0ic3RhdCI+PHNwYW4gY2xhc3M9Im4iPiR7YXBwdHMubGVuZ3RofTwvc3Bhbj48c3BhbiBjbGFzcz0ibCI+VG90YWw8L3NwYW4+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJzdGF0Ij48c3BhbiBjbGFzcz0ibiI+JHtjb3VudCgnY29uZmlybWVkJyl9PC9zcGFuPjxzcGFuIGNsYXNzPSJsIj5Db25maXJtZWQ8L3NwYW4+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJzdGF0Ij48c3BhbiBjbGFzcz0ibiI+JHtjb3VudCgncGVuZGluZycpfTwvc3Bhbj48c3BhbiBjbGFzcz0ibCI+UGVuZGluZzwvc3Bhbj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9InN0YXQiPjxzcGFuIGNsYXNzPSJuIj4ke2NvdW50KCdjb21wbGV0ZWQnKX08L3NwYW4+PHNwYW4gY2xhc3M9ImwiPkNvbXBsZXRlZDwvc3Bhbj48L2Rpdj4KICA8L2Rpdj4KICA8dGFibGU+CiAgICA8dGhlYWQ+PHRyPjx0aD4jPC90aD48dGg+VGltZTwvdGg+PHRoPlBhdGllbnQ8L3RoPjx0aD5SZWFzb248L3RoPjx0aD5TdGF0dXM8L3RoPjwvdHI+PC90aGVhZD4KICAgIDx0Ym9keT4ke3Jvd3N9PC90Ym9keT4KICA8L3RhYmxlPgo8L2JvZHk+CjwvaHRtbD5gOwp9CgpmdW5jdGlvbiBwcmludERvY3RvclNjaGVkdWxlKGRvY3RvciwgYXBwdHMsIGRhdGVTdHIpIHsKICBjb25zdCBmcmFtZSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2lmcmFtZScpOwogIGZyYW1lLnNldEF0dHJpYnV0ZSgnYXJpYS1oaWRkZW4nLCAndHJ1ZScpOwogIGZyYW1lLnN0eWxlLmNzc1RleHQgPSAncG9zaXRpb246Zml4ZWQ7cmlnaHQ6MDtib3R0b206MDt3aWR0aDowO2hlaWdodDowO2JvcmRlcjowOyc7CiAgY29uc3QgY2xlYW51cCA9ICgpID0+IHNldFRpbWVvdXQoKCkgPT4geyBpZiAoZnJhbWUucGFyZW50Tm9kZSkgZnJhbWUucGFyZW50Tm9kZS5yZW1vdmVDaGlsZChmcmFtZSk7IH0sIDMwMCk7CiAgZnJhbWUuYWRkRXZlbnRMaXN0ZW5lcignbG9hZCcsICgpID0+IHsKICAgIHRyeSB7CiAgICAgIGNvbnN0IHdpbiA9IGZyYW1lLmNvbnRlbnRXaW5kb3c7CiAgICAgIHdpbi5hZGRFdmVudExpc3RlbmVyKCdhZnRlcnByaW50JywgY2xlYW51cCk7CiAgICAgIHdpbi5mb2N1cygpOwogICAgICBzZXRUaW1lb3V0KCgpID0+IHdpbi5wcmludCgpLCAyMDApOwogICAgfSBjYXRjaCB7IGNsZWFudXAoKTsgfQogIH0pOwogIGZyYW1lLnNyY2RvYyA9IGJ1aWxkRG9jdG9yU2NoZWR1bGVIVE1MKGRvY3RvciwgYXBwdHMsIGRhdGVTdHIpOwogIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoZnJhbWUpOwogIHNldFRpbWVvdXQoY2xlYW51cCwgNjAwMDAwKTsKfQoKZXhwb3J0IHsgY3N2Q2VsbCwgZG93bmxvYWRDU1YsIGJ1aWxkRG9jdG9yU2NoZWR1bGVIVE1MLCBwcmludERvY3RvclNjaGVkdWxlLCBsb2NhbFRvZGF5LCBmb2N1c0ZpcnN0RXJyb3IgfTsK
+// Shared helpers — admin console.
+import { downloadFile, formatDate, formatDayRange, statusMeta } from '../shared/data.js';
+
+// CSV export helpers (downloadFile is the shared helper from data.js)
+// ============================================================
+function csvCell(v) {
+  let s = String(v == null ? '' : v);
+  // A leading =, +, -, @, TAB or CR makes Excel/LibreOffice treat the cell as
+  // a formula — prefix it with an apostrophe so exported free-text fields
+  // (patient name, reason for visit, message subject…) stay inert text.
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+// rows = array of arrays; first row is the header. BOM keeps Excel happy with ₱.
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  downloadFile(filename, '﻿' + csv, 'text/csv;charset=utf-8');
+}
+
+// Local (not UTC) YYYY-MM-DD so "today" matches the user's timezone
+function localToday() {
+  const n = new Date();
+  const pad = (x) => String(x).padStart(2, '0');
+  return `${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`;
+}
+
+// After inline validation fails, move focus to the first invalid field so
+// keyboard and screen-reader users land straight on what needs fixing.
+// The shared TextInput/TextArea/SelectInput carry an .error class whenever
+// their error prop is set.
+function focusFirstError() {
+  const el = document.querySelector('.input.error, .textarea.error, .select.error');
+  if (el) el.focus();
+}
+
+// Printable daily schedule for one doctor (staff print the day's patient
+// list for doctors who are not at a workstation). The HTML is rendered into
+// a hidden print iframe — the browser's print dialog then offers
+// "Save as PDF" as the destination.
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function buildDoctorScheduleHTML(doctor, appts, dateStr) {
+  const count = (s) => appts.filter(a => a.status === s).length;
+  const rows = appts.length ? appts.map((a, i) => {
+    const pName = a.patient?.full_name || a.booked_for || 'Unknown patient';
+    const pEmail = a.patient?.email || '—';
+    return `<tr>
+      <td class="c-num">${i + 1}</td>
+      <td class="c-time"><strong>${esc((a.start_time || '').slice(0, 5))}</strong></td>
+      <td class="c-patient"><strong>${esc(pName)}</strong><span class="sub">${esc(pEmail)}</span></td>
+      <td>${esc(a.reason || '—')}</td>
+      <td>${esc((statusMeta(a.status) || {}).label || a.status)}</td>
+    </tr>`;
+  }).join('') : '<tr class="empty"><td colspan="5">No appointments scheduled for this day.</td></tr>';
+  const stamp = `${formatDate(localToday())} at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  const docName = doctor.full_name || 'Doctor';
+  const specialty = doctor.specialties?.name || doctor.specialty_name || '';
+  return `<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Dr. ${esc(docName.replace(/^Dr\.\s*/, ''))} — schedule ${esc(formatDate(dateStr))}</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, Helvetica, sans-serif; color: #000000; background: #ffffff; font-size: 12px; margin: 0; }
+  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000000; padding-bottom: 10px; }
+  .brand { margin: 0 0 3px; font-size: 21px; font-weight: 700; letter-spacing: .3px; }
+  .doc-label { margin: 0 0 4px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .doc-time { margin: 0; text-align: right; color: #000000; font-size: 10px; }
+  .doctor-block { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 2px; }
+  .doc-name { margin: 0; font-size: 16px; font-weight: 700; }
+  .doc-sub { margin: 3px 0 0; color: #000000; font-size: 11px; }
+  .date-line { margin: 0 0 14px; font-size: 12.5px; font-weight: 600; }
+  .summary { display: flex; gap: 8px; margin: 0 0 14px; }
+  .stat { flex: 1; border: 1px solid #000000; border-radius: 6px; padding: 7px 10px; }
+  .stat .n { display: block; font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .stat .l { font-size: 9.5px; text-transform: uppercase; letter-spacing: .6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 11.5px; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th { text-align: left; padding: 6px 9px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; border-bottom: 2px solid #000000; }
+  td { padding: 8px 9px; border-bottom: 1px solid #000000; vertical-align: top; }
+  .c-num { width: 22px; }
+  .c-time { white-space: nowrap; width: 72px; }
+  .c-patient .sub { display: block; font-size: 10px; margin-top: 1px; }
+  .empty td { text-align: center; padding: 24px; color: #666; }
+</style>
+</head>
+<body>
+  <div class="letterhead">
+    <div>
+      <p class="brand">MedicaCare</p>
+    </div>
+    <div>
+      <p class="doc-label">Daily Schedule</p>
+      <p class="doc-time">${esc(stamp)}</p>
+    </div>
+  </div>
+  <div class="doctor-block">
+    <div>
+      <p class="doc-name">${esc(docName)}</p>
+      <p class="doc-sub">${esc(specialty)}${doctor.room ? ` · ${esc(doctor.room)}` : ''}</p>
+    </div>
+  </div>
+  <p class="date-line">${esc(formatDate(dateStr))}</p>
+  <div class="summary">
+    <div class="stat"><span class="n">${appts.length}</span><span class="l">Total</span></div>
+    <div class="stat"><span class="n">${count('confirmed')}</span><span class="l">Confirmed</span></div>
+    <div class="stat"><span class="n">${count('pending')}</span><span class="l">Pending</span></div>
+    <div class="stat"><span class="n">${count('completed')}</span><span class="l">Completed</span></div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Time</th><th>Patient</th><th>Reason</th><th>Status</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+</body>
+</html>`;
+}
+
+function printDoctorSchedule(doctor, appts, dateStr) {
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  const cleanup = () => setTimeout(() => { if (frame.parentNode) frame.parentNode.removeChild(frame); }, 300);
+  frame.addEventListener('load', () => {
+    try {
+      const win = frame.contentWindow;
+      win.addEventListener('afterprint', cleanup);
+      win.focus();
+      setTimeout(() => win.print(), 200);
+    } catch { cleanup(); }
+  });
+  frame.srcdoc = buildDoctorScheduleHTML(doctor, appts, dateStr);
+  document.body.appendChild(frame);
+  setTimeout(cleanup, 600000);
+}
+
+export { csvCell, downloadCSV, buildDoctorScheduleHTML, printDoctorSchedule, localToday, focusFirstError };
