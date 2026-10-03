@@ -205,7 +205,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
 
           {/* R-23 honesty label: portraits are stock placeholders, not real staff */}
           <div style={{ marginTop: 16, fontSize: 12.5, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="info" size={13} /> Doctor photos are placeholder portraits (randomuser.me), not real staff. Ratings shown are prototype demo data; ratings you submit from completed visits are added to them.
+            <Icon name="info" size={13} /> Doctor photos are placeholder portraits (randomuser.me), not real staff. Ratings are from verified completed visits.
           </div>
 
           <div style={{ marginTop: 32, padding: 24, background: 'var(--primary-soft)', border: '1px solid var(--border)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
@@ -264,7 +264,7 @@ function DoctorsPage({ initialSpecialty = '' }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <DoctorStatusBadge status={selectedDoctor.status} />
                   <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 13 }}>
-                    <DoctorRatingPill ratings={store.ratings} doctorId={selectedDoctor.id} />
+                    <DoctorRatingPill ratings={store.ratings} doctorId={selectedDoctor.id} avg={selectedDoctor.rating} count={selectedDoctor.ratingCount} />
                   </span>
                 </div>
               </div>

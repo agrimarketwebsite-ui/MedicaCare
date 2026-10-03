@@ -25,7 +25,7 @@ function AboutPage() {
       : { value: '—', label: 'Departments & centers' },
     { value: '35 yrs', label: 'Serving Quezon City (est. 1991)' },
     minFee != null
-      ? { value: `₱${minFee.toLocaleString('en-PH')}`, label: 'Consultation fees start at' }
+      ? { to: minFee, prefix: '₱', label: 'Consultation fees start at' }
       : { value: '—', label: 'Consultation fees start at' },
   ];
   // Equal-weight by design: these values are peers, and the uniform treatment

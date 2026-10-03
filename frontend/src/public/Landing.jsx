@@ -71,8 +71,8 @@ function Landing() {
               <ClinicStatus />
             </div>
             <HeroTitle light>Book a MedicaCare specialist online, no phone calls needed.</HeroTitle>
-            <p>Board-certified specialists across every department, real-time availability,
-               and a confirmation in minutes. Reschedule anytime from your portal.</p>
+            <p>Pick from {store.doctors.length} board-certified doctors across {store.specialties.length} departments,
+               view real-time availability, and get a confirmation in minutes. Reschedule anytime from your portal.</p>
             <div className="public-hero-actions">
               {/* Solid white CTA — the blue-on-blue primary would vanish against
                   the photo's blue overlay. Plain button, no glow/gradient border

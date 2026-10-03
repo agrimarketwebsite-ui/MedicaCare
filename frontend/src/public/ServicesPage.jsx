@@ -1,7 +1,6 @@
 // ServicesPage — public (split from screens-public.jsx)
 
 import { FaqAccordion, Icon, navigate, PublicFooter, PublicNav, useStore } from '../shared/components.jsx';
-import { SPECIALTIES } from '../shared/data.js';
 import Magnet from '../shared/reactbits/Magnet.jsx';
 import { SERVICES_FAQS } from './content.js';
 import { HeroAurora, HeroTitle } from './hero.jsx';
@@ -55,9 +54,9 @@ function ServicesPage() {
           <span className="section-kicker">Find your department</span>
           <h2>Departments & specialties</h2>
           <p className="public-section-sub">Tap a department to see its specialists.</p>
-          {SPECIALTIES.length > 0 ? (
+          {store.specialties.length > 0 ? (
             <div className="grid-4">
-              {SPECIALTIES.map(s => (
+              {store.specialties.map(s => (
                 <button key={s} className="dept-chip" onClick={() => navigate(`/doctors?spec=${encodeURIComponent(s)}`)}>
                   {s}
                   <Icon name="arrow-right" size={14} className="dept-arrow" />

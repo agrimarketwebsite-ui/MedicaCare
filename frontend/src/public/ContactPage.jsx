@@ -48,7 +48,7 @@ function ContactPage() {
       } else if (err instanceof ApiError && err.status === 429) {
         store.pushToast({ kind: 'error', title: 'Too many messages', msg: 'Please wait a few minutes before sending another message.' });
       } else {
-        store.pushToast({ kind: 'error', title: 'Message not sent', msg: 'Hindi makakonekta sa server. Please try again.' });
+        store.pushToast({ kind: 'error', title: 'Message not sent', msg: 'Could not connect to the server. Please try again.' });
       }
     } finally {
       setSending(false);
