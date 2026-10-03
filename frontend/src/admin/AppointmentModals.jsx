@@ -29,7 +29,7 @@ function useDirectory(open) {
 
 // ---------- Slot-aware date/time pickers (live availability + bookings) ----------
 // Rolling 30-day date list. The selected doctor's weekly availability comes
-// from getAdminDoctorAvailability ({ day_of_week: 0=Sun..6=Sat, start_time,
+// from getAdminDoctorAvailability ({ weekday: 1=Mon..7=Sun ISO, start_time,
 // end_time }); already-booked slots for the doctor+date come from
 // getAdminAppointments({ date, doctor_id }) and are excluded/disabled.
 // Time slots are 30-min windows inside each availability entry.
@@ -99,7 +99,9 @@ function useDoctorSlots(doctorId, date, excludeId) {
     return () => { cancelled = true; };
   }, [doctorId, date, excludeId]);
 
-  const windowsFor = (ymd) => availability.filter((e) => Number(e.day_of_week) === weekdayOf(ymd));
+  // Real API convention: entry.weekday is 1–7 ISO (1 = Monday … 7 = Sunday);
+  // weekdayOf() is JS getDay() (0 = Sunday … 6 = Saturday), so ISO 7 maps to 0.
+  const windowsFor = (ymd) => availability.filter((e) => Number(e.weekday) % 7 === weekdayOf(ymd));
   const isClinicDay = (ymd) => windowsFor(ymd).length > 0;
   const allSlots = date ? slotsInWindows(windowsFor(date)) : [];
   const openSlots = allSlots.filter((t) => !booked.includes(t));
@@ -142,7 +144,7 @@ function AppointmentDetailsModal({ appointment, onClose }) {
             <div className="t-help">Doctor</div>
             <div style={{ fontWeight: 600 }}>{doctor?.full_name || 'Unknown'}</div>
             <div className="t-muted" style={{ fontSize: 12.5 }}>
-              {doctor ? `${doctor.specialties?.name || ''}${doctor.room ? ` · ${doctor.room}` : ''}` : '—'}
+              {doctor ? `${doctor.specialty_name || ''}${doctor.room ? ` · ${doctor.room}` : ''}` : '—'}
             </div>
           </div>
           <div>
@@ -251,7 +253,7 @@ function AppointmentFormModal({ open, onClose, onSaved }) {
         <Field label="Patient" required error={errors.patient_id}>
           <SelectInput value={form.patient_id} onChange={e => set('patient_id', e.target.value)} error={errors.patient_id}>
             <option value="">Select a patient…</option>
-            {patients.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+            {patients.map(p => <option key={p.id} value={p.id}>{p.full_name} ({p.phone || '—'})</option>)}
           </SelectInput>
         </Field>
         <Field label="Doctor" required error={errors.doctor_id}>
