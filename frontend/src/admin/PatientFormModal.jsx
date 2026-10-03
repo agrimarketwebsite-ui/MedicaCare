@@ -33,6 +33,7 @@ function PatientFormModal({ open, onClose, onSaved }) {
     if (!form.name.trim()) e.name = 'Name is required';
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email';
+    if (!form.phone.trim()) e.phone = 'Phone is required';
     if (!form.password) e.password = 'Password is required';
     else if (form.password.length < 8) e.password = 'Min. 8 characters';
     setErrors(e);
@@ -48,7 +49,7 @@ function PatientFormModal({ open, onClose, onSaved }) {
         gender: form.gender || undefined,
         date_of_birth: form.dob || undefined,
       });
-      store.pushToast({ kind: 'success', title: 'Patient added', msg: `${form.name.trim()} has been added to the registry.` });
+      store.pushToast({ title: 'Patient added', msg: `${form.name.trim()} has been added to the registry.` });
       onClose();
       onSaved && onSaved();
     } catch (err) {
@@ -82,7 +83,7 @@ function PatientFormModal({ open, onClose, onSaved }) {
         <Field label="Password" required error={errors.password} help="Initial password — the patient can change it later">
           <TextInput type="password" value={form.password} onChange={e => set('password', e.target.value)} error={errors.password} placeholder="Min. 8 characters" />
         </Field>
-        <Field label="Phone" error={errors.phone}>
+        <Field label="Phone" required error={errors.phone}>
           <TextInput type="tel" icon="phone" value={form.phone} onChange={e => set('phone', e.target.value)} error={errors.phone} placeholder="+63 917 000 0000" />
         </Field>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
