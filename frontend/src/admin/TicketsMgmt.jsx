@@ -1,8 +1,9 @@
 // TicketsMgmt — patient support messages (Phase 6).
 // Two-card layout restored from the prototype: "Open" and "Resolved".
 // Reply modal sends the reply AND resolves the ticket in one step.
-// Ticket shape: { id, subject, status, patient_name, created_at }.
-// Thread: getAdminTicket(id) → { ticket, messages: [{ id, sender, body, created_at }] }.
+// Ticket shape: { id, subject, status, created_at, patient: { id, full_name, email } }.
+// Thread: getAdminTicket(id) → { ticket, messages: [{ id, sender, body, created_at }] }
+// (sender is 'patient' for patient messages, 'staff' for staff replies).
 import { useEffect, useState } from 'react';
 import {
   AppShell, Badge, EmptyState, ErrorState, Field, Icon, Modal,
@@ -10,6 +11,7 @@ import {
 } from '../shared/components.jsx';
 import { formatDate } from '../shared/data.js';
 import { getAdminTicket, getAdminTickets, replyTicket, resolveTicket, ApiError } from '../shared/api.js';
+import { focusFirstError } from './helpers.js';
 
 // ---------- Patient messages (support tickets) ----------
 // Patients send questions from the portal's Help & support page ("Message the
@@ -63,7 +65,7 @@ function TicketsMgmt() {
 
   const sendReply = async () => {
     const text = replyText.trim();
-    if (text.length < 10) { setReplyError('Please write a reply (10+ characters).'); return; }
+    if (text.length < 10) { setReplyError('Please write a reply (10+ characters).'); focusFirstError(); return; }
     setSending(true);
     try {
       // The prototype sends the reply AND resolves in one step
@@ -72,12 +74,12 @@ function TicketsMgmt() {
       store.pushToast({
         kind: 'success',
         title: 'Reply sent',
-        message: `${replyFor.patient_name || 'The patient'} will see your response in their portal.`,
+        msg: `${replyFor.patient?.full_name || 'The patient'} will see your response in their portal.`,
       });
       setReplyFor(null);
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Reply failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+      store.pushToast({ kind: 'error', title: 'Reply failed', msg: err instanceof ApiError ? err.message : 'Please try again.' });
     } finally {
       setSending(false);
     }
@@ -97,11 +99,11 @@ function TicketsMgmt() {
   const TicketRow = ({ t, actions, children }) => {
     const msgs = threads[t.id] || [];
     const patientMsgs = msgs.filter((m) => m.sender === 'patient');
-    const staffMsgs = msgs.filter((m) => m.sender === 'admin');
+    const staffMsgs = msgs.filter((m) => m.sender === 'staff');
     const original = patientMsgs[0]?.body || '';
     const followUps = Math.max(0, patientMsgs.length - 1);
     const lastReply = staffMsgs.length > 0 ? staffMsgs[staffMsgs.length - 1] : null;
-    const name = t.patient_name || 'Patient';
+    const name = t.patient?.full_name || 'Patient';
     return (
       <div className="list-item" style={{ alignItems: 'flex-start' }}>
         <PatientAvatar person={{ name }} size={28} />
@@ -173,7 +175,7 @@ function TicketsMgmt() {
                     <EmptyState icon="check-circle-2" title="Nothing resolved yet" message="Replied messages move here." />
                   </div>
                 ) : resolved.map((t) => {
-                  const staffMsgs = (threads[t.id] || []).filter((m) => m.sender === 'admin');
+                  const staffMsgs = (threads[t.id] || []).filter((m) => m.sender === 'staff');
                   const lastReply = staffMsgs.length > 0 ? staffMsgs[staffMsgs.length - 1] : null;
                   return (
                     <TicketRow
@@ -199,7 +201,7 @@ function TicketsMgmt() {
         open={!!replyFor}
         onClose={() => setReplyFor(null)}
         title="Reply to patient"
-        subtitle={replyFor ? `${replyFor.patient_name || 'Patient'} · "${replyFor.subject || 'Support ticket'}"` : ''}
+        subtitle={replyFor ? `${replyFor.patient?.full_name || 'Patient'} · "${replyFor.subject || 'Support ticket'}"` : ''}
         icon="reply"
         iconKind="info"
         footer={<>
@@ -222,11 +224,11 @@ function TicketsMgmt() {
               {history.map((m) => (
                 <div key={m.id} style={{
                   borderRadius: 6, padding: '8px 10px', fontSize: 12.5, lineHeight: 1.55,
-                  border: '1px solid ' + (m.sender === 'admin' ? 'var(--success-border)' : 'var(--border)'),
-                  background: m.sender === 'admin' ? 'var(--success-soft)' : 'var(--surface-muted)',
-                  color: m.sender === 'admin' ? 'var(--success-text)' : 'var(--text-secondary)',
+                  border: '1px solid ' + (m.sender === 'staff' ? 'var(--success-border)' : 'var(--border)'),
+                  background: m.sender === 'staff' ? 'var(--success-soft)' : 'var(--surface-muted)',
+                  color: m.sender === 'staff' ? 'var(--success-text)' : 'var(--text-secondary)',
                 }}>
-                  <strong>{m.sender === 'admin' ? 'Previous staff reply' : 'Patient follow-up'}:</strong> {m.body}
+                  <strong>{m.sender === 'staff' ? 'Previous staff reply' : 'Patient follow-up'}:</strong> {m.body}
                   {m.created_at && <div className="t-help" style={{ marginTop: 2 }}>{formatDate(m.created_at.slice(0, 10))}</div>}
                 </div>
               ))}
