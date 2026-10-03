@@ -1,7 +1,11 @@
 // AppointmentsMgmt — admin appointments (restored prototype UI, real API).
 // Live search + status filter + sortable table + inline status select +
 // view/edit/create modals + complete-visit notes modal + delete.
-import { useEffect, useState } from 'react';
+//
+// The list API has no text search, so search mode fetches up to 100 rows and
+// filters/sorts/paginates client-side exactly like the prototype; browsing
+// uses server pagination (4 per page, like the prototype).
+import { useEffect, useRef, useState } from 'react';
 import {
   AppShell, ConfirmModal, EmptyState, ErrorState, Field, Icon, Modal,
   PageHeader, Pagination, PatientAvatar, SelectInput, SortableTh, TextArea,
@@ -16,7 +20,7 @@ import { downloadCSV } from './helpers.js';
 
 import { AppointmentDetailsModal, AppointmentEditModal, AppointmentFormModal } from './AppointmentModals.jsx';
 
-const PAGE_SIZE = 15;
+const PAGE = 4;
 const STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'no-show'];
 
 // ---------- Appointments Management ----------
@@ -35,6 +39,9 @@ function AppointmentsMgmt() {
   const [error, setError] = useState('');
   const [appointments, setAppointments] = useState([]);
   const [total, setTotal] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [pendingTotal, setPendingTotal] = useState(0);
+  const [searchMode, setSearchMode] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
   const [delLoading, setDelLoading] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -43,16 +50,39 @@ function AppointmentsMgmt() {
   const [sortKey, setSortKey] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
 
+  const apptDate = (a) => (a.appointment_date || '').slice(0, 10);
+  const apptTime = (a) => (a.start_time || '').slice(0, 5);
+  const patientName = (a) => a.patient?.full_name || a.booked_for || 'Unknown';
+  const doctorName = (a) => a.doctor?.full_name || 'Unknown';
+  const doctorSpecialty = (a) => a.doctor?.specialty_name || '';
+  const refOf = (a) => a.reference_code || a.appointment_ref || '';
+  const matchesQuery = (a, q) => {
+    const hay = (doctorName(a) + ' ' + patientName(a) + ' ' + (a.reason || '')).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  };
+
   const load = async () => {
     setLoading(true);
     setError('');
     try {
-      const r = await getAdminAppointments({
-        status: status === 'all' ? undefined : status,
-        page, limit: PAGE_SIZE,
-      });
+      const q = query.trim();
+      const statusParam = status === 'all' ? undefined : status;
+      const [r, counts] = await Promise.all([
+        q
+          // No server-side text search — fetch a wide window and filter
+          // client-side, exactly like the prototype
+          ? getAdminAppointments({ status: statusParam, page: 1, limit: 100 })
+          : getAdminAppointments({ status: statusParam, page, limit: PAGE }),
+        Promise.all([
+          getAdminAppointments({ page: 1, limit: 1 }),
+          getAdminAppointments({ status: 'pending', page: 1, limit: 1 }),
+        ]),
+      ]);
       setAppointments(r.appointments);
-      setTotal(r.total);
+      setTotal(q ? 0 : r.total);
+      setGrandTotal(counts[0].total);
+      setPendingTotal(counts[1].total);
+      setSearchMode(!!q);
     } catch (err) {
       setError(err.message || 'Could not load appointments.');
     } finally {
@@ -60,22 +90,28 @@ function AppointmentsMgmt() {
     }
   };
 
-  useEffect(() => { load(); }, [page, status]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Browse mode uses server pagination; in search mode the wide fetch is
+  // re-sliced client-side, so page turns must not refetch.
+  const searchModeRef = useRef(false);
+  searchModeRef.current = searchMode;
+  useEffect(() => { load(); }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!searchModeRef.current) load(); }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Live search (debounced); skipped on mount (the effects above load)
+  const firstQuery = useRef(true);
+  useEffect(() => {
+    if (firstQuery.current) { firstQuery.current = false; return; }
+    const t = setTimeout(() => { setPage(1); load(); }, 350);
+    return () => clearTimeout(t);
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const apptDate = (a) => (a.appointment_date || '').slice(0, 10);
-  const apptTime = (a) => (a.start_time || '').slice(0, 5);
-  const patientName = (a) => a.patient?.full_name || a.booked_for || 'Unknown';
-  const doctorName = (a) => a.doctor?.full_name || 'Unknown';
-  const doctorSpecialty = (a) => a.doctor?.specialties?.name || '';
-  const refOf = (a) => a.reference_code || a.appointment_ref || '';
+  const filtered = searchMode
+    ? appointments.filter(a => matchesQuery(a, query.trim()))
+    : appointments.filter(a => {
+      if (!query) return true;
+      return matchesQuery(a, query.trim());
+    });
 
-  const filtered = appointments.filter(a => {
-    if (!query) return true;
-    const hay = (doctorName(a) + ' ' + patientName(a) + ' ' + (a.reason || '')).toLowerCase();
-    return hay.includes(query.toLowerCase());
-  });
-
-  // Column sorting; default stays newest-first like before
+  // Column sorting (guideline 18); default stays newest-first like before
   const toggleSort = (key) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
     else { setSortKey(key); setSortDir(key === 'date' ? 'desc' : 'asc'); }
@@ -93,8 +129,13 @@ function AppointmentsMgmt() {
   const sorted = filtered.slice().sort((a, b) => {
     const va = sortVal(a), vb = sortVal(b);
     if (va !== vb) return (va < vb ? -1 : 1) * dir;
+    // Same-day rows keep chronological order by time slot
     return sortKey === 'date' ? (timeValue(apptTime(a)) - timeValue(apptTime(b))) * dir : 0;
   });
+  // Search mode paginates the client-side slice; browse mode is server-paged
+  const visible = searchMode ? sorted.slice((page - 1) * PAGE, page * PAGE) : sorted;
+  const pageTotal = searchMode ? filtered.length : total;
+  const resultCount = searchMode ? filtered.length : total;
   // A sort change can move the current page out of range
   useEffect(() => { setPage(1); }, [sortKey, sortDir]);
 
@@ -107,7 +148,7 @@ function AppointmentsMgmt() {
 
   const updateStatus = async (appt, newStatus) => {
     if (newStatus === appt.status) return;
-    if (newStatus === 'completed') {
+    if (newStatus === 'completed' && !appt.notes) {
       setCompleteAppt(appt);
       setVisitNotes('');
       setNotesError('');
@@ -157,19 +198,33 @@ function AppointmentsMgmt() {
     }
   };
 
-  const doExport = () => {
-    downloadCSV('medicacare-appointments.csv', [
-      ['Ref', 'Patient', 'Doctor', 'Specialty', 'Date', 'Time', 'Reason', 'Status'],
-      ...sorted.map(a => [
-        refOf(a), patientName(a), doctorName(a), doctorSpecialty(a),
-        apptDate(a), apptTime(a), a.reason || '',
-        (statusMeta(a.status) || {}).label || a.status,
-      ]),
-    ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${sorted.length} appointment(s) exported to CSV.` });
+  const doExport = async () => {
+    const q = query.trim();
+    const statusParam = status === 'all' ? undefined : status;
+    try {
+      // Export the full filtered set like the prototype (not just the page)
+      const r = await getAdminAppointments({ status: statusParam, page: 1, limit: 100 });
+      const rows = (q ? r.appointments.filter(a => matchesQuery(a, q)) : r.appointments)
+        .slice()
+        .sort((a, b) => {
+          const va = sortVal(a), vb = sortVal(b);
+          if (va !== vb) return (va < vb ? -1 : 1) * dir;
+          return sortKey === 'date' ? (timeValue(apptTime(a)) - timeValue(apptTime(b))) * dir : 0;
+        });
+      downloadCSV('medicacare-appointments.csv', [
+        ['Ref', 'Patient', 'Phone', 'Doctor', 'Specialty', 'Date', 'Time', 'Reason', 'Status'],
+        ...rows.map(a => [
+          refOf(a), patientName(a), a.patient?.phone || '',
+          doctorName(a), doctorSpecialty(a),
+          apptDate(a), apptTime(a), a.reason || '',
+          (statusMeta(a.status) || {}).label || a.status,
+        ]),
+      ]);
+      store.pushToast({ kind: 'success', title: 'Export ready', msg: `${rows.length} appointment(s) exported to CSV.` });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Export failed', msg: err.message || 'Could not export appointments.' });
+    }
   };
-
-  const pendingCount = appointments.filter(a => a.status === 'pending').length;
 
   return (
     <AppShell current="appointments">
@@ -178,7 +233,7 @@ function AppointmentsMgmt() {
           title="Appointments"
           subtitle={loading
             ? <span className="skel" aria-hidden="true" style={{ width: 200, maxWidth: '100%', height: 14 }} />
-            : `${total} total · ${pendingCount} pending review`}
+            : `${grandTotal} total · ${pendingTotal} pending review`}
           breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Appointments' }]}
           actions={<>
             <button className="btn btn-secondary" onClick={doExport}><Icon name="download" size={14} /> Export</button>
@@ -209,7 +264,7 @@ function AppointmentsMgmt() {
                 <option value="no-show">No-show</option>
               </SelectInput>
               <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
-                <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> results
+                <strong style={{ color: 'var(--text)' }}>{resultCount}</strong> results
               </div>
             </div>
 
@@ -228,6 +283,11 @@ function AppointmentsMgmt() {
                 </thead>
                 <tbody>
                   {loading ? (
+                    // Skeleton rows mirroring the real ones: the Patient cell has
+                    // an avatar + phone line, the Doctor and Date & time cells
+                    // have two stacked lines (name over specialty, date over
+                    // time), Status is a select-sized pill, and every cell
+                    // carries data-label for the mobile stacked-card view
                     Array.from({ length: 5 }).map((_, r) => (
                       <tr key={r}>
                         <td data-label="Ref" className="t-mono td-nowrap"><span className="skel" style={{ width: 64, height: 11 }} /></td>
@@ -262,12 +322,12 @@ function AppointmentsMgmt() {
                         </td>
                       </tr>
                     ))
-                  ) : sorted.length === 0 ? (
+                  ) : filtered.length === 0 ? (
                     <tr><td colSpan={7} className="empty-cell" style={{ padding: 0 }}>
                       <EmptyState icon="calendar-x" title="No appointments match" message="Try adjusting your filters."
                         actions={<button className="btn btn-secondary" onClick={() => { setQuery(''); setStatus('all'); }}>Clear filters</button>} />
                     </td></tr>
-                  ) : sorted.map(a => (
+                  ) : visible.map(a => (
                     <tr key={a.id}>
                       <td data-label="Ref" className="t-mono td-nowrap" style={{ fontSize: 12 }}>{refOf(a)}</td>
                       <td data-label="Patient">
@@ -292,7 +352,7 @@ function AppointmentsMgmt() {
                       </td>
                       <td data-label="Reason" className="cell-primary-truncate" style={{ maxWidth: 150 }}>{a.reason || '—'}</td>
                       <td data-label="Status">
-                        <SelectInput value={a.status} onChange={e => updateStatus(a, e.target.value)} className="status-select" aria-label="Change status">
+                        <SelectInput value={a.status} onChange={e => updateStatus(a, e.target.value)} className="status-select">
                           <option value="pending">Pending</option>
                           <option value="confirmed">Confirmed</option>
                           <option value="completed">Completed</option>
@@ -300,7 +360,7 @@ function AppointmentsMgmt() {
                           <option value="no-show">No-show</option>
                         </SelectInput>
                       </td>
-                      <td className="col-actions" style={{ whiteSpace: 'nowrap' }}>
+                      <td className="col-actions">
                         <button className="btn-icon" title="View" aria-label="View appointment" onClick={() => setViewAppt(a)}><Icon name="eye" size={16} /></button>
                         <button className="btn-icon" title="Edit appointment" aria-label="Edit appointment" onClick={() => setEditAppt(a)}><Icon name="pencil" size={16} /></button>
                         <button className="btn-icon" title="Delete" aria-label="Delete appointment" onClick={() => setConfirmDel(a)} style={{ color: 'var(--error)' }}><Icon name="trash-2" size={16} /></button>
@@ -310,7 +370,7 @@ function AppointmentsMgmt() {
                 </tbody>
               </table>
             </div>
-            {!loading && sorted.length > 0 && <Pagination page={page} setPage={setPage} total={total} pageSize={PAGE_SIZE} label="appointments" />}
+            {!loading && filtered.length > 0 && <Pagination page={page} setPage={setPage} total={pageTotal} pageSize={PAGE} label="appointments" />}
           </div>
         )}
       </div>
@@ -347,7 +407,7 @@ function AppointmentsMgmt() {
             value={visitNotes}
             onChange={e => { setVisitNotes(e.target.value); if (notesError) setNotesError(''); }}
             error={notesError}
-            maxLength={2000}
+            maxLength={500}
           />
         </Field>
       </Modal>
