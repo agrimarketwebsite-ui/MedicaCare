@@ -46,6 +46,19 @@ export async function findAccountByEmail(kind, email) {
   return data;
 }
 
+/** Buong row KASAMA ang password_hash by id (pang-change-password verify lang
+    — hindi ito ibinabalik sa client). */
+export async function findAccountHashById(kind, id) {
+  const { table } = SOURCES[kind];
+  const { data, error } = await supabase
+    .from(table)
+    .select('id, password_hash')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) return must({ data, error }, `findAccountHashById:${table}`);
+  return data;
+}
+
 /** Hanapin sa lahat ng sources (patients → admins → doctor_accounts). */
 export async function findAccountAnySource(email) {
   for (const kind of ACCOUNT_KINDS) {
@@ -179,6 +192,7 @@ export async function logAuthEvent(actor, action, detail = '') {
 export default {
   ACCOUNT_KINDS,
   findAccountByEmail,
+  findAccountHashById,
   findAccountAnySource,
   emailExistsAnySource,
   findProfileById,
