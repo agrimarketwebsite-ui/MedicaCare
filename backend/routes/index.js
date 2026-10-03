@@ -18,6 +18,7 @@ import appointmentRoutes from '../modules/appointments/appointment.routes.js';
 import doctorAppointmentRoutes from '../modules/appointments/doctorAppointment.routes.js';
 import recordRoutes from '../modules/records/record.routes.js';
 import ratingRoutes from '../modules/ratings/rating.routes.js';
+import adminRoutes from '../modules/admin/admin.routes.js';
 
 const router = Router();
 
@@ -65,6 +66,10 @@ router.use('/ratings', ratingRoutes);
 // resolveDoctorId: JWT.sub = doctor_accounts.id → doctors.id).
 router.use('/doctor/appointments', doctorAppointmentRoutes);
 router.use('/records', recordRoutes);
+
+// Phase 6 — Admin Console (lahat ay requireAuth + requireRole('admin') sa
+// composer ng modules/admin; ang BOLA/audit ay nasa bawat sub-module).
+router.use('/admin', adminRoutes);
 
 export default router;
 
