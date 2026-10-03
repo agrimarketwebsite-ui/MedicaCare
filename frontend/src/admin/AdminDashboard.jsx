@@ -34,8 +34,8 @@ function AdminDashboard() {
     Promise.all([
       getReportStats(),
       getAdminAppointments({ limit: 100 }),
-      getAdminPatients('', 1, 1000),
-      getAdminDoctors('', 1, 1000),
+      getAdminPatients('', 1, 100),
+      getAdminDoctors('', 1, 100),
     ])
       .then(([report, appts, pats, docs]) => {
         if (cancelled) return;

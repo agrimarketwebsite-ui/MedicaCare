@@ -24,7 +24,7 @@ function AdminReports() {
     setError('');
     Promise.all([
       getAdminAppointments({ limit: 100 }),
-      getAdminDoctors('', 1, 1000),
+      getAdminDoctors('', 1, 100),
     ])
       .then(([appts, docs]) => {
         if (cancelled) return;
