@@ -9,6 +9,11 @@ import {
 import { getAdminAppointments, getAdminDoctors } from '../shared/api.js';
 import { downloadCSV } from './helpers.js';
 
+// The API caps list pages at 100 rows, but the prototype's figures are
+// computed from the FULL dataset — so walk every page instead of reading
+// only the first 100.
+const PAGE_LIMIT = 100;
+
 // ---------- Reports ----------
 function AdminReports() {
   const store = useStore();
@@ -22,29 +27,43 @@ function AdminReports() {
     let cancelled = false;
     setLoading(true);
     setError('');
-    Promise.all([
-      getAdminAppointments({ limit: 100 }),
-      getAdminDoctors('', 1, 100),
-    ])
-      .then(([appts, docs]) => {
+    const fetchAll = async (fetchPage) => {
+      const first = await fetchPage(1);
+      const pages = Math.max(1, Math.ceil((first.total || 0) / PAGE_LIMIT));
+      let all = first.items;
+      if (pages > 1) {
+        const rest = await Promise.all(
+          Array.from({ length: pages - 1 }, (_, i) => fetchPage(i + 2)),
+        );
+        for (const r of rest) all = all.concat(r.items);
+      }
+      return all;
+    };
+    (async () => {
+      try {
+        const [appts, docs] = await Promise.all([
+          fetchAll((page) => getAdminAppointments({ limit: PAGE_LIMIT, page })
+            .then((r) => ({ items: r.appointments || [], total: r.total }))),
+          fetchAll((page) => getAdminDoctors('', page, PAGE_LIMIT)
+            .then((r) => ({ items: r.doctors || [], total: r.total }))),
+        ]);
         if (cancelled) return;
-        setAppointments(appts.appointments || []);
-        setDoctors(docs.doctors || []);
+        setAppointments(appts);
+        setDoctors(docs);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (cancelled) return;
         setError(err.message || 'Could not load reports.');
         setLoading(false);
-      });
+      }
+    })();
     return () => { cancelled = true; };
   }, [retryKey]);
 
   const appts = appointments;
-  const apptDate = (a) => (a.appointment_date || '').slice(0, 10);
 
   const completed = appts.filter(a => a.status === 'completed').length;
-  const cancelled = appts.filter(a => ['cancelled', 'no-show'].includes(a.status)).length;
+  const cancelled = appts.filter(a => a.status === 'cancelled').length;
   const completionRate = appts.length ? Math.round((completed / appts.length) * 100) : 0;
   const cancellationRate = appts.length ? ((cancelled / appts.length) * 100).toFixed(1) : '0.0';
 
@@ -69,7 +88,8 @@ function AdminReports() {
     { label: 'Total appointments', value: appts.length, icon: 'calendar-days', tone: 'success', trend: dayCounts(appts, 'appointment_date') },
     { label: 'Completed visits', value: completed, icon: 'check-circle-2', tone: 'success', trend: dayCounts(appts.filter(a => a.status === 'completed'), 'appointment_date') },
     { label: 'Completion rate', value: `${completionRate}%`, icon: 'trending-up', tone: 'success', trend: dayRate(['completed']) },
-    { label: 'Cancellation rate', value: `${cancellationRate}%`, icon: 'x-circle', tone: 'error', trend: dayRate(['cancelled', 'no-show']) },
+    // Rising cancellations are bad news — the trend line reads red
+    { label: 'Cancellation rate', value: `${cancellationRate}%`, icon: 'x-circle', tone: 'error', trend: dayRate(['cancelled']) },
   ];
 
   // Doctor lookup for specialty/fee
@@ -88,16 +108,17 @@ function AdminReports() {
       specMap[sp].completed++;
       specMap[sp].revenue += Number(d?.consultation_fee) || 0;
     }
-    if (['cancelled', 'no-show'].includes(a.status)) specMap[sp].cancelled++;
+    if (a.status === 'cancelled') specMap[sp].cancelled++;
   }
   const bySpecialty = Object.values(specMap)
     .filter(r => r.total > 0)
     .sort((a, b) => b.total - a.total);
 
   const chartData = bySpecialty.slice(0, 6).map(r => ({ label: r.specialty, value: r.total }));
+  // Highlight the peak specialty bar, same as the Dashboard week chart
   const peak = chartData.length ? Math.max(...chartData.map(d => d.value)) : 0;
 
-  // Busiest doctors by appointment count (3 rows)
+  // Busiest doctors by appointment count (3 rows to visually match the specialty chart beside it)
   const byDoctor = doctors
     .map(d => ({ ...d, count: appts.filter(a => a.doctor_id === d.id).length }))
     .filter(d => d.count > 0)
@@ -109,7 +130,7 @@ function AdminReports() {
       ['Specialty', 'Appointments', 'Completed', 'Cancelled', 'Revenue (completed)'],
       ...bySpecialty.map(r => [r.specialty, r.total, r.completed, r.cancelled, r.revenue]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', message: 'Specialty breakdown exported to CSV.' });
+    store.pushToast({ title: 'Export ready', msg: 'Specialty breakdown exported to CSV.' });
   };
 
   return (
@@ -156,8 +177,6 @@ function AdminReports() {
                     <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span className="spinner" role="status" aria-label="Loading chart" />
                     </div>
-                  ) : chartData.length === 0 ? (
-                    <EmptyState icon="bar-chart-3" title="No appointment data yet" message="The specialty chart will appear once appointments are booked." />
                   ) : (
                     <MiniBarChart
                       data={chartData.map(d => ({ ...d, highlight: d.value === peak }))}
@@ -178,11 +197,10 @@ function AdminReports() {
                           <span className="skel" style={{ height: 10, width: '60%' }} />
                           <span className="skel" style={{ height: 10, width: '45%' }} />
                         </div>
+                        {/* Mirror the real row's right-side appointments pill */}
                         <span className="skel" style={{ width: 92, height: 22, borderRadius: 'var(--r-pill)', flexShrink: 0 }} />
                       </div>
                     ))
-                  ) : byDoctor.length === 0 ? (
-                    <EmptyState icon="stethoscope" title="No appointment data yet" message="Doctor activity will appear once appointments are booked." />
                   ) : byDoctor.map(d => (
                     <div key={d.id} className="list-item">
                       <DoctorAvatar doctor={{ name: d.full_name, photo: d.photo_url }} size={28} />
@@ -190,9 +208,11 @@ function AdminReports() {
                         <div className="list-item-title">{d.full_name}</div>
                         <div className="list-item-sub">{specialtyOf(d)} · {d.room || '—'}</div>
                       </div>
+                      {/* Neutral stat pill — same right-side treatment as the
+                          status badges on the other list rows */}
                       <span className="badge badge-neutral" style={{ flexShrink: 0 }}>
                         <span style={{ fontWeight: 700, color: 'var(--text)' }}>{d.count}</span>
-                        {' '}{d.count === 1 ? 'appointment' : 'appointments'}
+                        {d.count === 1 ? 'appointment' : 'appointments'}
                       </span>
                     </div>
                   ))}
