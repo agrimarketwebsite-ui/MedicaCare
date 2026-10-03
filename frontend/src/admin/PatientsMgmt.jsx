@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import {
   AppShell, ConfirmModal, EmptyState, ErrorState, Icon, PageHeader,
-  Pagination, PatientAvatar, SkeletonRows, useStore,
+  Pagination, PatientAvatar, useStore,
 } from '../shared/components.jsx';
 import { formatDate } from '../shared/data.js';
 import { deleteAdminPatient, getAdminPatients } from '../shared/api.js';
@@ -13,7 +13,7 @@ import { downloadCSV } from './helpers.js';
 import { PatientFormModal } from './PatientFormModal.jsx';
 import { PatientRecordsModal } from './PatientRecordsModal.jsx';
 
-const PAGE = 15;
+const PAGE = 4;
 
 // ---------- Patients Management ----------
 function PatientsMgmt() {
@@ -81,7 +81,7 @@ function PatientsMgmt() {
     try {
       await deleteAdminPatient(confirmDel.id);
       setConfirmDel(null);
-      store.pushToast({ kind: 'success', title: 'Patient removed', msg: `${confirmDel.full_name}'s record has been deleted.` });
+      store.pushToast({ title: 'Patient removed', msg: `${confirmDel.full_name}'s record has been deleted.` });
       load();
     } catch (err) {
       store.pushToast({ kind: 'error', title: 'Delete failed', msg: err.message || 'Could not delete patient.' });
@@ -99,7 +99,7 @@ function PatientsMgmt() {
         (p.last_visit_date || '').slice(0, 10),
       ]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${filtered.length} patient(s) exported to CSV.` });
+    store.pushToast({ title: 'Export ready', msg: `${filtered.length} patient(s) exported to CSV.` });
   };
 
   return (
@@ -140,7 +140,7 @@ function PatientsMgmt() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderTop: '1px solid var(--border)' }}>
                 <span style={{ fontSize: 12, color: 'var(--text-muted)', marginRight: 4 }}>Filter by gender:</span>
                 {[['all', 'All'], ['male', 'Male'], ['female', 'Female']].map(([k, l]) => (
-                  <button key={k} className={'chip filter' + (gender === k ? ' on' : '')} onClick={() => setGender(k)}>{l}</button>
+                  <button key={k} className={'chip filter' + (gender === k ? ' on' : '')} onClick={() => { setGender(k); setPage(1); }}>{l}</button>
                 ))}
               </div>
             )}
@@ -159,6 +159,10 @@ function PatientsMgmt() {
                 </thead>
                 <tbody>
                   {loading ? (
+                    // Skeleton rows mirroring the real ones: the Patient cell has
+                    // an avatar + ID line, the Contact cell has two lines, and
+                    // every cell carries data-label so the mobile stacked-card
+                    // view keeps its labels
                     Array.from({ length: 6 }).map((_, r) => (
                       <tr key={r}>
                         <td data-label="Patient">
@@ -185,7 +189,7 @@ function PatientsMgmt() {
                       <EmptyState icon="user-x" title={query ? `No patients found for "${query}"` : 'No patients found'}
                         message="Try a different name, or add a new patient record."
                         actions={<>
-                          {query && <button className="btn btn-secondary" onClick={() => setQuery('')}>Clear search</button>}
+                          <button className="btn btn-secondary" onClick={() => setQuery('')}>Clear search</button>
                           <button className="btn btn-primary" onClick={() => setAddOpen(true)}><Icon name="user-plus" size={14} /> Add patient</button>
                         </>} />
                     </td></tr>
@@ -208,7 +212,7 @@ function PatientsMgmt() {
                         </td>
                         <td data-label="Gender / Age">{genderLabel(p.gender)}{age != null ? `, ${age}` : ''}</td>
                         <td data-label="Joined">{p.created_at ? formatDate(String(p.created_at).slice(0, 10)) : '—'}</td>
-                        <td data-label="Last visit">{p.last_visit_date ? formatDate(String(p.last_visit_date).slice(0, 10)) : <span className="t-muted">—</span>}</td>
+                        <td data-label="Last visit">{p.last_visit_date ? formatDate(String(p.last_visit_date).slice(0, 10)) : <span className="t-muted">Never</span>}</td>
                         <td className="col-actions">
                           {/* No edit action: personal info is owned by the patient —
                               they manage it on their Profile page */}
