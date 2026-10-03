@@ -1,52 +1,56 @@
-// VisitNotesModal — doctor (Phase 5)
-// Ipinapakita ang visit notes ng isang completed appointment. Ang doctor ay
-// pwedeng mag-amend sa pamamagitan ng linked medical record (ang summary
-// nito ang naka-sync sa notes) — "amended notes".
+// VisitNotesModal — doctor portal
+// View and amend the doctor's own notes. Completed visits are read-only in
+// the UI until the doctor chooses to edit; amendments flow straight to the
+// patient's medical records (same field).
 import { useEffect, useState } from 'react';
-import { Field, Icon, Modal, TextArea, useStore } from '../shared/components.jsx';
+import { Field, Modal, TextArea, useStore } from '../shared/components.jsx';
 import { getDoctorAppointment, updateMedicalRecord, ApiError } from '../shared/api.js';
-import { fmtTime12 } from './helpers.js';
+import { fmtTime12, focusFirstError } from './helpers.js';
 
-const MAX_NOTES = 500;
-
-function VisitNotesModal({ open, onClose, appointmentId, onAmended }) {
+function VisitNotesModal({ appointment, onClose, onAmended }) {
   const store = useStore();
-  const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState('');
+  const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [detail, setDetail] = useState(null);
 
   useEffect(() => {
-    if (!open || !appointmentId) return;
-    let cancelled = false;
-    setLoading(true);
-    setError('');
-    setEditing(false);
-    getDoctorAppointment(appointmentId)
-      .then((a) => { if (!cancelled) { setDetail(a); setLoading(false); } })
-      .catch((err) => { if (!cancelled) { setError(err.message || 'Could not load visit notes.'); setLoading(false); } });
-    return () => { cancelled = true; };
-  }, [open, appointmentId]);
+    if (appointment) {
+      setEditing(false);
+      setNotes(appointment.notes || '');
+      setError('');
+      setSaving(false);
+      setDetail(null);
+      // Fetch the full detail (notes + linked consultation record) so
+      // amendments go to the right place.
+      let cancelled = false;
+      setLoading(true);
+      getDoctorAppointment(appointment.id)
+        .then((d) => {
+          if (cancelled) return;
+          const a = d.appointment || d;
+          setDetail(a);
+          setNotes(a.medical_record?.summary || a.notes || '');
+          setLoading(false);
+        })
+        .catch(() => { if (!cancelled) setLoading(false); });
+      return () => { cancelled = true; };
+    }
+  }, [appointment?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (!appointment) return null;
+  const patientName = appointment.patient?.full_name || appointment.booked_for || 'Patient';
   const record = detail?.medical_record || null;
-  const patientName = detail?.patient?.full_name || detail?.booked_for || 'Patient';
-  // Ang consultation record summary ang "living" na notes (pwedeng i-amend);
-  // ang appointment.notes ay ang visit-time snapshot. Ipakita ang summary
-  // kapag meron, fallback sa notes.
-  const shownNotes = record?.summary || detail?.notes || '';
+  // The doctor can only amend their own consultation records.
+  const canAmend = !!record && !!record.doctor_id && record.doctor_id === store.doctorSession?.doctorId;
 
-  const startEdit = () => {
-    setDraft(shownNotes);
-    setEditing(true);
-    setError('');
-  };
-
-  const doAmend = async () => {
-    const trimmed = draft.trim();
-    if (trimmed.length < 10) {
-      setError('Amended notes must be at least 10 characters.');
+  const save = async () => {
+    const n = notes.trim();
+    if (n.length < 10) {
+      setError('Please write the visit summary (10+ characters).');
+      focusFirstError();
       return;
     }
     if (!record) {
@@ -56,77 +60,62 @@ function VisitNotesModal({ open, onClose, appointmentId, onAmended }) {
     setSaving(true);
     setError('');
     try {
-      const updated = await updateMedicalRecord(record.id, { summary: trimmed });
-      setDetail(d => ({ ...d, medical_record: updated }));
-      store.pushToast({ title: 'Notes amended', msg: 'The consultation record was updated.' });
-      setEditing(false);
+      await updateMedicalRecord(record.id, { summary: n });
+      store.pushToast({ title: 'Notes updated', msg: "The amended notes were saved to the patient's medical records." });
       onAmended?.();
+      onClose();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not amend the notes. Please try again.');
-    } finally {
+      setError(err instanceof ApiError ? err.message : 'Could not save. Please try again.');
       setSaving(false);
     }
   };
 
   return (
     <Modal
-      open={open}
+      open
       onClose={onClose}
-      title="Visit notes"
-      subtitle={detail ? `${patientName} · ${detail.appointment_date} at ${fmtTime12(detail.start_time)}` : 'Loading…'}
-      icon="file-text"
-      footer={
-        editing ? (
-          <>
-            <button className="btn btn-ghost" onClick={() => setEditing(false)} disabled={saving}>Cancel</button>
-            <button className={`btn btn-primary ${saving ? 'btn-loading' : ''}`} onClick={doAmend} disabled={saving}>
-              Save amended notes
-            </button>
-          </>
-        ) : (
-          <>
-            <button className="btn btn-ghost" onClick={onClose}>Close</button>
-            {record && !loading && (
-              <button className="btn btn-secondary" onClick={startEdit}>
-                <Icon name="pencil" size={14} /> Amend notes
-              </button>
-            )}
-          </>
-        )
-      }
+      title="Doctor's notes"
+      subtitle={`${patientName} · ${appointment.appointment_date}`}
+      icon="stethoscope"
+      iconKind="info"
+      footer={editing ? (
+        <>
+          <button className="btn btn-secondary" onClick={() => { setEditing(false); setError(''); }} disabled={saving}>Cancel</button>
+          <button className={`btn btn-primary${saving ? ' btn-loading' : ''}`} onClick={save} disabled={saving}>Save changes</button>
+        </>
+      ) : (
+        <>
+          <button className="btn btn-secondary" onClick={onClose}>Close</button>
+          {canAmend && !loading && (
+            <button className="btn btn-primary" onClick={() => setEditing(true)}>Edit notes</button>
+          )}
+        </>
+      )}
     >
-      {loading ? (
-        <div
-          role="status"
-          aria-label="Loading"
-          style={{ minHeight: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
-        >
-          <div className="spinner" />
-        </div>
-      ) : error && !detail ? (
-        <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)' }}>
+      {error && (
+        <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)', marginBottom: 10 }}>
           {error}
         </div>
+      )}
+      {editing ? (
+        <Field
+          label="Doctor's notes / visit summary"
+          required
+          error={error}
+          help="Amendments are saved to the patient's medical records immediately."
+        >
+          <TextArea
+            rows={4}
+            value={notes}
+            onChange={e => { setNotes(e.target.value); if (error) setError(''); }}
+            error={error}
+            maxLength={500}
+          />
+        </Field>
       ) : (
-        <div className="stack md">
-          {error && (
-            <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13.5, background: 'var(--error-soft)', border: '1px solid var(--error-border)', color: 'var(--error-text)' }}>
-              {error}
-            </div>
-          )}
-          {editing ? (
-            <Field label="Amended notes" required help="Updates the linked consultation record.">
-              <TextArea value={draft} onChange={e => setDraft(e.target.value)} maxLength={MAX_NOTES} rows={6} />
-              <div className="t-help" style={{ textAlign: 'right', marginTop: -4 }}>{draft.trim().length}/{MAX_NOTES}</div>
-            </Field>
-          ) : (
-            <div className="card" style={{ background: 'var(--surface-muted)' }}>
-              <div className="card-body" style={{ fontSize: 14, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
-                {shownNotes || <span className="t-muted">No notes recorded for this visit.</span>}
-              </div>
-            </div>
-          )}
-        </div>
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.6 }}>
+          {loading ? 'Loading…' : (detail?.medical_record?.summary || detail?.notes || appointment.notes || 'No consultation notes were recorded for this visit.')}
+        </p>
       )}
     </Modal>
   );
