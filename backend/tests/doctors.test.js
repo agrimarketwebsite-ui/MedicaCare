@@ -140,6 +140,10 @@ describe('doctors integration — Phase 5 doctor portal', { skip: !H || docs.len
 
   after(async () => {
     try {
+      // Linisin ang test appointments para hindi mapuno ang slots sa susunod na run
+      if (H && state.patientId && state.date) {
+        await H.supabase.from('appointments').delete().eq('patient_id', state.patientId).eq('appointment_date', state.date);
+      }
       if (H && state.docAccount0) {
         for (const key of ['docAccount0', 'docAccount1']) {
           if (state[key]) {
