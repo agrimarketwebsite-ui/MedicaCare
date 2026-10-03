@@ -12,6 +12,7 @@ import {
 import {
   getAppSettings, getClinicInfo, updateAppSettings, updateClinicInfo, ApiError,
 } from '../shared/api.js';
+import { focusFirstError } from './helpers.js';
 
 function AdminSettings() {
   const store = useStore();
@@ -25,10 +26,6 @@ function AdminSettings() {
   const [clinicError, setClinicError] = useState('');
   const updateClinic = (k, v) => setClinic((f) => ({ ...f, [k]: v }));
   const updatePref = (k, v) => setPrefs((f) => ({ ...f, [k]: v }));
-  const focusNameField = () => {
-    const el = document.getElementById('clinic-name');
-    if (el) el.focus();
-  };
 
   const load = async () => {
     setLoading(true);
@@ -58,7 +55,7 @@ function AdminSettings() {
     e.preventDefault();
     if (!clinic.name.trim()) {
       setClinicError('Clinic name is required');
-      focusNameField();
+      focusFirstError();
       return;
     }
     setSavingClinic(true);
@@ -104,6 +101,14 @@ function AdminSettings() {
     }
   };
 
+  if (loading) {
+    return (
+      <AppShell current="settings">
+        <div className="page"><PageSpinner /></div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell current="settings">
       <div className="page" style={{ maxWidth: 960, margin: '0 auto' }}>
@@ -113,9 +118,7 @@ function AdminSettings() {
           breadcrumbs={[{ label: 'Home', to: '/admin/dashboard' }, { label: 'Settings' }]}
         />
 
-        {loading ? (
-          <PageSpinner />
-        ) : error ? (
+        {error ? (
           <ErrorState title="Could not load settings" message={error} onRetry={load} />
         ) : (
           <>
@@ -124,9 +127,8 @@ function AdminSettings() {
               <form onSubmit={saveClinic}>
                 <div className="card-body">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                    <Field label="Clinic name" required error={clinicError} htmlFor="clinic-name">
+                    <Field label="Clinic name" required error={clinicError}>
                       <TextInput
-                        id="clinic-name"
                         value={clinic.name}
                         onChange={(ev) => { updateClinic('name', ev.target.value); if (clinicError) setClinicError(''); }}
                         error={clinicError}
@@ -145,9 +147,7 @@ function AdminSettings() {
                   </div>
                 </div>
                 <div className="card-footer">
-                  <button type="submit" className={`btn btn-primary ${savingClinic ? 'btn-loading' : ''}`} disabled={savingClinic}>
-                    {savingClinic ? 'Saving…' : 'Save changes'}
-                  </button>
+                  <button type="submit" className={`btn btn-primary ${savingClinic ? 'btn-loading' : ''}`} disabled={savingClinic}>Save changes</button>
                 </div>
               </form>
             </div>
@@ -169,9 +169,7 @@ function AdminSettings() {
                   </Field>
                 </div>
                 <div className="card-footer">
-                  <button type="submit" className={`btn btn-primary ${savingPrefs ? 'btn-loading' : ''}`} disabled={savingPrefs}>
-                    {savingPrefs ? 'Saving…' : 'Save preferences'}
-                  </button>
+                  <button type="submit" className={`btn btn-primary ${savingPrefs ? 'btn-loading' : ''}`} disabled={savingPrefs}>Save preferences</button>
                 </div>
               </form>
             </div>
