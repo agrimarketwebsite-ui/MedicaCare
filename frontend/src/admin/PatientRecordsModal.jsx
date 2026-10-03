@@ -1,1 +1,325 @@
-Ly8gUGF0aWVudFJlY29yZHNNb2RhbCDigJQgbGFicyAmIG1lZGljYXRpb25zLCBzdGFmZi1lbmNvZGVkIChyZXN0b3JlZCBwcm90b3R5cGUKLy8gVUksIHJlYWwgQVBJKS4gU3RhZmYtc2lkZSBjcmVhdGlvbiBwYXRoIGZvciB0aGUgTWVkaWNhbCBSZWNvcmRzIHNlY3Rpb25zIGluCi8vIHRoZSBwYXRpZW50IHBvcnRhbDogbGFiIHJlc3VsdHMgYW5kIHByZXNjcmlwdGlvbnMgYXJlIGVuY29kZWQgaGVyZQovLyAoQWRtaW4gY29uc29sZSDihpIgUGF0aWVudHMg4oaSIExhYnMgJiBtZWRpY2F0aW9ucykuCi8vIFByb3BzOiBwYXRpZW50LCBvbkNsb3NlLgppbXBvcnQgeyB1c2VFZmZlY3QsIHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgewogIEJhZGdlLCBFbXB0eVN0YXRlLCBGaWVsZCwgSWNvbiwgTW9kYWwsIFBhZ2VTcGlubmVyLCBTZWxlY3RJbnB1dCwKICBUZXh0SW5wdXQsIFRleHRBcmVhLCB1c2VTdG9yZSwKfSBmcm9tICcuLi9zaGFyZWQvY29tcG9uZW50cy5qc3gnOwppbXBvcnQgeyBmb3JtYXREYXRlIH0gZnJvbSAnLi4vc2hhcmVkL2RhdGEuanMnOwppbXBvcnQgewogIGNyZWF0ZUFkbWluTGFiLCBjcmVhdGVBZG1pbk1lZCwgZGVsZXRlQWRtaW5MYWIsIGRlbGV0ZUFkbWluTWVkLAogIGdldEFkbWluRG9jdG9ycywgZ2V0QWRtaW5MYWJzLCBnZXRBZG1pbk1lZHMsIEFwaUVycm9yLAp9IGZyb20gJy4uL3NoYXJlZC9hcGkuanMnOwppbXBvcnQgeyBsb2NhbFRvZGF5LCBmb2N1c0ZpcnN0RXJyb3IgfSBmcm9tICcuL2hlbHBlcnMuanMnOwoKZnVuY3Rpb24gUGF0aWVudFJlY29yZHNNb2RhbCh7IHBhdGllbnQsIG9uQ2xvc2UgfSkgewogIGNvbnN0IHN0b3JlID0gdXNlU3RvcmUoKTsKICBjb25zdCBbdGFiLCBzZXRUYWJdID0gdXNlU3RhdGUoJ2xhYnMnKTsKICBjb25zdCBbYWRkaW5nLCBzZXRBZGRpbmddID0gdXNlU3RhdGUoZmFsc2UpOwogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKHRydWUpOwogIGNvbnN0IFtsYWJzLCBzZXRMYWJzXSA9IHVzZVN0YXRlKFtdKTsKICBjb25zdCBbbWVkcywgc2V0TWVkc10gPSB1c2VTdGF0ZShbXSk7CiAgY29uc3QgW2RvY3RvcnMsIHNldERvY3RvcnNdID0gdXNlU3RhdGUoW10pOwogIGNvbnN0IFtsYWJGb3JtLCBzZXRMYWJGb3JtXSA9IHVzZVN0YXRlKHsgZGF0ZTogJycsIG5hbWU6ICcnLCBjYXRlZ29yeTogJ0hlbWF0b2xvZ3knLCBzdGF0dXM6ICdGaW5hbCcsIGZpbmRpbmdzOiBbXSB9KTsKICBjb25zdCBbbGFiRXJyb3JzLCBzZXRMYWJFcnJvcnNdID0gdXNlU3RhdGUoe30pOwogIGNvbnN0IFttZWRGb3JtLCBzZXRNZWRGb3JtXSA9IHVzZVN0YXRlKHsgbmFtZTogJycsIGRvc2U6ICcnLCBmb3JtOiAnVGFibGV0JywgZnJlcXVlbmN5OiAnJywgcHJlc2NyaWJlcklkOiAnJywgc3RhcnREYXRlOiAnJywgc3RhdHVzOiAnQWN0aXZlJywgaW5zdHJ1Y3Rpb25zOiAnJyB9KTsKICBjb25zdCBbbWVkRXJyb3JzLCBzZXRNZWRFcnJvcnNdID0gdXNlU3RhdGUoe30pOwogIGNvbnN0IFtzYXZpbmcsIHNldFNhdmluZ10gPSB1c2VTdGF0ZShmYWxzZSk7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoIXBhdGllbnQ/LmlkKSByZXR1cm47CiAgICBsZXQgY2FuY2VsbGVkID0gZmFsc2U7CiAgICBzZXRMb2FkaW5nKHRydWUpOwogICAgc2V0VGFiKCdsYWJzJyk7CiAgICBzZXRBZGRpbmcoZmFsc2UpOwogICAgUHJvbWlzZS5hbGwoWwogICAgICBnZXRBZG1pbkxhYnMocGF0aWVudC5pZCkuY2F0Y2goKCkgPT4gW10pLAogICAgICBnZXRBZG1pbk1lZHMocGF0aWVudC5pZCkuY2F0Y2goKCkgPT4gW10pLAogICAgICBnZXRBZG1pbkRvY3RvcnMoJycsIDEsIDEwMCkudGhlbihyID0+IHIuZG9jdG9ycyB8fCBbXSkuY2F0Y2goKCkgPT4gW10pLAogICAgXSkudGhlbigoW2wsIG0sIGRdKSA9PiB7CiAgICAgIGlmIChjYW5jZWxsZWQpIHJldHVybjsKICAgICAgc2V0TGFicygobCB8fCBbXSkuc29ydCgoYSwgYikgPT4gU3RyaW5nKGIucmVzdWx0X2RhdGUgfHwgJycpLmxvY2FsZUNvbXBhcmUoU3RyaW5nKGEucmVzdWx0X2RhdGUgfHwgJycpKSkpOwogICAgICBzZXRNZWRzKChtIHx8IFtdKS5zb3J0KChhLCBiKSA9PiBTdHJpbmcoYi5zdGFydF9kYXRlIHx8ICcnKS5sb2NhbGVDb21wYXJlKFN0cmluZyhhLnN0YXJ0X2RhdGUgfHwgJycpKSkpOwogICAgICBzZXREb2N0b3JzKGQpOwogICAgICBzZXRMb2FkaW5nKGZhbHNlKTsKICAgIH0pOwogICAgcmV0dXJuICgpID0+IHsgY2FuY2VsbGVkID0gdHJ1ZTsgfTsKICB9LCBbcGF0aWVudF0pOwoKICBpZiAoIXBhdGllbnQpIHJldHVybiBudWxsOwoKICBjb25zdCBvcGVuQWRkID0gKCkgPT4gewogICAgc2V0TGFiRm9ybSh7IGRhdGU6IGxvY2FsVG9kYXkoKSwgbmFtZTogJycsIGNhdGVnb3J5OiAnSGVtYXRvbG9neScsIHN0YXR1czogJ0ZpbmFsJywgZmluZGluZ3M6IFt7IGl0ZW06ICcnLCB2YWx1ZTogJycsIHVuaXQ6ICcnLCByYW5nZTogJycsIGZsYWc6ICcnIH1dIH0pOwogICAgc2V0TWVkRm9ybSh7IG5hbWU6ICcnLCBkb3NlOiAnJywgZm9ybTogJ1RhYmxldCcsIGZyZXF1ZW5jeTogJycsIHByZXNjcmliZXJJZDogJycsIHN0YXJ0RGF0ZTogbG9jYWxUb2RheSgpLCBzdGF0dXM6ICdBY3RpdmUnLCBpbnN0cnVjdGlvbnM6ICcnIH0pOwogICAgc2V0TGFiRXJyb3JzKHt9KTsKICAgIHNldE1lZEVycm9ycyh7fSk7CiAgICBzZXRBZGRpbmcodHJ1ZSk7CiAgfTsKICBjb25zdCBzZXRMYWIgPSAoaywgdikgPT4geyBzZXRMYWJGb3JtKGYgPT4gKHsgLi4uZiwgW2tdOiB2IH0pKTsgaWYgKGxhYkVycm9yc1trXSkgc2V0TGFiRXJyb3JzKHggPT4gKHsgLi4ueCwgW2tdOiBudWxsIH0pKTsgfTsKICBjb25zdCBzZXRNZWQgPSAoaywgdikgPT4geyBzZXRNZWRGb3JtKGYgPT4gKHsgLi4uZiwgW2tdOiB2IH0pKTsgaWYgKG1lZEVycm9yc1trXSkgc2V0TWVkRXJyb3JzKHggPT4gKHsgLi4ueCwgW2tdOiBudWxsIH0pKTsgfTsKICBjb25zdCBzZXRGaW5kaW5nID0gKGksIGssIHYpID0+IHNldExhYkZvcm0oZiA9PiAoeyAuLi5mLCBmaW5kaW5nczogZi5maW5kaW5ncy5tYXAoKHgsIGopID0+IGogPT09IGkgPyB7IC4uLngsIFtrXTogdiB9IDogeCkgfSkpOwogIGNvbnN0IGFkZEZpbmRpbmcgPSAoKSA9PiBzZXRMYWJGb3JtKGYgPT4gKHsgLi4uZiwgZmluZGluZ3M6IFsuLi5mLmZpbmRpbmdzLCB7IGl0ZW06ICcnLCB2YWx1ZTogJycsIHVuaXQ6ICcnLCByYW5nZTogJycsIGZsYWc6ICcnIH1dIH0pKTsKICBjb25zdCByZW1vdmVGaW5kaW5nID0gKGkpID0+IHNldExhYkZvcm0oZiA9PiAoeyAuLi5mLCBmaW5kaW5nczogZi5maW5kaW5ncy5maWx0ZXIoKF8sIGopID0+IGogIT09IGkpIH0pKTsKCiAgY29uc3QgZXJyTXNnID0gKGVyciwgZmFsbGJhY2spID0+IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiBmYWxsYmFjazsKCiAgY29uc3Qgc2F2ZUxhYiA9IGFzeW5jICgpID0+IHsKICAgIGNvbnN0IGUgPSB7fTsKICAgIGlmICghbGFiRm9ybS5uYW1lLnRyaW0oKSkgZS5uYW1lID0gJ1Rlc3QgbmFtZSBpcyByZXF1aXJlZCc7CiAgICBpZiAoIWxhYkZvcm0uZGF0ZSkgZS5kYXRlID0gJ0RhdGUgaXMgcmVxdWlyZWQnOwogICAgY29uc3QgZmluZGluZ3MgPSBsYWJGb3JtLmZpbmRpbmdzLmZpbHRlcihmID0+IGYuaXRlbS50cmltKCkgfHwgZi52YWx1ZS50cmltKCkpOwogICAgaWYgKCFmaW5kaW5ncy5sZW5ndGgpIGUuZmluZGluZ3MgPSAnQWRkIGF0IGxlYXN0IG9uZSBmaW5kaW5nIChpdGVtIGFuZCB2YWx1ZSknOwogICAgZWxzZSBpZiAoZmluZGluZ3Muc29tZShmID0+ICFmLml0ZW0udHJpbSgpIHx8ICFmLnZhbHVlLnRyaW0oKSkpIGUuZmluZGluZ3MgPSAnRWFjaCBmaW5kaW5nIG5lZWRzIGFuIGl0ZW0gYW5kIGEgdmFsdWUnOwogICAgc2V0TGFiRXJyb3JzKGUpOwogICAgaWYgKE9iamVjdC5rZXlzKGUpLmxlbmd0aCkgeyBmb2N1c0ZpcnN0RXJyb3IoKTsgcmV0dXJuOyB9CgogICAgc2V0U2F2aW5nKHRydWUpOwogICAgdHJ5IHsKICAgICAgY29uc3QgcmVjID0gYXdhaXQgY3JlYXRlQWRtaW5MYWIoewogICAgICAgIHBhdGllbnRfaWQ6IHBhdGllbnQuaWQsCiAgICAgICAgdGVzdF9uYW1lOiBsYWJGb3JtLm5hbWUudHJpbSgpLAogICAgICAgIGNhdGVnb3J5OiBsYWJGb3JtLmNhdGVnb3J5LAogICAgICAgIHN0YXR1czogbGFiRm9ybS5zdGF0dXMsCiAgICAgICAgcmVzdWx0X2RhdGU6IGxhYkZvcm0uZGF0ZSwKICAgICAgICBmaW5kaW5nczogZmluZGluZ3MubWFwKGYgPT4gKHsKICAgICAgICAgIGl0ZW06IGYuaXRlbS50cmltKCksIHZhbHVlOiBmLnZhbHVlLnRyaW0oKSwKICAgICAgICAgIHVuaXQ6IGYudW5pdC50cmltKCksIHJhbmdlOiBmLnJhbmdlLnRyaW0oKSwgZmxhZzogZi5mbGFnIHx8ICdub3JtYWwnLAogICAgICAgIH0pKSwKICAgICAgfSk7CiAgICAgIHNldExhYnMobCA9PiBbcmVjLCAuLi5sXSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdMYWIgcmVzdWx0IHNhdmVkJywgbWVzc2FnZTogYCR7cmVjLnRlc3RfbmFtZX0gd2FzIGFkZGVkIHRvICR7cGF0aWVudC5mdWxsX25hbWV9J3MgbWVkaWNhbCByZWNvcmRzLmAgfSk7CiAgICAgIHNldEFkZGluZyhmYWxzZSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0TGFiRXJyb3JzKHsgZm9ybTogZXJyTXNnKGVyciwgJ0NvdWxkIG5vdCBzYXZlIGxhYiByZXN1bHQuJykgfSk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRTYXZpbmcoZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRlbGV0ZUxhYiA9IGFzeW5jIChsKSA9PiB7CiAgICB0cnkgewogICAgICBhd2FpdCBkZWxldGVBZG1pbkxhYihsLmlkKTsKICAgICAgc2V0TGFicyhscyA9PiBscy5maWx0ZXIoeCA9PiB4LmlkICE9PSBsLmlkKSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdMYWIgcmVzdWx0IHJlbW92ZWQnLCBtZXNzYWdlOiBgJHtsLnRlc3RfbmFtZX0gd2FzIGRlbGV0ZWQgZnJvbSAke3BhdGllbnQuZnVsbF9uYW1lfSdzIHJlY29yZHMuYCB9KTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzdG9yZS5wdXNoVG9hc3QoeyBraW5kOiAnZXJyb3InLCB0aXRsZTogJ0RlbGV0ZSBmYWlsZWQnLCBtZXNzYWdlOiBlcnJNc2coZXJyLCAnQ291bGQgbm90IGRlbGV0ZSBsYWIgcmVzdWx0LicpIH0pOwogICAgfQogIH07CgogIGNvbnN0IHNhdmVNZWQgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBlID0ge307CiAgICBpZiAoIW1lZEZvcm0ubmFtZS50cmltKCkpIGUubmFtZSA9ICdNZWRpY2luZSBuYW1lIGlzIHJlcXVpcmVkJzsKICAgIGlmICghbWVkRm9ybS5mcmVxdWVuY3kudHJpbSgpKSBlLmZyZXF1ZW5jeSA9ICdGcmVxdWVuY3kgaXMgcmVxdWlyZWQnOwogICAgaWYgKCFtZWRGb3JtLnByZXNjcmliZXJJZCkgZS5wcmVzY3JpYmVySWQgPSAnU2VsZWN0IHRoZSBwcmVzY3JpYmVyJzsKICAgIHNldE1lZEVycm9ycyhlKTsKICAgIGlmIChPYmplY3Qua2V5cyhlKS5sZW5ndGgpIHsgZm9jdXNGaXJzdEVycm9yKCk7IHJldHVybjsgfQoKICAgIHNldFNhdmluZyh0cnVlKTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IHJlYyA9IGF3YWl0IGNyZWF0ZUFkbWluTWVkKHsKICAgICAgICBwYXRpZW50X2lkOiBwYXRpZW50LmlkLAogICAgICAgIG5hbWU6IG1lZEZvcm0ubmFtZS50cmltKCksCiAgICAgICAgZG9zZTogbWVkRm9ybS5kb3NlLnRyaW0oKSB8fCB1bmRlZmluZWQsCiAgICAgICAgZm9ybTogbWVkRm9ybS5mb3JtLAogICAgICAgIGZyZXF1ZW5jeTogbWVkRm9ybS5mcmVxdWVuY3kudHJpbSgpLAogICAgICAgIGRvY3Rvcl9pZDogbWVkRm9ybS5wcmVzY3JpYmVySWQsCiAgICAgICAgc3RhcnRfZGF0ZTogbWVkRm9ybS5zdGFydERhdGUgfHwgbG9jYWxUb2RheSgpLAogICAgICAgIHN0YXR1czogbWVkRm9ybS5zdGF0dXMsCiAgICAgICAgaW5zdHJ1Y3Rpb25zOiBtZWRGb3JtLmluc3RydWN0aW9ucy50cmltKCkgfHwgdW5kZWZpbmVkLAogICAgICB9KTsKICAgICAgc2V0TWVkcyhtID0+IFtyZWMsIC4uLm1dKTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZTogJ01lZGljYXRpb24gc2F2ZWQnLCBtZXNzYWdlOiBgJHtyZWMubmFtZX0gd2FzIGFkZGVkIHRvICR7cGF0aWVudC5mdWxsX25hbWV9J3MgbWVkaWNhbCByZWNvcmRzLmAgfSk7CiAgICAgIHNldEFkZGluZyhmYWxzZSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0TWVkRXJyb3JzKHsgZm9ybTogZXJyTXNnKGVyciwgJ0NvdWxkIG5vdCBzYXZlIG1lZGljYXRpb24uJykgfSk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRTYXZpbmcoZmFsc2UpOwogICAgfQogIH07CgogIGNvbnN0IGRlbGV0ZU1lZCA9IGFzeW5jIChtKSA9PiB7CiAgICB0cnkgewogICAgICBhd2FpdCBkZWxldGVBZG1pbk1lZChtLmlkKTsKICAgICAgc2V0TWVkcyhtcyA9PiBtcy5maWx0ZXIoeCA9PiB4LmlkICE9PSBtLmlkKSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdNZWRpY2F0aW9uIHJlbW92ZWQnLCBtZXNzYWdlOiBgJHttLm5hbWV9IHdhcyBkZWxldGVkIGZyb20gJHtwYXRpZW50LmZ1bGxfbmFtZX0ncyByZWNvcmRzLmAgfSk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ2Vycm9yJywgdGl0bGU6ICdEZWxldGUgZmFpbGVkJywgbWVzc2FnZTogZXJyTXNnKGVyciwgJ0NvdWxkIG5vdCBkZWxldGUgbWVkaWNhdGlvbi4nKSB9KTsKICAgIH0KICB9OwoKICBjb25zdCBkb2N0b3JOYW1lID0gKGlkKSA9PiAoZG9jdG9ycy5maW5kKGQgPT4gZC5pZCA9PT0gaWQpIHx8IHt9KS5mdWxsX25hbWUgfHwgJ+KAlCc7CgogIHJldHVybiAoCiAgICA8TW9kYWwKICAgICAgb3BlbiBvbkNsb3NlPXtvbkNsb3NlfSBzaXplPSJsZyIKICAgICAgdGl0bGU9e2BMYWJzICYgbWVkaWNhdGlvbnMgZm9yICR7cGF0aWVudC5mdWxsX25hbWV9YH0KICAgICAgc3VidGl0bGU9IlN0YWZmLWVuY29kZWQgZW50cmllcyBzaG93biBpbiB0aGUgcGF0aWVudCdzIE1lZGljYWwgUmVjb3JkcyBwYWdlLiIKICAgICAgaWNvbj0iZmxhc2stY29uaWNhbCIgaWNvbktpbmQ9ImluZm8iCiAgICAgIGZvb3Rlcj17PGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBvbkNsaWNrPXtvbkNsb3NlfT5DbG9zZTwvYnV0dG9uPn0KICAgID4KICAgICAge2xvYWRpbmcgPyAoCiAgICAgICAgPFBhZ2VTcGlubmVyIC8+CiAgICAgICkgOiAoCiAgICAgICAgPD4KICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBnYXA6IDYsIG1hcmdpbkJvdHRvbTogMTIgfX0+CiAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPXsnY2hpcCBmaWx0ZXInICsgKHRhYiA9PT0gJ2xhYnMnID8gJyBvbicgOiAnJyl9IG9uQ2xpY2s9eygpID0+IHsgc2V0VGFiKCdsYWJzJyk7IHNldEFkZGluZyhmYWxzZSk7IH19PkxhYnMgKHtsYWJzLmxlbmd0aH0pPC9idXR0b24+CiAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPXsnY2hpcCBmaWx0ZXInICsgKHRhYiA9PT0gJ21lZHMnID8gJyBvbicgOiAnJyl9IG9uQ2xpY2s9eygpID0+IHsgc2V0VGFiKCdtZWRzJyk7IHNldEFkZGluZyhmYWxzZSk7IH19Pk1lZGljYXRpb25zICh7bWVkcy5sZW5ndGh9KTwvYnV0dG9uPgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAge3RhYiA9PT0gJ2xhYnMnICYmICFhZGRpbmcgJiYgKAogICAgICAgICAgICBsYWJzLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICA8RW1wdHlTdGF0ZSBpY29uPSJmbGFzay1jb25pY2FsIiB0aXRsZT0iTm8gbGFiIHJlc3VsdHMgb24gZmlsZSIKICAgICAgICAgICAgICAgIG1lc3NhZ2U9IkFkZCBhIGxhYiByZXN1bHQgYW5kIGl0IGFwcGVhcnMgaW4gdGhlIHBhdGllbnQncyBNZWRpY2FsIFJlY29yZHMgcGFnZS4iCiAgICAgICAgICAgICAgICBhY3Rpb25zPXs8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1wcmltYXJ5IiBvbkNsaWNrPXtvcGVuQWRkfT48SWNvbiBuYW1lPSJwbHVzIiBzaXplPXsxNH0gLz4gQWRkIGxhYiByZXN1bHQ8L2J1dHRvbj59IC8+CiAgICAgICAgICAgICkgOiAoCiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InN0YWNrIG1kIj4KICAgICAgICAgICAgICAgIHtsYWJzLm1hcChsID0+IHsKICAgICAgICAgICAgICAgICAgY29uc3QgZmluZGluZ3MgPSBBcnJheS5pc0FycmF5KGwuZmluZGluZ3MpID8gbC5maW5kaW5ncyA6IFtdOwogICAgICAgICAgICAgICAgICByZXR1cm4gKAogICAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXtsLmlkfSBjbGFzc05hbWU9Imxpc3QtaXRlbSIgc3R5bGU9e3sgcGFkZGluZzogJzEwcHggMCcsIGJvcmRlclRvcDogJzFweCBzb2xpZCB2YXIoLS1ib3JkZXIpJyB9fT4KICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tYm9keSIgc3R5bGU9e3sgd2hpdGVTcGFjZTogJ25vcm1hbCcsIG92ZXJmbG93OiAndmlzaWJsZScgfX0+CiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tdGl0bGUiPntsLnRlc3RfbmFtZX08L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1zdWIiPntsLnJlc3VsdF9kYXRlID8gZm9ybWF0RGF0ZShTdHJpbmcobC5yZXN1bHRfZGF0ZSkuc2xpY2UoMCwgMTApKSA6ICcnfSDCtyB7bC5jYXRlZ29yeX0gwrcge2ZpbmRpbmdzLmxlbmd0aH0gZmluZGluZ3tmaW5kaW5ncy5sZW5ndGggPT09IDEgPyAnJyA6ICdzJ30gwrcge2wuc3RhdHVzfTwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuLWljb24iIHRpdGxlPSJEZWxldGUgbGFiIHJlc3VsdCIgYXJpYS1sYWJlbD17YERlbGV0ZSAke2wudGVzdF9uYW1lfWB9IHN0eWxlPXt7IGNvbG9yOiAndmFyKC0tZXJyb3IpJyB9fSBvbkNsaWNrPXsoKSA9PiBkZWxldGVMYWIobCl9PgogICAgICAgICAgICAgICAgICAgICAgICA8SWNvbiBuYW1lPSJ0cmFzaC0yIiBzaXplPXsxNX0gLz4KICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICApOwogICAgICAgICAgICAgICAgfSl9CiAgICAgICAgICAgICAgICA8ZGl2PjxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkgc20iIG9uQ2xpY2s9e29wZW5BZGR9PjxJY29uIG5hbWU9InBsdXMiIHNpemU9ezEzfSAvPiBBZGQgbGFiIHJlc3VsdDwvYnV0dG9uPjwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApCiAgICAgICAgICApfQoKICAgICAgICAgIHt0YWIgPT09ICdsYWJzJyAmJiBhZGRpbmcgJiYgKAogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3RhY2sgbWQiPgogICAgICAgICAgICAgIHtsYWJFcnJvcnMuZm9ybSAmJiA8ZGl2IGNsYXNzTmFtZT0iZm9ybS1lcnJvciI+PEljb24gbmFtZT0iYWxlcnQtY2lyY2xlIiBzaXplPXsxNH0gLz4ge2xhYkVycm9ycy5mb3JtfTwvZGl2Pn0KICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzJmciAxZnIgMWZyJywgZ2FwOiAxMiB9fT4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iVGVzdCBuYW1lIiByZXF1aXJlZCBlcnJvcj17bGFiRXJyb3JzLm5hbWV9PgogICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHZhbHVlPXtsYWJGb3JtLm5hbWV9IG9uQ2hhbmdlPXtlID0+IHNldExhYignbmFtZScsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2xhYkVycm9ycy5uYW1lfSBwbGFjZWhvbGRlcj0iZS5nLiwgQ29tcGxldGUgQmxvb2QgQ291bnQgKENCQykiIC8+CiAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgICAgPEZpZWxkIGxhYmVsPSJDYXRlZ29yeSI+CiAgICAgICAgICAgICAgICAgIDxTZWxlY3RJbnB1dCB2YWx1ZT17bGFiRm9ybS5jYXRlZ29yeX0gb25DaGFuZ2U9e2UgPT4gc2V0TGFiKCdjYXRlZ29yeScsIGUudGFyZ2V0LnZhbHVlKX0+CiAgICAgICAgICAgICAgICAgICAge1snSGVtYXRvbG9neScsICdDbGluaWNhbCBDaGVtaXN0cnknLCAnTWljcm9iaW9sb2d5JywgJ0ltbXVub2xvZ3knLCAnUmFkaW9sb2d5J10ubWFwKGMgPT4gPG9wdGlvbiBrZXk9e2N9PntjfTwvb3B0aW9uPil9CiAgICAgICAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgICAgPEZpZWxkIGxhYmVsPSJEYXRlIiByZXF1aXJlZCBlcnJvcj17bGFiRXJyb3JzLmRhdGV9PgogICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHR5cGU9ImRhdGUiIHZhbHVlPXtsYWJGb3JtLmRhdGV9IG9uQ2hhbmdlPXtlID0+IHNldExhYignZGF0ZScsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2xhYkVycm9ycy5kYXRlfSAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IlN0YXR1cyI+CiAgICAgICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2xhYkZvcm0uc3RhdHVzfSBvbkNoYW5nZT17ZSA9PiBzZXRMYWIoJ3N0YXR1cycsIGUudGFyZ2V0LnZhbHVlKX0+CiAgICAgICAgICAgICAgICAgIDxvcHRpb24+RmluYWw8L29wdGlvbj4KICAgICAgICAgICAgICAgICAgPG9wdGlvbj5QZW5kaW5nPC9vcHRpb24+CiAgICAgICAgICAgICAgICA8L1NlbGVjdElucHV0PgogICAgICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmaWVsZC1sYWJlbCIgc3R5bGU9e3sgbWFyZ2luQm90dG9tOiA2IH19PkZpbmRpbmdzIDxzcGFuIGNsYXNzTmFtZT0icmVxIj4qPC9zcGFuPjwvZGl2PgogICAgICAgICAgICAgICAge2xhYkZvcm0uZmluZGluZ3MubWFwKChmLCBpKSA9PiAoCiAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXtpfSBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcyZnIgMWZyIDFmciAxZnIgOTZweCBhdXRvJywgZ2FwOiA4LCBtYXJnaW5Cb3R0b206IDgsIGFsaWduSXRlbXM6ICdzdGFydCcgfX0+CiAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCBwbGFjZWhvbGRlcj0iSXRlbSAoZS5nLiwgSGVtb2dsb2JpbikiIHZhbHVlPXtmLml0ZW19IG9uQ2hhbmdlPXtlID0+IHNldEZpbmRpbmcoaSwgJ2l0ZW0nLCBlLnRhcmdldC52YWx1ZSl9IC8+CiAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCBwbGFjZWhvbGRlcj0iVmFsdWUiIHZhbHVlPXtmLnZhbHVlfSBvbkNoYW5nZT17ZSA9PiBzZXRGaW5kaW5nKGksICd2YWx1ZScsIGUudGFyZ2V0LnZhbHVlKX0gLz4KICAgICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHBsYWNlaG9sZGVyPSJVbml0IiB2YWx1ZT17Zi51bml0fSBvbkNoYW5nZT17ZSA9PiBzZXRGaW5kaW5nKGksICd1bml0JywgZS50YXJnZXQudmFsdWUpfSAvPgogICAgICAgICAgICAgICAgICAgIDxUZXh0SW5wdXQgcGxhY2Vob2xkZXI9IlJlZi4gcmFuZ2UiIHZhbHVlPXtmLnJhbmdlfSBvbkNoYW5nZT17ZSA9PiBzZXRGaW5kaW5nKGksICdyYW5nZScsIGUudGFyZ2V0LnZhbHVlKX0gLz4KICAgICAgICAgICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2YuZmxhZ30gb25DaGFuZ2U9e2UgPT4gc2V0RmluZGluZyhpLCAnZmxhZycsIGUudGFyZ2V0LnZhbHVlKX0gYXJpYS1sYWJlbD0iRmxhZyI+CiAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPk5vcm1hbDwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iaGlnaCI+SGlnaDwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0ibG93Ij5Mb3c8L29wdGlvbj4KICAgICAgICAgICAgICAgICAgICA8L1NlbGVjdElucHV0PgogICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4taWNvbiIgdGl0bGU9IlJlbW92ZSBmaW5kaW5nIiBhcmlhLWxhYmVsPSJSZW1vdmUgZmluZGluZyIgb25DbGljaz17KCkgPT4gcmVtb3ZlRmluZGluZyhpKX0+CiAgICAgICAgICAgICAgICAgICAgICA8SWNvbiBuYW1lPSJ4IiBzaXplPXsxNX0gLz4KICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICAgIHtsYWJFcnJvcnMuZmluZGluZ3MgJiYgPGRpdiBjbGFzc05hbWU9ImZpZWxkLWVycm9yIj48SWNvbiBuYW1lPSJhbGVydC1jaXJjbGUiIHNpemU9ezEyfSAvPiB7bGFiRXJyb3JzLmZpbmRpbmdzfTwvZGl2Pn0KICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IHNtIiBvbkNsaWNrPXthZGRGaW5kaW5nfT48SWNvbiBuYW1lPSJwbHVzIiBzaXplPXsxM30gLz4gQWRkIGZpbmRpbmc8L2J1dHRvbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZ2FwOiA4IH19PgogICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBvbkNsaWNrPXsoKSA9PiBzZXRBZGRpbmcoZmFsc2UpfSBkaXNhYmxlZD17c2F2aW5nfT5DYW5jZWw8L2J1dHRvbj4KICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e3NhdmVMYWJ9IGRpc2FibGVkPXtzYXZpbmd9PntzYXZpbmcgPyAnU2F2aW5n4oCmJyA6ICdTYXZlIGxhYiByZXN1bHQnfTwvYnV0dG9uPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICl9CgogICAgICAgICAge3RhYiA9PT0gJ21lZHMnICYmICFhZGRpbmcgJiYgKAogICAgICAgICAgICBtZWRzLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgICAgICA8RW1wdHlTdGF0ZSBpY29uPSJwaWxsIiB0aXRsZT0iTm8gbWVkaWNhdGlvbnMgb24gZmlsZSIKICAgICAgICAgICAgICAgIG1lc3NhZ2U9IkFkZCBhIHByZXNjcmlwdGlvbiBhbmQgaXQgYXBwZWFycyBpbiB0aGUgcGF0aWVudCdzIE1lZGljYWwgUmVjb3JkcyBwYWdlLiIKICAgICAgICAgICAgICAgIGFjdGlvbnM9ezxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e29wZW5BZGR9PjxJY29uIG5hbWU9InBsdXMiIHNpemU9ezE0fSAvPiBBZGQgbWVkaWNhdGlvbjwvYnV0dG9uPn0gLz4KICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3RhY2sgbWQiPgogICAgICAgICAgICAgICAge21lZHMubWFwKG0gPT4gKAogICAgICAgICAgICAgICAgICA8ZGl2IGtleT17bS5pZH0gY2xhc3NOYW1lPSJsaXN0LWl0ZW0iIHN0eWxlPXt7IHBhZGRpbmc6ICcxMHB4IDAnLCBib3JkZXJUb3A6ICcxcHggc29saWQgdmFyKC0tYm9yZGVyKScgfX0+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9Imxpc3QtaXRlbS1ib2R5IiBzdHlsZT17eyB3aGl0ZVNwYWNlOiAnbm9ybWFsJywgb3ZlcmZsb3c6ICd2aXNpYmxlJyB9fT4KICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsaXN0LWl0ZW0tdGl0bGUiPnttLm5hbWV9IDxzcGFuIGNsYXNzTmFtZT0idC1tdXRlZCIgc3R5bGU9e3sgZm9udFdlaWdodDogNDAwIH19PnttLmRvc2UgPyBgwrcgJHttLmRvc2V9ICR7bS5mb3JtIHx8ICcnfWAgOiAnJ308L3NwYW4+PC9kaXY+CiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibGlzdC1pdGVtLXN1YiI+e20uZnJlcXVlbmN5fSDCtyB7ZG9jdG9yTmFtZShtLmRvY3Rvcl9pZCl9IMK3IHN0YXJ0ZWQge20uc3RhcnRfZGF0ZSA/IGZvcm1hdERhdGUoU3RyaW5nKG0uc3RhcnRfZGF0ZSkuc2xpY2UoMCwgMTApKSA6ICcnfTwvZGl2PgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxCYWRnZSBraW5kPXttLnN0YXR1cyA9PT0gJ0FjdGl2ZScgPyAnc3VjY2VzcycgOiAnbmV1dHJhbCd9IGRvdD17ZmFsc2V9PnttLnN0YXR1c308L0JhZGdlPgogICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4taWNvbiIgdGl0bGU9IkRlbGV0ZSBtZWRpY2F0aW9uIiBhcmlhLWxhYmVsPXtgRGVsZXRlICR7bS5uYW1lfWB9IHN0eWxlPXt7IGNvbG9yOiAndmFyKC0tZXJyb3IpJyB9fSBvbkNsaWNrPXsoKSA9PiBkZWxldGVNZWQobSl9PgogICAgICAgICAgICAgICAgICAgICAgPEljb24gbmFtZT0idHJhc2gtMiIgc2l6ZT17MTV9IC8+CiAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICA8ZGl2PjxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkgc20iIG9uQ2xpY2s9e29wZW5BZGR9PjxJY29uIG5hbWU9InBsdXMiIHNpemU9ezEzfSAvPiBBZGQgbWVkaWNhdGlvbjwvYnV0dG9uPjwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApCiAgICAgICAgICApfQoKICAgICAgICAgIHt0YWIgPT09ICdtZWRzJyAmJiBhZGRpbmcgJiYgKAogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3RhY2sgbWQiPgogICAgICAgICAgICAgIHttZWRFcnJvcnMuZm9ybSAmJiA8ZGl2IGNsYXNzTmFtZT0iZm9ybS1lcnJvciI+PEljb24gbmFtZT0iYWxlcnQtY2lyY2xlIiBzaXplPXsxNH0gLz4ge21lZEVycm9ycy5mb3JtfTwvZGl2Pn0KICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzJmciAxZnIgMWZyJywgZ2FwOiAxMiB9fT4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iTWVkaWNpbmUgbmFtZSIgcmVxdWlyZWQgZXJyb3I9e21lZEVycm9ycy5uYW1lfT4KICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCB2YWx1ZT17bWVkRm9ybS5uYW1lfSBvbkNoYW5nZT17ZSA9PiBzZXRNZWQoJ25hbWUnLCBlLnRhcmdldC52YWx1ZSl9IGVycm9yPXttZWRFcnJvcnMubmFtZX0gcGxhY2Vob2xkZXI9ImUuZy4sIEFtb3hpY2lsbGluIiAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iRG9zZSI+CiAgICAgICAgICAgICAgICAgIDxUZXh0SW5wdXQgdmFsdWU9e21lZEZvcm0uZG9zZX0gb25DaGFuZ2U9e2UgPT4gc2V0TWVkKCdkb3NlJywgZS50YXJnZXQudmFsdWUpfSBwbGFjZWhvbGRlcj0iZS5nLiwgNTAwIG1nIiAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iRm9ybSI+CiAgICAgICAgICAgICAgICAgIDxTZWxlY3RJbnB1dCB2YWx1ZT17bWVkRm9ybS5mb3JtfSBvbkNoYW5nZT17ZSA9PiBzZXRNZWQoJ2Zvcm0nLCBlLnRhcmdldC52YWx1ZSl9PgogICAgICAgICAgICAgICAgICAgIHtbJ1RhYmxldCcsICdDYXBzdWxlJywgJ1N5cnVwJywgJ1RvcGljYWwgY3JlYW0nLCAnSW5qZWN0aW9uJ10ubWFwKGYgPT4gPG9wdGlvbiBrZXk9e2Z9PntmfTwvb3B0aW9uPil9CiAgICAgICAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2dyaWQnLCBncmlkVGVtcGxhdGVDb2x1bW5zOiAnMWZyIDFmciAxZnInLCBnYXA6IDEyIH19PgogICAgICAgICAgICAgICAgPEZpZWxkIGxhYmVsPSJGcmVxdWVuY3kiIHJlcXVpcmVkIGVycm9yPXttZWRFcnJvcnMuZnJlcXVlbmN5fT4KICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dCB2YWx1ZT17bWVkRm9ybS5mcmVxdWVuY3l9IG9uQ2hhbmdlPXtlID0+IHNldE1lZCgnZnJlcXVlbmN5JywgZS50YXJnZXQudmFsdWUpfSBlcnJvcj17bWVkRXJyb3JzLmZyZXF1ZW5jeX0gcGxhY2Vob2xkZXI9ImUuZy4sIFRocmVlIHRpbWVzIGRhaWx5IiAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICAgIDxGaWVsZCBsYWJlbD0iUHJlc2NyaWJlciIgcmVxdWlyZWQgZXJyb3I9e21lZEVycm9ycy5wcmVzY3JpYmVySWR9PgogICAgICAgICAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e21lZEZvcm0ucHJlc2NyaWJlcklkfSBvbkNoYW5nZT17ZSA9PiBzZXRNZWQoJ3ByZXNjcmliZXJJZCcsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e21lZEVycm9ycy5wcmVzY3JpYmVySWR9PgogICAgICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9IiI+U2VsZWN0IGEgZG9jdG9y4oCmPC9vcHRpb24+CiAgICAgICAgICAgICAgICAgICAge2RvY3RvcnMubWFwKGQgPT4gPG9wdGlvbiBrZXk9e2QuaWR9IHZhbHVlPXtkLmlkfT57ZC5mdWxsX25hbWV9PC9vcHRpb24+KX0KICAgICAgICAgICAgICAgICAgPC9TZWxlY3RJbnB1dD4KICAgICAgICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IlN0YXJ0IGRhdGUiPgogICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHR5cGU9ImRhdGUiIHZhbHVlPXttZWRGb3JtLnN0YXJ0RGF0ZX0gb25DaGFuZ2U9e2UgPT4gc2V0TWVkKCdzdGFydERhdGUnLCBlLnRhcmdldC52YWx1ZSl9IC8+CiAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2dyaWQnLCBncmlkVGVtcGxhdGVDb2x1bW5zOiAnMWZyIDFmcicsIGdhcDogMTIgfX0+CiAgICAgICAgICAgICAgICA8RmllbGQgbGFiZWw9IlN0YXR1cyI+CiAgICAgICAgICAgICAgICAgIDxTZWxlY3RJbnB1dCB2YWx1ZT17bWVkRm9ybS5zdGF0dXN9IG9uQ2hhbmdlPXtlID0+IHNldE1lZCgnc3RhdHVzJywgZS50YXJnZXQudmFsdWUpfT4KICAgICAgICAgICAgICAgICAgICA8b3B0aW9uPkFjdGl2ZTwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgIDxvcHRpb24+Q29tcGxldGVkPC9vcHRpb24+CiAgICAgICAgICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgICAgICAgICA8L0ZpZWxkPgogICAgICAgICAgICAgICAgPEZpZWxkIGxhYmVsPSJJbnN0cnVjdGlvbnMiIGhlbHA9IlNob3duIHVuZGVyIHRoZSBtZWRpY2luZSBuYW1lIGluIHRoZSBwYXRpZW50J3MgcmVjb3Jkcy4iPgogICAgICAgICAgICAgICAgICA8VGV4dElucHV0IHZhbHVlPXttZWRGb3JtLmluc3RydWN0aW9uc30gb25DaGFuZ2U9e2UgPT4gc2V0TWVkKCdpbnN0cnVjdGlvbnMnLCBlLnRhcmdldC52YWx1ZSl9IHBsYWNlaG9sZGVyPSJlLmcuLCBUYWtlIGFmdGVyIG1lYWxzIiAvPgogICAgICAgICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgZ2FwOiA4IH19PgogICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBvbkNsaWNrPXsoKSA9PiBzZXRBZGRpbmcoZmFsc2UpfSBkaXNhYmxlZD17c2F2aW5nfT5DYW5jZWw8L2J1dHRvbj4KICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e3NhdmVNZWR9IGRpc2FibGVkPXtzYXZpbmd9PntzYXZpbmcgPyAnU2F2aW5n4oCmJyA6ICdTYXZlIG1lZGljYXRpb24nfTwvYnV0dG9uPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICl9CiAgICAgICAgPC8+CiAgICAgICl9CiAgICA8L01vZGFsPgogICk7Cn0KCmV4cG9ydCB7IFBhdGllbnRSZWNvcmRzTW9kYWwgfTsK
+// PatientRecordsModal — labs & medications, staff-encoded (restored prototype
+// UI, real API). Staff-side creation path for the Medical Records sections in
+// the patient portal: lab results and prescriptions are encoded here
+// (Admin console → Patients → Labs & medications).
+// Props: patient, onClose.
+import { useEffect, useState } from 'react';
+import {
+  Badge, EmptyState, Field, Icon, Modal, PageSpinner, SelectInput,
+  TextInput, TextArea, useStore,
+} from '../shared/components.jsx';
+import { formatDate } from '../shared/data.js';
+import {
+  createAdminLab, createAdminMed, deleteAdminLab, deleteAdminMed,
+  getAdminDoctors, getAdminLabs, getAdminMeds, ApiError,
+} from '../shared/api.js';
+import { localToday, focusFirstError } from './helpers.js';
+
+function PatientRecordsModal({ patient, onClose }) {
+  const store = useStore();
+  const [tab, setTab] = useState('labs');
+  const [adding, setAdding] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [labs, setLabs] = useState([]);
+  const [meds, setMeds] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [labForm, setLabForm] = useState({ date: '', name: '', category: 'Hematology', status: 'Final', findings: [] });
+  const [labErrors, setLabErrors] = useState({});
+  const [medForm, setMedForm] = useState({ name: '', dose: '', form: 'Tablet', frequency: '', prescriberId: '', startDate: '', status: 'Active', instructions: '' });
+  const [medErrors, setMedErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!patient?.id) return;
+    let cancelled = false;
+    setLoading(true);
+    setTab('labs');
+    setAdding(false);
+    Promise.all([
+      getAdminLabs(patient.id).catch(() => []),
+      getAdminMeds(patient.id).catch(() => []),
+      getAdminDoctors('', 1, 100).then(r => r.doctors || []).catch(() => []),
+    ]).then(([l, m, d]) => {
+      if (cancelled) return;
+      setLabs((l || []).sort((a, b) => String(b.result_date || '').localeCompare(String(a.result_date || ''))));
+      setMeds((m || []).sort((a, b) => String(b.start_date || '').localeCompare(String(a.start_date || ''))));
+      setDoctors(d);
+      setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [patient]);
+
+  if (!patient) return null;
+
+  const openAdd = () => {
+    setLabForm({ date: localToday(), name: '', category: 'Hematology', status: 'Final', findings: [{ item: '', value: '', unit: '', range: '', flag: '' }] });
+    setMedForm({ name: '', dose: '', form: 'Tablet', frequency: '', prescriberId: '', startDate: localToday(), status: 'Active', instructions: '' });
+    setLabErrors({});
+    setMedErrors({});
+    setAdding(true);
+  };
+  const setLab = (k, v) => { setLabForm(f => ({ ...f, [k]: v })); if (labErrors[k]) setLabErrors(x => ({ ...x, [k]: null })); };
+  const setMed = (k, v) => { setMedForm(f => ({ ...f, [k]: v })); if (medErrors[k]) setMedErrors(x => ({ ...x, [k]: null })); };
+  const setFinding = (i, k, v) => setLabForm(f => ({ ...f, findings: f.findings.map((x, j) => j === i ? { ...x, [k]: v } : x) }));
+  const addFinding = () => setLabForm(f => ({ ...f, findings: [...f.findings, { item: '', value: '', unit: '', range: '', flag: '' }] }));
+  const removeFinding = (i) => setLabForm(f => ({ ...f, findings: f.findings.filter((_, j) => j !== i) }));
+
+  const errMsg = (err, fallback) => err instanceof ApiError ? err.message : fallback;
+
+  const saveLab = async () => {
+    const e = {};
+    if (!labForm.name.trim()) e.name = 'Test name is required';
+    if (!labForm.date) e.date = 'Date is required';
+    const findings = labForm.findings.filter(f => f.item.trim() || f.value.trim());
+    if (!findings.length) e.findings = 'Add at least one finding (item and value)';
+    else if (findings.some(f => !f.item.trim() || !f.value.trim())) e.findings = 'Each finding needs an item and a value';
+    setLabErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      const rec = await createAdminLab({
+        patient_id: patient.id,
+        test_name: labForm.name.trim(),
+        category: labForm.category,
+        status: labForm.status,
+        result_date: labForm.date,
+        findings: findings.map(f => ({
+          item: f.item.trim(), value: f.value.trim(),
+          unit: f.unit.trim(), range: f.range.trim(), flag: f.flag || 'normal',
+        })),
+      });
+      setLabs(l => [rec, ...l]);
+      store.pushToast({ kind: 'success', title: 'Lab result saved', message: `${rec.test_name} was added to ${patient.full_name}'s medical records.` });
+      setAdding(false);
+    } catch (err) {
+      setLabErrors({ form: errMsg(err, 'Could not save lab result.') });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteLab = async (l) => {
+    try {
+      await deleteAdminLab(l.id);
+      setLabs(ls => ls.filter(x => x.id !== l.id));
+      store.pushToast({ kind: 'success', title: 'Lab result removed', message: `${l.test_name} was deleted from ${patient.full_name}'s records.` });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Delete failed', message: errMsg(err, 'Could not delete lab result.') });
+    }
+  };
+
+  const saveMed = async () => {
+    const e = {};
+    if (!medForm.name.trim()) e.name = 'Medicine name is required';
+    if (!medForm.frequency.trim()) e.frequency = 'Frequency is required';
+    if (!medForm.prescriberId) e.prescriberId = 'Select the prescriber';
+    setMedErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      const rec = await createAdminMed({
+        patient_id: patient.id,
+        name: medForm.name.trim(),
+        dose: medForm.dose.trim() || undefined,
+        form: medForm.form,
+        frequency: medForm.frequency.trim(),
+        doctor_id: medForm.prescriberId,
+        start_date: medForm.startDate || localToday(),
+        status: medForm.status,
+        instructions: medForm.instructions.trim() || undefined,
+      });
+      setMeds(m => [rec, ...m]);
+      store.pushToast({ kind: 'success', title: 'Medication saved', message: `${rec.name} was added to ${patient.full_name}'s medical records.` });
+      setAdding(false);
+    } catch (err) {
+      setMedErrors({ form: errMsg(err, 'Could not save medication.') });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteMed = async (m) => {
+    try {
+      await deleteAdminMed(m.id);
+      setMeds(ms => ms.filter(x => x.id !== m.id));
+      store.pushToast({ kind: 'success', title: 'Medication removed', message: `${m.name} was deleted from ${patient.full_name}'s records.` });
+    } catch (err) {
+      store.pushToast({ kind: 'error', title: 'Delete failed', message: errMsg(err, 'Could not delete medication.') });
+    }
+  };
+
+  const doctorName = (id) => (doctors.find(d => d.id === id) || {}).full_name || '—';
+
+  return (
+    <Modal
+      open onClose={onClose} size="lg"
+      title={`Labs & medications for ${patient.full_name}`}
+      subtitle="Staff-encoded entries shown in the patient's Medical Records page."
+      icon="flask-conical" iconKind="info"
+      footer={<button className="btn btn-secondary" onClick={onClose}>Close</button>}
+    >
+      {loading ? (
+        <PageSpinner />
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+            <button className={'chip filter' + (tab === 'labs' ? ' on' : '')} onClick={() => { setTab('labs'); setAdding(false); }}>Labs ({labs.length})</button>
+            <button className={'chip filter' + (tab === 'meds' ? ' on' : '')} onClick={() => { setTab('meds'); setAdding(false); }}>Medications ({meds.length})</button>
+          </div>
+
+          {tab === 'labs' && !adding && (
+            labs.length === 0 ? (
+              <EmptyState icon="flask-conical" title="No lab results on file"
+                message="Add a lab result and it appears in the patient's Medical Records page."
+                actions={<button className="btn btn-primary" onClick={openAdd}><Icon name="plus" size={14} /> Add lab result</button>} />
+            ) : (
+              <div className="stack md">
+                {labs.map(l => {
+                  const findings = Array.isArray(l.findings) ? l.findings : [];
+                  return (
+                    <div key={l.id} className="list-item" style={{ padding: '10px 0', borderTop: '1px solid var(--border)' }}>
+                      <div className="list-item-body" style={{ whiteSpace: 'normal', overflow: 'visible' }}>
+                        <div className="list-item-title">{l.test_name}</div>
+                        <div className="list-item-sub">{l.result_date ? formatDate(String(l.result_date).slice(0, 10)) : ''} · {l.category} · {findings.length} finding{findings.length === 1 ? '' : 's'} · {l.status}</div>
+                      </div>
+                      <button className="btn-icon" title="Delete lab result" aria-label={`Delete ${l.test_name}`} style={{ color: 'var(--error)' }} onClick={() => deleteLab(l)}>
+                        <Icon name="trash-2" size={15} />
+                      </button>
+                    </div>
+                  );
+                })}
+                <div><button className="btn btn-primary sm" onClick={openAdd}><Icon name="plus" size={13} /> Add lab result</button></div>
+              </div>
+            )
+          )}
+
+          {tab === 'labs' && adding && (
+            <div className="stack md">
+              {labErrors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {labErrors.form}</div>}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12 }}>
+                <Field label="Test name" required error={labErrors.name}>
+                  <TextInput value={labForm.name} onChange={e => setLab('name', e.target.value)} error={labErrors.name} placeholder="e.g., Complete Blood Count (CBC)" />
+                </Field>
+                <Field label="Category">
+                  <SelectInput value={labForm.category} onChange={e => setLab('category', e.target.value)}>
+                    {['Hematology', 'Clinical Chemistry', 'Microbiology', 'Immunology', 'Radiology'].map(c => <option key={c}>{c}</option>)}
+                  </SelectInput>
+                </Field>
+                <Field label="Date" required error={labErrors.date}>
+                  <TextInput type="date" value={labForm.date} onChange={e => setLab('date', e.target.value)} error={labErrors.date} />
+                </Field>
+              </div>
+              <Field label="Status">
+                <SelectInput value={labForm.status} onChange={e => setLab('status', e.target.value)}>
+                  <option>Final</option>
+                  <option>Pending</option>
+                </SelectInput>
+              </Field>
+              <div>
+                <div className="field-label" style={{ marginBottom: 6 }}>Findings <span className="req">*</span></div>
+                {labForm.findings.map((f, i) => (
+                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 96px auto', gap: 8, marginBottom: 8, alignItems: 'start' }}>
+                    <TextInput placeholder="Item (e.g., Hemoglobin)" value={f.item} onChange={e => setFinding(i, 'item', e.target.value)} />
+                    <TextInput placeholder="Value" value={f.value} onChange={e => setFinding(i, 'value', e.target.value)} />
+                    <TextInput placeholder="Unit" value={f.unit} onChange={e => setFinding(i, 'unit', e.target.value)} />
+                    <TextInput placeholder="Ref. range" value={f.range} onChange={e => setFinding(i, 'range', e.target.value)} />
+                    <SelectInput value={f.flag} onChange={e => setFinding(i, 'flag', e.target.value)} aria-label="Flag">
+                      <option value="">Normal</option>
+                      <option value="high">High</option>
+                      <option value="low">Low</option>
+                    </SelectInput>
+                    <button className="btn-icon" title="Remove finding" aria-label="Remove finding" onClick={() => removeFinding(i)}>
+                      <Icon name="x" size={15} />
+                    </button>
+                  </div>
+                ))}
+                {labErrors.findings && <div className="field-error"><Icon name="alert-circle" size={12} /> {labErrors.findings}</div>}
+                <button type="button" className="btn btn-secondary sm" onClick={addFinding}><Icon name="plus" size={13} /> Add finding</button>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-secondary" onClick={() => setAdding(false)} disabled={saving}>Cancel</button>
+                <button className="btn btn-primary" onClick={saveLab} disabled={saving}>{saving ? 'Saving…' : 'Save lab result'}</button>
+              </div>
+            </div>
+          )}
+
+          {tab === 'meds' && !adding && (
+            meds.length === 0 ? (
+              <EmptyState icon="pill" title="No medications on file"
+                message="Add a prescription and it appears in the patient's Medical Records page."
+                actions={<button className="btn btn-primary" onClick={openAdd}><Icon name="plus" size={14} /> Add medication</button>} />
+            ) : (
+              <div className="stack md">
+                {meds.map(m => (
+                  <div key={m.id} className="list-item" style={{ padding: '10px 0', borderTop: '1px solid var(--border)' }}>
+                    <div className="list-item-body" style={{ whiteSpace: 'normal', overflow: 'visible' }}>
+                      <div className="list-item-title">{m.name} <span className="t-muted" style={{ fontWeight: 400 }}>{m.dose ? `· ${m.dose} ${m.form || ''}` : ''}</span></div>
+                      <div className="list-item-sub">{m.frequency} · {doctorName(m.doctor_id)} · started {m.start_date ? formatDate(String(m.start_date).slice(0, 10)) : ''}</div>
+                    </div>
+                    <Badge kind={m.status === 'Active' ? 'success' : 'neutral'} dot={false}>{m.status}</Badge>
+                    <button className="btn-icon" title="Delete medication" aria-label={`Delete ${m.name}`} style={{ color: 'var(--error)' }} onClick={() => deleteMed(m)}>
+                      <Icon name="trash-2" size={15} />
+                    </button>
+                  </div>
+                ))}
+                <div><button className="btn btn-primary sm" onClick={openAdd}><Icon name="plus" size={13} /> Add medication</button></div>
+              </div>
+            )
+          )}
+
+          {tab === 'meds' && adding && (
+            <div className="stack md">
+              {medErrors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {medErrors.form}</div>}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12 }}>
+                <Field label="Medicine name" required error={medErrors.name}>
+                  <TextInput value={medForm.name} onChange={e => setMed('name', e.target.value)} error={medErrors.name} placeholder="e.g., Amoxicillin" />
+                </Field>
+                <Field label="Dose">
+                  <TextInput value={medForm.dose} onChange={e => setMed('dose', e.target.value)} placeholder="e.g., 500 mg" />
+                </Field>
+                <Field label="Form">
+                  <SelectInput value={medForm.form} onChange={e => setMed('form', e.target.value)}>
+                    {['Tablet', 'Capsule', 'Syrup', 'Topical cream', 'Injection'].map(f => <option key={f}>{f}</option>)}
+                  </SelectInput>
+                </Field>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                <Field label="Frequency" required error={medErrors.frequency}>
+                  <TextInput value={medForm.frequency} onChange={e => setMed('frequency', e.target.value)} error={medErrors.frequency} placeholder="e.g., Three times daily" />
+                </Field>
+                <Field label="Prescriber" required error={medErrors.prescriberId}>
+                  <SelectInput value={medForm.prescriberId} onChange={e => setMed('prescriberId', e.target.value)} error={medErrors.prescriberId}>
+                    <option value="">Select a doctor…</option>
+                    {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name}</option>)}
+                  </SelectInput>
+                </Field>
+                <Field label="Start date">
+                  <TextInput type="date" value={medForm.startDate} onChange={e => setMed('startDate', e.target.value)} />
+                </Field>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <Field label="Status">
+                  <SelectInput value={medForm.status} onChange={e => setMed('status', e.target.value)}>
+                    <option>Active</option>
+                    <option>Completed</option>
+                  </SelectInput>
+                </Field>
+                <Field label="Instructions" help="Shown under the medicine name in the patient's records.">
+                  <TextInput value={medForm.instructions} onChange={e => setMed('instructions', e.target.value)} placeholder="e.g., Take after meals" />
+                </Field>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-secondary" onClick={() => setAdding(false)} disabled={saving}>Cancel</button>
+                <button className="btn btn-primary" onClick={saveMed} disabled={saving}>{saving ? 'Saving…' : 'Save medication'}</button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </Modal>
+  );
+}
+
+export { PatientRecordsModal };

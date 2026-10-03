@@ -1,1 +1,143 @@
-Ly8gUGF0aWVudEZvcm1Nb2RhbCDigJQgYWRkIHBhdGllbnQgKHJlc3RvcmVkIHByb3RvdHlwZSBVSSwgcmVhbCBBUEkpLgovLyBQcm9wczogb3Blbiwgb25DbG9zZSwgb25TYXZlZCgpLiBBZGQtb25seTsgcGVyc29uYWwgaW5mbyBpcyBvd25lZCBieSB0aGUKLy8gcGF0aWVudCB2aWEgdGhlaXIgUHJvZmlsZSBwYWdlLgppbXBvcnQgeyB1c2VFZmZlY3QsIHVzZVJlZiwgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IEZpZWxkLCBJY29uLCBNb2RhbCwgUGF0aWVudEF2YXRhciwgU2VsZWN0SW5wdXQsIFRleHRJbnB1dCwgdXNlU3RvcmUgfSBmcm9tICcuLi9zaGFyZWQvY29tcG9uZW50cy5qc3gnOwppbXBvcnQgeyBjcmVhdGVBZG1pblBhdGllbnQsIEFwaUVycm9yIH0gZnJvbSAnLi4vc2hhcmVkL2FwaS5qcyc7CmltcG9ydCB7IGZvY3VzRmlyc3RFcnJvciB9IGZyb20gJy4vaGVscGVycy5qcyc7CgpmdW5jdGlvbiBQYXRpZW50Rm9ybU1vZGFsKHsgb3Blbiwgb25DbG9zZSwgb25TYXZlZCB9KSB7CiAgY29uc3Qgc3RvcmUgPSB1c2VTdG9yZSgpOwogIGNvbnN0IFtmb3JtLCBzZXRGb3JtXSA9IHVzZVN0YXRlKHsgbmFtZTogJycsIGVtYWlsOiAnJywgcGhvbmU6ICcnLCBnZW5kZXI6ICdtYWxlJywgZG9iOiAnJywgcGFzc3dvcmQ6ICcnIH0pOwogIGNvbnN0IFtlcnJvcnMsIHNldEVycm9yc10gPSB1c2VTdGF0ZSh7fSk7CiAgY29uc3QgW3NhdmluZywgc2V0U2F2aW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbcGhvdG8sIHNldFBob3RvXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbcGhvdG9FcnJvciwgc2V0UGhvdG9FcnJvcl0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgcGhvdG9JbnB1dFJlZiA9IHVzZVJlZihudWxsKTsKCiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGlmIChvcGVuKSB7CiAgICAgIHNldEZvcm0oeyBuYW1lOiAnJywgZW1haWw6ICcnLCBwaG9uZTogJycsIGdlbmRlcjogJ21hbGUnLCBkb2I6ICcnLCBwYXNzd29yZDogJycgfSk7CiAgICAgIHNldEVycm9ycyh7fSk7CiAgICAgIHNldFNhdmluZyhmYWxzZSk7CiAgICAgIHNldFBob3RvKCcnKTsKICAgICAgc2V0UGhvdG9FcnJvcignJyk7CiAgICB9CiAgfSwgW29wZW5dKTsKCiAgY29uc3Qgc2V0ID0gKGssIHYpID0+IHsKICAgIHNldEZvcm0oZiA9PiAoeyAuLi5mLCBba106IHYgfSkpOwogICAgaWYgKGVycm9yc1trXSkgc2V0RXJyb3JzKGUgPT4gKHsgLi4uZSwgW2tdOiBudWxsIH0pKTsKICB9OwoKICBjb25zdCBvblBob3RvQ2hhbmdlID0gKGUpID0+IHsKICAgIGNvbnN0IGZpbGUgPSBlLnRhcmdldC5maWxlcyAmJiBlLnRhcmdldC5maWxlc1swXTsKICAgIGUudGFyZ2V0LnZhbHVlID0gJyc7CiAgICBpZiAoIWZpbGUpIHJldHVybjsKICAgIGlmICghZmlsZS50eXBlLnN0YXJ0c1dpdGgoJ2ltYWdlLycpKSB7CiAgICAgIHNldFBob3RvRXJyb3IoJ1BsZWFzZSBjaG9vc2UgYW4gaW1hZ2UgZmlsZSAoSlBHIG9yIFBORykuJyk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmIChmaWxlLnNpemUgPiAxMDI0ICogMTAyNCkgewogICAgICBzZXRQaG90b0Vycm9yKCdJbWFnZSBpcyB0b28gbGFyZ2UuIFBsZWFzZSBjaG9vc2Ugb25lIHVuZGVyIDEgTUIuJyk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIHNldFBob3RvRXJyb3IoJycpOwogICAgY29uc3QgcmVhZGVyID0gbmV3IEZpbGVSZWFkZXIoKTsKICAgIHJlYWRlci5vbmxvYWQgPSAoKSA9PiBzZXRQaG90byhyZWFkZXIucmVzdWx0KTsKICAgIHJlYWRlci5yZWFkQXNEYXRhVVJMKGZpbGUpOwogIH07CgogIGNvbnN0IHN1Ym1pdCA9IGFzeW5jICgpID0+IHsKICAgIGNvbnN0IGUgPSB7fTsKICAgIGlmICghZm9ybS5uYW1lLnRyaW0oKSkgZS5uYW1lID0gJ05hbWUgaXMgcmVxdWlyZWQnOwogICAgaWYgKCFmb3JtLmVtYWlsLnRyaW0oKSkgZS5lbWFpbCA9ICdFbWFpbCBpcyByZXF1aXJlZCc7CiAgICBlbHNlIGlmICghL15bXlxzQF0rQFteXHNAXStcLlteXHNAXSskLy50ZXN0KGZvcm0uZW1haWwpKSBlLmVtYWlsID0gJ0VudGVyIGEgdmFsaWQgZW1haWwnOwogICAgaWYgKCFmb3JtLnBhc3N3b3JkKSBlLnBhc3N3b3JkID0gJ1Bhc3N3b3JkIGlzIHJlcXVpcmVkJzsKICAgIGVsc2UgaWYgKGZvcm0ucGFzc3dvcmQubGVuZ3RoIDwgOCkgZS5wYXNzd29yZCA9ICdNaW4uIDggY2hhcmFjdGVycyc7CiAgICBzZXRFcnJvcnMoZSk7CiAgICBpZiAoT2JqZWN0LmtleXMoZSkubGVuZ3RoKSB7IGZvY3VzRmlyc3RFcnJvcigpOyByZXR1cm47IH0KCiAgICBzZXRTYXZpbmcodHJ1ZSk7CiAgICB0cnkgewogICAgICBhd2FpdCBjcmVhdGVBZG1pblBhdGllbnQoewogICAgICAgIGZ1bGxfbmFtZTogZm9ybS5uYW1lLnRyaW0oKSwKICAgICAgICBlbWFpbDogZm9ybS5lbWFpbC50cmltKCksCiAgICAgICAgcGFzc3dvcmQ6IGZvcm0ucGFzc3dvcmQsCiAgICAgICAgcGhvbmU6IGZvcm0ucGhvbmUudHJpbSgpIHx8IHVuZGVmaW5lZCwKICAgICAgICBnZW5kZXI6IGZvcm0uZ2VuZGVyIHx8IHVuZGVmaW5lZCwKICAgICAgICBkYXRlX29mX2JpcnRoOiBmb3JtLmRvYiB8fCB1bmRlZmluZWQsCiAgICAgIH0pOwogICAgICBzdG9yZS5wdXNoVG9hc3QoeyBraW5kOiAnc3VjY2VzcycsIHRpdGxlOiAnUGF0aWVudCBhZGRlZCcsIG1lc3NhZ2U6IGAke2Zvcm0ubmFtZS50cmltKCl9IGhhcyBiZWVuIGFkZGVkIHRvIHRoZSByZWdpc3RyeS5gIH0pOwogICAgICBvbkNsb3NlKCk7CiAgICAgIG9uU2F2ZWQgJiYgb25TYXZlZCgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIGNvbnN0IG1zZyA9IGVyciBpbnN0YW5jZW9mIEFwaUVycm9yID8gZXJyLm1lc3NhZ2UgOiAnQ291bGQgbm90IGFkZCBwYXRpZW50Lic7CiAgICAgIHNldEVycm9ycyh7IGZvcm06IG1zZyB9KTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldFNhdmluZyhmYWxzZSk7CiAgICB9CiAgfTsKCiAgcmV0dXJuICgKICAgIDxNb2RhbAogICAgICBvcGVuPXtvcGVufQogICAgICBvbkNsb3NlPXtvbkNsb3NlfQogICAgICB0aXRsZT0iQWRkIG5ldyBwYXRpZW50IgogICAgICBzdWJ0aXRsZT0iRW50ZXIgdGhlIG5ldyBwYXRpZW50J3MgZGV0YWlscyB0byBjcmVhdGUgYSByZWNvcmQuIgogICAgICBzaXplPSJtZCIKICAgICAgZm9vdGVyPXs8PgogICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSIgb25DbGljaz17b25DbG9zZX0gZGlzYWJsZWQ9e3NhdmluZ30+Q2FuY2VsPC9idXR0b24+CiAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tcHJpbWFyeSIgb25DbGljaz17c3VibWl0fSBkaXNhYmxlZD17c2F2aW5nfT57c2F2aW5nID8gJ1NhdmluZ+KApicgOiAnQWRkIHBhdGllbnQnfTwvYnV0dG9uPgogICAgICA8Lz59CiAgICA+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJzdGFjayBtZCI+CiAgICAgICAge2Vycm9ycy5mb3JtICYmIDxkaXYgY2xhc3NOYW1lPSJmb3JtLWVycm9yIj48SWNvbiBuYW1lPSJhbGVydC1jaXJjbGUiIHNpemU9ezE0fSAvPiB7ZXJyb3JzLmZvcm19PC9kaXY+fQogICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2ZsZXgnLCBhbGlnbkl0ZW1zOiAnY2VudGVyJywgZ2FwOiAxNCB9fT4KICAgICAgICAgIHtwaG90bwogICAgICAgICAgICA/IDxpbWcgc3JjPXtwaG90b30gYWx0PSJQYXRpZW50IiBzdHlsZT17eyB3aWR0aDogNjQsIGhlaWdodDogNjQsIGJvcmRlclJhZGl1czogJzUwJScsIG9iamVjdEZpdDogJ2NvdmVyJywgYm9yZGVyOiAnMXB4IHNvbGlkIHZhcigtLWJvcmRlciknIH19IC8+CiAgICAgICAgICAgIDogPFBhdGllbnRBdmF0YXIgcGVyc29uPXt7IG5hbWU6IGZvcm0ubmFtZSB9fSBzaXplPXs2NH0gLz59CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8aW5wdXQgcmVmPXtwaG90b0lucHV0UmVmfSB0eXBlPSJmaWxlIiBhY2NlcHQ9ImltYWdlLyoiIHN0eWxlPXt7IGRpc3BsYXk6ICdub25lJyB9fSBvbkNoYW5nZT17b25QaG90b0NoYW5nZX0gLz4KICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGdhcDogOCB9fT4KICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3NOYW1lPSJidG4gYnRuLXNlY29uZGFyeSBzbSIgb25DbGljaz17KCkgPT4gcGhvdG9JbnB1dFJlZi5jdXJyZW50ICYmIHBob3RvSW5wdXRSZWYuY3VycmVudC5jbGljaygpfT4KICAgICAgICAgICAgICAgIDxJY29uIG5hbWU9InVwbG9hZCIgc2l6ZT17MTR9IC8+IFVwbG9hZCBwaG90bwogICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgIHtwaG90byAmJiA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3NOYW1lPSJidG4gYnRuLWdob3N0IHNtIiBvbkNsaWNrPXsoKSA9PiBzZXRQaG90bygnJyl9PlJlbW92ZTwvYnV0dG9uPn0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0LW11dGVkIiBzdHlsZT17eyBmb250U2l6ZTogMTEuNSwgbWFyZ2luVG9wOiA2IH19PgogICAgICAgICAgICAgIE9wdGlvbmFsLiBEZWZhdWx0cyB0byBhIHBvcnRyYWl0IHBob3RvLiBKUEcvUE5HIHVwIHRvIDEgTUIuCiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICB7cGhvdG9FcnJvciAmJiA8ZGl2IHN0eWxlPXt7IGZvbnRTaXplOiAxMiwgY29sb3I6ICd2YXIoLS1lcnJvciknLCBtYXJnaW5Ub3A6IDQgfX0+e3Bob3RvRXJyb3J9PC9kaXY+fQogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPEZpZWxkIGxhYmVsPSJGdWxsIG5hbWUiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMubmFtZX0+CiAgICAgICAgICA8VGV4dElucHV0IHZhbHVlPXtmb3JtLm5hbWV9IG9uQ2hhbmdlPXtlID0+IHNldCgnbmFtZScsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5uYW1lfSBwbGFjZWhvbGRlcj0iZS5nLiwgSnVhbiBkZWxhIENydXoiIC8+CiAgICAgICAgPC9GaWVsZD4KICAgICAgICA8RmllbGQgbGFiZWw9IkVtYWlsIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLmVtYWlsfSBoZWxwPSJVc2VkIGZvciB0aGUgcGF0aWVudCdzIHBvcnRhbCBsb2dpbiI+CiAgICAgICAgICA8VGV4dElucHV0IHR5cGU9ImVtYWlsIiBpY29uPSJtYWlsIiB2YWx1ZT17Zm9ybS5lbWFpbH0gb25DaGFuZ2U9e2UgPT4gc2V0KCdlbWFpbCcsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5lbWFpbH0gcGxhY2Vob2xkZXI9InBhdGllbnRAZXhhbXBsZS5jb20iIC8+CiAgICAgICAgPC9GaWVsZD4KICAgICAgICA8RmllbGQgbGFiZWw9IlBhc3N3b3JkIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLnBhc3N3b3JkfSBoZWxwPSJJbml0aWFsIHBhc3N3b3JkIOKAlCB0aGUgcGF0aWVudCBjYW4gY2hhbmdlIGl0IGxhdGVyIj4KICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0icGFzc3dvcmQiIHZhbHVlPXtmb3JtLnBhc3N3b3JkfSBvbkNoYW5nZT17ZSA9PiBzZXQoJ3Bhc3N3b3JkJywgZS50YXJnZXQudmFsdWUpfSBlcnJvcj17ZXJyb3JzLnBhc3N3b3JkfSBwbGFjZWhvbGRlcj0iTWluLiA4IGNoYXJhY3RlcnMiIC8+CiAgICAgICAgPC9GaWVsZD4KICAgICAgICA8RmllbGQgbGFiZWw9IlBob25lIiBlcnJvcj17ZXJyb3JzLnBob25lfT4KICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0idGVsIiBpY29uPSJwaG9uZSIgdmFsdWU9e2Zvcm0ucGhvbmV9IG9uQ2hhbmdlPXtlID0+IHNldCgncGhvbmUnLCBlLnRhcmdldC52YWx1ZSl9IGVycm9yPXtlcnJvcnMucGhvbmV9IHBsYWNlaG9sZGVyPSIrNjMgOTE3IDAwMCAwMDAwIiAvPgogICAgICAgIDwvRmllbGQ+CiAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAxMiB9fT4KICAgICAgICAgIDxGaWVsZCBsYWJlbD0iR2VuZGVyIj4KICAgICAgICAgICAgPFNlbGVjdElucHV0IHZhbHVlPXtmb3JtLmdlbmRlcn0gb25DaGFuZ2U9e2UgPT4gc2V0KCdnZW5kZXInLCBlLnRhcmdldC52YWx1ZSl9PgogICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9Im1hbGUiPk1hbGU8L29wdGlvbj4KICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSJmZW1hbGUiPkZlbWFsZTwvb3B0aW9uPgogICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9Im90aGVyIj5PdGhlcjwvb3B0aW9uPgogICAgICAgICAgICA8L1NlbGVjdElucHV0PgogICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgIDxGaWVsZCBsYWJlbD0iRGF0ZSBvZiBiaXJ0aCI+CiAgICAgICAgICAgIDxUZXh0SW5wdXQgdHlwZT0iZGF0ZSIgdmFsdWU9e2Zvcm0uZG9ifSBvbkNoYW5nZT17ZSA9PiBzZXQoJ2RvYicsIGUudGFyZ2V0LnZhbHVlKX0gLz4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9Nb2RhbD4KICApOwp9CgpleHBvcnQgeyBQYXRpZW50Rm9ybU1vZGFsIH07Cg==
+// PatientFormModal — add patient (restored prototype UI, real API).
+// Props: open, onClose, onSaved(). Add-only; personal info is owned by the
+// patient via their Profile page.
+import { useEffect, useRef, useState } from 'react';
+import { Field, Icon, Modal, PatientAvatar, SelectInput, TextInput, useStore } from '../shared/components.jsx';
+import { createAdminPatient, ApiError } from '../shared/api.js';
+import { focusFirstError } from './helpers.js';
+
+function PatientFormModal({ open, onClose, onSaved }) {
+  const store = useStore();
+  const [form, setForm] = useState({ name: '', email: '', phone: '', gender: 'male', dob: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [photo, setPhoto] = useState('');
+  const [photoError, setPhotoError] = useState('');
+  const photoInputRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      setForm({ name: '', email: '', phone: '', gender: 'male', dob: '', password: '' });
+      setErrors({});
+      setSaving(false);
+      setPhoto('');
+      setPhotoError('');
+    }
+  }, [open]);
+
+  const set = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }));
+    if (errors[k]) setErrors(e => ({ ...e, [k]: null }));
+  };
+
+  const onPhotoChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please choose an image file (JPG or PNG).');
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      setPhotoError('Image is too large. Please choose one under 1 MB.');
+      return;
+    }
+    setPhotoError('');
+    const reader = new FileReader();
+    reader.onload = () => setPhoto(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const submit = async () => {
+    const e = {};
+    if (!form.name.trim()) e.name = 'Name is required';
+    if (!form.email.trim()) e.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email';
+    if (!form.password) e.password = 'Password is required';
+    else if (form.password.length < 8) e.password = 'Min. 8 characters';
+    setErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      await createAdminPatient({
+        full_name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+        phone: form.phone.trim() || undefined,
+        gender: form.gender || undefined,
+        date_of_birth: form.dob || undefined,
+      });
+      store.pushToast({ kind: 'success', title: 'Patient added', message: `${form.name.trim()} has been added to the registry.` });
+      onClose();
+      onSaved && onSaved();
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Could not add patient.';
+      setErrors({ form: msg });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Add new patient"
+      subtitle="Enter the new patient's details to create a record."
+      size="md"
+      footer={<>
+        <button className="btn btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
+        <button className="btn btn-primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : 'Add patient'}</button>
+      </>}
+    >
+      <div className="stack md">
+        {errors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {errors.form}</div>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {photo
+            ? <img src={photo} alt="Patient" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
+            : <PatientAvatar person={{ name: form.name }} size={64} />}
+          <div>
+            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
+                <Icon name="upload" size={14} /> Upload photo
+              </button>
+              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
+            </div>
+            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
+              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
+            </div>
+            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
+          </div>
+        </div>
+        <Field label="Full name" required error={errors.name}>
+          <TextInput value={form.name} onChange={e => set('name', e.target.value)} error={errors.name} placeholder="e.g., Juan dela Cruz" />
+        </Field>
+        <Field label="Email" required error={errors.email} help="Used for the patient's portal login">
+          <TextInput type="email" icon="mail" value={form.email} onChange={e => set('email', e.target.value)} error={errors.email} placeholder="patient@example.com" />
+        </Field>
+        <Field label="Password" required error={errors.password} help="Initial password — the patient can change it later">
+          <TextInput type="password" value={form.password} onChange={e => set('password', e.target.value)} error={errors.password} placeholder="Min. 8 characters" />
+        </Field>
+        <Field label="Phone" error={errors.phone}>
+          <TextInput type="tel" icon="phone" value={form.phone} onChange={e => set('phone', e.target.value)} error={errors.phone} placeholder="+63 917 000 0000" />
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <Field label="Gender">
+            <SelectInput value={form.gender} onChange={e => set('gender', e.target.value)}>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </SelectInput>
+          </Field>
+          <Field label="Date of birth">
+            <TextInput type="date" value={form.dob} onChange={e => set('dob', e.target.value)} />
+          </Field>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+export { PatientFormModal };
