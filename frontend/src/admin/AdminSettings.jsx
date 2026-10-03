@@ -1,6 +1,6 @@
 // AdminSettings — clinic info + app settings (Phase 6).
 // Two independent forms:
-//   clinic_info: { clinic_name, phone, email, address, hours }
+//   clinic_info: { name, phone, email, address, hours } (backend field names)
 //   app_settings: { auto_confirm_appointments (toggle),
 //                   slot_interval_minutes (select), ... }
 import { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ function AdminSettings() {
   const store = useStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [clinic, setClinic] = useState({ clinic_name: '', phone: '', email: '', address: '', hours: '' });
+  const [clinic, setClinic] = useState({ name: '', phone: '', email: '', address: '', hours: '' });
   const [appCfg, setAppCfg] = useState({ auto_confirm_appointments: false, slot_interval_minutes: 30 });
   const [savingClinic, setSavingClinic] = useState(false);
   const [savingApp, setSavingApp] = useState(false);
@@ -27,11 +27,11 @@ function AdminSettings() {
     try {
       const [c, a] = await Promise.all([getClinicInfo(), getAppSettings()]);
       setClinic({
-        clinic_name: c.clinic_name || '',
+        name: c.name || '',
         phone: c.phone || '',
         email: c.email || '',
         address: c.address || '',
-        hours: c.hours || '',
+        hours: typeof c.hours === 'string' ? c.hours : '',
       });
       setAppCfg({
         auto_confirm_appointments: Boolean(a.auto_confirm_appointments),
@@ -49,13 +49,12 @@ function AdminSettings() {
   const saveClinic = async () => {
     setSavingClinic(true);
     try {
-      const saved = await updateClinicInfo({
-        clinic_name: clinic.clinic_name.trim(),
-        phone: clinic.phone.trim() || null,
-        email: clinic.email.trim() || null,
-        address: clinic.address.trim() || null,
-        hours: clinic.hours.trim() || null,
-      });
+      const body = { name: clinic.name.trim() };
+      if (clinic.phone.trim()) body.phone = clinic.phone.trim();
+      if (clinic.email.trim()) body.email = clinic.email.trim();
+      if (clinic.address.trim()) body.address = clinic.address.trim();
+      if (clinic.hours.trim()) body.hours = clinic.hours.trim();
+      const saved = await updateClinicInfo(body);
       store.pushToast({ kind: 'success', title: 'Clinic info saved', message: 'Public pages will show the updated details.' });
       setClinic((prev) => ({ ...prev, ...saved }));
     } catch (err) {
@@ -102,8 +101,8 @@ function AdminSettings() {
                 <div className="form-grid">
                   <Field label="Clinic name">
                     <TextInput
-                      value={clinic.clinic_name}
-                      onChange={(e) => setClinic((c) => ({ ...c, clinic_name: e.target.value }))}
+                      value={clinic.name}
+                      onChange={(e) => setClinic((c) => ({ ...c, name: e.target.value }))}
                       maxLength={160}
                     />
                   </Field>

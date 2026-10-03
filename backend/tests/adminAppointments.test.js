@@ -97,7 +97,7 @@ describe('admin integration — Phase 6 appointments CRUD', { skip: !H }, () => 
     if (spec.error) throw new Error('kailangan ng specialty row');
     const doc = await H.supabase
       .from('doctors')
-      .insert({ full_name: 'Dr. Admin Appt Test', specialty_id: spec.data.id, status: 'available', consultation_fee: 500 })
+      .insert({ full_name: 'Dr. Admin Appt Test', specialty_id: spec.data.id, status: 'available', consultation_fee: 500, room: '101', gender: 'male' })
       .select('id')
       .single();
     if (doc.error) throw new Error(`create doctor: ${doc.error.message}`);

@@ -17,14 +17,15 @@ const atLeastOneField = (d) => Object.keys(d).length > 0;
 
 export const clinicUpdateSchema = z
   .object({
-    name: z.string().trim().min(1, 'Clinic name is required').max(160),
-    short_name: z.string().trim().min(1).max(60),
-    tagline: z.string().trim().max(240),
-    phone: z.string().trim().max(40),
-    email: emailSchema,
-    address: z.string().trim().max(500),
-    // hours: JSONB per-day hours (hal. { "monday": "08:00–17:00", ... }).
-    hours: z.record(z.string(), z.any()),
+    name: z.string().trim().min(1, 'Clinic name is required').max(160).optional(),
+    short_name: z.string().trim().min(1).max(60).optional(),
+    tagline: z.string().trim().max(240).optional(),
+    phone: z.string().trim().max(40).optional(),
+    email: emailSchema.optional(),
+    address: z.string().trim().max(500).optional(),
+    // hours: JSONB per-day hours (hal. { "monday": "08:00–17:00", ... }),
+    // o plain string mula sa admin form.
+    hours: z.union([z.record(z.string(), z.any()), z.string().trim().max(500)]).optional(),
   })
   .strict()
   .refine(atLeastOneField, { message: 'No fields to update' });
@@ -36,8 +37,9 @@ export const appUpdateSchema = z
       .int()
       .refine((v) => [15, 30, 60].includes(v), {
         message: 'slot_interval_minutes must be 15, 30, or 60',
-      }),
-    auto_confirm_appointments: z.boolean(),
+      })
+      .optional(),
+    auto_confirm_appointments: z.boolean().optional(),
   })
   .strict()
   .refine(atLeastOneField, { message: 'No fields to update' });
