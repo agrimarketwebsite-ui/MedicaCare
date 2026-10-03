@@ -1,5 +1,9 @@
 // Shared helpers — admin console.
-import { downloadFile, formatDate, formatDayRange, statusMeta } from '../shared/data.js';
+import {
+  downloadFile, formatDate, formatDateLong, formatDayRange, statusMeta,
+  // Shared hardened escapeHTML (escapes quotes too) — see docs/FRONTEND_SECURITY_AUDIT.md MEDIUM-002
+  escapeHTML as esc,
+} from '../shared/data.js';
 
 // CSV export helpers (downloadFile is the shared helper from data.js)
 // ============================================================
@@ -37,29 +41,40 @@ function focusFirstError() {
 // Printable daily schedule for one doctor (staff print the day's patient
 // list for doctors who are not at a workstation). The HTML is rendered into
 // a hidden print iframe — the browser's print dialog then offers
-// "Save as PDF" as the destination.
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
+// "Save as PDF" as the destination (see printDoctorSchedule below).
 function buildDoctorScheduleHTML(doctor, appts, dateStr) {
   const count = (s) => appts.filter(a => a.status === s).length;
   const rows = appts.length ? appts.map((a, i) => {
-    const pName = a.patient?.full_name || a.booked_for || 'Unknown patient';
-    const pEmail = a.patient?.email || '—';
+    const p = a.patient || null;
+    const subParts = [];
+    if (p && p.age != null && p.age !== '') subParts.push(`${p.age} yrs old`);
+    if (p && p.gender) {
+      const g = String(p.gender).trim().toLowerCase();
+      if (g.startsWith('f')) subParts.push('Female');
+      else if (g.startsWith('m')) subParts.push('Male');
+      else subParts.push(p.gender);
+    }
+    const sub = subParts.length ? subParts.join(' · ') : (p && p.email ? p.email : '—');
+    const pName = (p && p.full_name) || 'Unknown patient';
+    const pPhone = (p && p.phone) || '—';
+    const time = (a.start_time || a.time || '').slice(0, 5);
     return `<tr>
       <td class="c-num">${i + 1}</td>
-      <td class="c-time"><strong>${esc((a.start_time || '').slice(0, 5))}</strong></td>
-      <td class="c-patient"><strong>${esc(pName)}</strong><span class="sub">${esc(pEmail)}</span></td>
-      <td>${esc(a.reason || '—')}</td>
+      <td class="c-time"><strong>${esc(time)}</strong></td>
+      <td class="c-patient"><strong>${esc(pName)}</strong><span class="sub">${esc(sub)}</span></td>
+      <td>${esc(pPhone)}</td>
+      <td>${esc(a.reason)}</td>
       <td>${esc((statusMeta(a.status) || {}).label || a.status)}</td>
     </tr>`;
-  }).join('') : '<tr class="empty"><td colspan="5">No appointments scheduled for this day.</td></tr>';
+  }).join('') : '<tr class="empty"><td colspan="6">No appointments scheduled for this day.</td></tr>';
   const stamp = `${formatDate(localToday())} at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
   const docName = doctor.full_name || 'Doctor';
   const specialty = doctor.specialties?.name || doctor.specialty_name || '';
+  const room = doctor.room || '';
+  const fee = doctor.consultation_fee != null ? Number(doctor.consultation_fee).toLocaleString() : '';
+  const days = Array.isArray(doctor.avail) ? doctor.avail : (Array.isArray(doctor.availability) ? doctor.availability : []);
+  const clinicDays = days.length ? ` · Clinic days: ${esc(formatDayRange(days))}` : '';
+  const leaveChip = doctor.status === 'on-leave' ? ' <small>(On leave)</small>' : '';
   return `<!doctype html>
 <html>
 <head><meta charset="utf-8"><title>Dr. ${esc(docName.replace(/^Dr\.\s*/, ''))} — schedule ${esc(formatDate(dateStr))}</title>
@@ -69,10 +84,12 @@ function buildDoctorScheduleHTML(doctor, appts, dateStr) {
   body { font-family: 'Segoe UI', Arial, Helvetica, sans-serif; color: #000000; background: #ffffff; font-size: 12px; margin: 0; }
   .letterhead { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000000; padding-bottom: 10px; }
   .brand { margin: 0 0 3px; font-size: 21px; font-weight: 700; letter-spacing: .3px; }
+  .addr { margin: 0; color: #000000; font-size: 10.5px; line-height: 1.5; }
   .doc-label { margin: 0 0 4px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
   .doc-time { margin: 0; text-align: right; color: #000000; font-size: 10px; }
   .doctor-block { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 2px; }
   .doc-name { margin: 0; font-size: 16px; font-weight: 700; }
+  .doc-name small { font-size: 11px; font-weight: 400; }
   .doc-sub { margin: 3px 0 0; color: #000000; font-size: 11px; }
   .date-line { margin: 0 0 14px; font-size: 12.5px; font-weight: 600; }
   .summary { display: flex; gap: 8px; margin: 0 0 14px; }
@@ -87,36 +104,58 @@ function buildDoctorScheduleHTML(doctor, appts, dateStr) {
   .c-num { width: 22px; }
   .c-time { white-space: nowrap; width: 72px; }
   .c-patient .sub { display: block; font-size: 10px; margin-top: 1px; }
-  .empty td { text-align: center; padding: 24px; color: #666; }
+  .empty td { text-align: center; padding: 28px; font-style: italic; }
+  .signs { display: flex; justify-content: space-between; margin-top: 46px; page-break-inside: avoid; }
+  .sign { width: 44%; text-align: center; }
+  .sign .line { height: 24px; border-bottom: 1px solid #000000; }
+  .sign .who { margin-top: 4px; font-size: 10px; }
+  .foot { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000000; font-size: 10px; }
 </style>
 </head>
 <body>
   <div class="letterhead">
     <div>
       <p class="brand">MedicaCare</p>
+      <p class="addr">221 Rizal Avenue, Quezon City, Metro Manila<br>+63 (2) 8567 4400 · care@medicacare.ph</p>
     </div>
     <div>
       <p class="doc-label">Daily Schedule</p>
-      <p class="doc-time">${esc(stamp)}</p>
+      <p class="doc-time">Printed ${esc(stamp)}</p>
     </div>
   </div>
   <div class="doctor-block">
     <div>
-      <p class="doc-name">${esc(docName)}</p>
-      <p class="doc-sub">${esc(specialty)}${doctor.room ? ` · ${esc(doctor.room)}` : ''}</p>
+      <h3 class="doc-name">${esc(docName)}${leaveChip}</h3>
+      <p class="doc-sub">${esc(specialty)} · ${esc(room)} · Consultation fee: ₱${esc(fee)}${clinicDays}</p>
     </div>
   </div>
-  <p class="date-line">${esc(formatDate(dateStr))}</p>
+  <p class="date-line">${esc(formatDateLong(dateStr))}</p>
   <div class="summary">
     <div class="stat"><span class="n">${appts.length}</span><span class="l">Total</span></div>
     <div class="stat"><span class="n">${count('confirmed')}</span><span class="l">Confirmed</span></div>
-    <div class="stat"><span class="n">${count('pending')}</span><span class="l">Pending</span></div>
     <div class="stat"><span class="n">${count('completed')}</span><span class="l">Completed</span></div>
+    <div class="stat"><span class="n">${count('pending')}</span><span class="l">Pending</span></div>
   </div>
   <table>
-    <thead><tr><th>#</th><th>Time</th><th>Patient</th><th>Reason</th><th>Status</th></tr></thead>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Time</th>
+        <th>Patient</th>
+        <th>Contact no.</th>
+        <th>Reason for visit</th>
+        <th>Status</th>
+      </tr>
+    </thead>
     <tbody>${rows}</tbody>
   </table>
+  <div class="signs">
+    <div class="sign"><div class="line"></div><div class="who">Prepared by (MedicaCare staff)</div></div>
+    <div class="sign"><div class="line"></div><div class="who">${esc(docName)} — signature over printed name</div></div>
+  </div>
+  <p class="foot">
+    Generated by the MedicaCare staff console for the doctor's reference · ${esc(stamp)} · Prototype: fictional demo data — not a medical document.
+  </p>
 </body>
 </html>`;
 }

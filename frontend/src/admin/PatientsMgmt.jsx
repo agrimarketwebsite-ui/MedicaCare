@@ -81,10 +81,10 @@ function PatientsMgmt() {
     try {
       await deleteAdminPatient(confirmDel.id);
       setConfirmDel(null);
-      store.pushToast({ kind: 'success', title: 'Patient removed', message: `${confirmDel.full_name}'s record has been deleted.` });
+      store.pushToast({ kind: 'success', title: 'Patient removed', msg: `${confirmDel.full_name}'s record has been deleted.` });
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Delete failed', message: err.message || 'Could not delete patient.' });
+      store.pushToast({ kind: 'error', title: 'Delete failed', msg: err.message || 'Could not delete patient.' });
     } finally {
       setDelLoading(false);
     }
@@ -92,13 +92,14 @@ function PatientsMgmt() {
 
   const doExport = () => {
     downloadCSV('medicacare-patients.csv', [
-      ['ID', 'Name', 'Email', 'Phone', 'Gender', 'Age', 'Joined'],
+      ['ID', 'Name', 'Email', 'Phone', 'Gender', 'Age', 'Joined', 'Last visit'],
       ...filtered.map(p => [
         p.id, p.full_name, p.email || '', p.phone || '',
         genderLabel(p.gender), ageOf(p) ?? '', (p.created_at || '').slice(0, 10),
+        (p.last_visit_date || '').slice(0, 10),
       ]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', message: `${filtered.length} patient(s) exported to CSV.` });
+    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${filtered.length} patient(s) exported to CSV.` });
   };
 
   return (
@@ -152,6 +153,7 @@ function PatientsMgmt() {
                     <th>Contact</th>
                     <th>Gender / Age</th>
                     <th>Joined</th>
+                    <th>Last visit</th>
                     <th className="col-actions">Actions</th>
                   </tr>
                 </thead>
@@ -174,11 +176,12 @@ function PatientsMgmt() {
                         </td>
                         <td data-label="Gender / Age"><span className="skel" style={{ width: 60, height: 12 }} /></td>
                         <td data-label="Joined"><span className="skel" style={{ width: 72, height: 12 }} /></td>
+                        <td data-label="Last visit"><span className="skel" style={{ width: 72, height: 12 }} /></td>
                         <td className="col-actions"><span className="skel" style={{ width: 24, height: 24 }} /></td>
                       </tr>
                     ))
                   ) : filtered.length === 0 ? (
-                    <tr><td colSpan={5} className="empty-cell" style={{ padding: 0 }}>
+                    <tr><td colSpan={6} className="empty-cell" style={{ padding: 0 }}>
                       <EmptyState icon="user-x" title={query ? `No patients found for "${query}"` : 'No patients found'}
                         message="Try a different name, or add a new patient record."
                         actions={<>
@@ -205,6 +208,7 @@ function PatientsMgmt() {
                         </td>
                         <td data-label="Gender / Age">{genderLabel(p.gender)}{age != null ? `, ${age}` : ''}</td>
                         <td data-label="Joined">{p.created_at ? formatDate(String(p.created_at).slice(0, 10)) : '—'}</td>
+                        <td data-label="Last visit">{p.last_visit_date ? formatDate(String(p.last_visit_date).slice(0, 10)) : <span className="t-muted">—</span>}</td>
                         <td className="col-actions">
                           {/* No edit action: personal info is owned by the patient —
                               they manage it on their Profile page */}

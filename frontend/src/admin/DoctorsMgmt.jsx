@@ -3,7 +3,7 @@
 // sub-view + specialty filter + Export CSV.
 import { useEffect, useState } from 'react';
 import {
-  AppShell, Badge, ConfirmModal, DoctorAvatar, DoctorStatusBadge, EmptyState,
+  AppShell, Badge, ConfirmModal, DoctorAvatar, DoctorRatingPill, DoctorStatusBadge, EmptyState,
   ErrorState, Icon, PageHeader, Pagination, SelectInput, SkeletonRows, useStore,
 } from '../shared/components.jsx';
 import { formatDayRange } from '../shared/data.js';
@@ -16,11 +16,14 @@ import { DoctorFormModal } from './DoctorFormModal.jsx';
 import { getAdminAppointments } from '../shared/api.js';
 
 const PAGE_SIZE = 15;
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// Real API convention: weekday 1–7 ISO (1 = Monday … 7 = Sunday),
+// matching the doctor portal's availability editor.
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-function fmtDay(d) {
-  const n = Number(d);
-  return Number.isInteger(n) && n >= 0 && n <= 6 ? DAYS[n] : String(d ?? '—');
+function fmtWeekday(w) {
+  const n = Number(w);
+  return Number.isInteger(n) && n >= 1 && n <= 7 ? DAY_NAMES[n - 1] : '—';
 }
 
 // ---------- Availability sub-view (kept from Phase 6) ----------
@@ -29,7 +32,7 @@ function AvailabilityPanel({ doctor, onClose }) {
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState([]);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ day_of_week: '1', start_time: '09:00', end_time: '17:00' });
+  const [form, setForm] = useState({ weekday: '1', start_time: '09:00', end_time: '17:00' });
   const [editingId, setEditingId] = useState(null);
   const [busy, setBusy] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -50,7 +53,7 @@ function AvailabilityPanel({ doctor, onClose }) {
   useEffect(() => { load(); }, [doctor.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetForm = () => {
-    setForm({ day_of_week: '1', start_time: '09:00', end_time: '17:00' });
+    setForm({ weekday: '1', start_time: '09:00', end_time: '17:00' });
     setEditingId(null);
   };
 
@@ -60,18 +63,18 @@ function AvailabilityPanel({ doctor, onClose }) {
     setError('');
     try {
       const body = {
-        day_of_week: Number(form.day_of_week),
+        weekday: Number(form.weekday),
         start_time: form.start_time,
         end_time: form.end_time,
       };
       if (editingId) {
         const { updateAdminDoctorAvailability } = await import('../shared/api.js');
         await updateAdminDoctorAvailability(doctor.id, editingId, body);
-        store.pushToast({ kind: 'success', title: 'Availability updated', message: 'The time slot was updated.' });
+        store.pushToast({ kind: 'success', title: 'Availability updated', msg: 'The time slot was updated.' });
       } else {
         const { createAdminDoctorAvailability } = await import('../shared/api.js');
         await createAdminDoctorAvailability(doctor.id, body);
-        store.pushToast({ kind: 'success', title: 'Availability added', message: 'The time slot was added.' });
+        store.pushToast({ kind: 'success', title: 'Availability added', msg: 'The time slot was added.' });
       }
       resetForm();
       load();
@@ -88,7 +91,7 @@ function AvailabilityPanel({ doctor, onClose }) {
     try {
       const { deleteAdminDoctorAvailability } = await import('../shared/api.js');
       await deleteAdminDoctorAvailability(doctor.id, deletingId);
-      store.pushToast({ kind: 'success', title: 'Slot removed', message: 'The availability slot was removed.' });
+      store.pushToast({ kind: 'success', title: 'Slot removed', msg: 'The availability slot was removed.' });
       setDeletingId(null);
       load();
     } catch (err) {
@@ -119,12 +122,12 @@ function AvailabilityPanel({ doctor, onClose }) {
             <tbody>
               {entries.map(e => (
                 <tr key={e.id}>
-                  <td>{fmtDay(e.day_of_week)}</td>
+                  <td>{fmtWeekday(e.weekday)}</td>
                   <td className="t-muted">{(e.start_time || '').slice(0, 5)}</td>
                   <td className="t-muted">{(e.end_time || '').slice(0, 5)}</td>
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <button className="btn btn-ghost sm" title="Edit slot" onClick={() => {
-                      setForm({ day_of_week: String(e.day_of_week), start_time: (e.start_time || '').slice(0, 5), end_time: (e.end_time || '').slice(0, 5) });
+                      setForm({ weekday: String(e.weekday), start_time: (e.start_time || '').slice(0, 5), end_time: (e.end_time || '').slice(0, 5) });
                       setEditingId(e.id);
                     }}><Icon name="pencil" size={14} /></button>
                     <button className="btn btn-ghost sm" title="Remove slot" onClick={() => setDeletingId(e.id)}><Icon name="trash-2" size={14} /></button>
@@ -136,8 +139,8 @@ function AvailabilityPanel({ doctor, onClose }) {
         )}
         <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginTop: 12, flexWrap: 'wrap' }}>
           <label style={{ fontSize: 12.5 }}>Day
-            <SelectInput value={form.day_of_week} onChange={e => setForm(f => ({ ...f, day_of_week: e.target.value }))} style={{ marginLeft: 6 }}>
-              {DAYS.map((d, i) => <option key={i} value={i}>{d}</option>)}
+            <SelectInput value={form.weekday} onChange={e => setForm(f => ({ ...f, weekday: e.target.value }))} style={{ marginLeft: 6 }}>
+              {DAY_NAMES.map((d, i) => <option key={i + 1} value={i + 1}>{d}</option>)}
             </SelectInput>
           </label>
           <label style={{ fontSize: 12.5 }}>Start
@@ -192,14 +195,17 @@ function DoctorsMgmt() {
       setDoctors(r.doctors);
       setTotal(r.total);
       setSpecialties(spec.map(s => s.specialty).filter(Boolean));
-      // Fetch availability day-ranges for the page (for the Availability column)
+      // Fetch availability day-ranges for the page (for the Availability column).
+      // Real API convention: entry.weekday is 1–7 ISO (1 = Monday).
       const availEntries = await Promise.all(
         r.doctors.map(d => getAdminDoctorAvailability(d.id).catch(() => []))
       );
       const map = {};
       r.doctors.forEach((d, i) => {
-        const days = [...new Set(availEntries[i].map(e => Number(e.day_of_week)))].sort();
-        map[d.id] = days;
+        const days = [...new Set(availEntries[i].map(e => Number(e.weekday)))]
+          .filter(w => Number.isInteger(w) && w >= 1 && w <= 7)
+          .sort((a, b) => a - b);
+        map[d.id] = days.map(w => DAY_SHORT[w - 1]);
       });
       setAvailMap(map);
     } catch (err) {
@@ -226,11 +232,11 @@ function DoctorsMgmt() {
     setDeleteBusy(true);
     try {
       await deleteAdminDoctor(deleting.id);
-      store.pushToast({ kind: 'success', title: 'Doctor removed', message: `${deleting.full_name}'s profile has been deleted.` });
+      store.pushToast({ kind: 'success', title: 'Doctor removed', msg: `${deleting.full_name}'s profile has been deleted.` });
       setDeleting(null);
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Delete failed', message: err.message || 'Could not delete doctor.' });
+      store.pushToast({ kind: 'error', title: 'Delete failed', msg: err.message || 'Could not delete doctor.' });
     } finally {
       setDeleteBusy(false);
     }
@@ -238,14 +244,15 @@ function DoctorsMgmt() {
 
   const doExport = () => {
     downloadCSV('medicacare-doctors.csv', [
-      ['ID', 'Name', 'Specialty', 'Status', 'Clinic days', 'Experience (yrs)', 'Consultation fee (₱)', 'Room'],
+      ['ID', 'Name', 'Specialty', 'Status', 'Clinic days', 'Experience (yrs)', 'Avg. rating', 'Ratings', 'Consultation fee (₱)', 'Room'],
       ...filtered.map(d => [
         d.id, d.full_name, d.specialties?.name || d.specialty_name || '',
         d.status, formatDayRange(availMap[d.id] || []),
-        d.years_of_experience ?? '', d.consultation_fee ?? '', d.room || '',
+        d.years_of_experience ?? '', '', '',
+        d.consultation_fee ?? '', d.room || '',
       ]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', message: `${filtered.length} doctor(s) exported to CSV.` });
+    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${filtered.length} doctor(s) exported to CSV.` });
   };
 
   const specialtyOf = (d) => d.specialties?.name || d.specialty_name || '—';
@@ -262,10 +269,10 @@ function DoctorsMgmt() {
       store.pushToast({
         kind: 'success',
         title: 'Print dialog opened',
-        message: `Choose "Save as PDF" as the destination to download today's ${list.length} appointment(s) as a PDF.`,
+        msg: `Choose "Save as PDF" as the destination to download today's ${list.length} appointment(s) as a PDF.`,
       });
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Print failed', message: err.message || 'Could not load today\'s schedule.' });
+      store.pushToast({ kind: 'error', title: 'Print failed', msg: err.message || 'Could not load today\'s schedule.' });
     }
   };
 
@@ -308,6 +315,7 @@ function DoctorsMgmt() {
                     <th>Status</th>
                     <th>Availability</th>
                     <th>Experience</th>
+                    <th>Rating</th>
                     <th>Fee</th>
                     <th className="col-actions">Actions</th>
                   </tr>
@@ -329,6 +337,7 @@ function DoctorsMgmt() {
                         <td data-label="Status"><span className="skel" style={{ width: 64, height: 18 }} /></td>
                         <td data-label="Availability" className="td-nowrap"><span className="skel" style={{ width: 96, height: 11 }} /></td>
                         <td data-label="Experience"><span className="skel" style={{ width: 40, height: 12 }} /></td>
+                        <td data-label="Rating"><span className="skel" style={{ width: 44, height: 12 }} /></td>
                         <td data-label="Fee"><span className="skel" style={{ width: 56, height: 12 }} /></td>
                         <td className="col-actions">
                           <div style={{ display: 'flex', gap: 6 }}>
@@ -340,7 +349,7 @@ function DoctorsMgmt() {
                       </tr>
                     ))
                   ) : filtered.length === 0 ? (
-                    <tr><td colSpan={7} className="empty-cell" style={{ padding: 0 }}>
+                    <tr><td colSpan={8} className="empty-cell" style={{ padding: 0 }}>
                       <EmptyState icon="stethoscope" title="No doctors found" message="Try clearing your search or add a new doctor."
                         actions={<button className="btn btn-primary" onClick={() => { setEditing(null); setFormOpen(true); }}><Icon name="plus" size={14} /> Add doctor</button>} />
                     </td></tr>
@@ -357,10 +366,13 @@ function DoctorsMgmt() {
                       </td>
                       <td data-label="Specialty">{specialtyOf(d)}</td>
                       <td data-label="Status"><DoctorStatusBadge status={d.status} /></td>
-                      <td data-label="Availability" className="td-nowrap" style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
+                      <td data-label="Availability" className="td-nowrap" style={{ fontSize: 12.5, color: 'var(--text-secondary)' }} title={(availMap[d.id] || []).length ? availMap[d.id].join(', ') : undefined}>
                         {formatDayRange(availMap[d.id] || [])}
                       </td>
                       <td data-label="Experience">{d.years_of_experience != null ? `${d.years_of_experience} yrs` : '—'}</td>
+                      <td data-label="Rating">
+                        <DoctorRatingPill avg={0} count={0} compact />
+                      </td>
                       <td data-label="Fee">{d.consultation_fee != null ? `₱${Number(d.consultation_fee).toLocaleString()}` : '—'}</td>
                       <td className="col-actions" style={{ whiteSpace: 'nowrap' }}>
                         <button className="btn btn-secondary sm" onClick={() => setAvailDoctor(d)} title="Manage availability">

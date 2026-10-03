@@ -1,9 +1,9 @@
 // DoctorFormModal — add/edit doctor + portal access (restored prototype UI,
 // real API). Props: open, onClose, initial? (doctor row — edit mode),
 // onSaved(savedDoctor).
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  DoctorAvatar, Field, Icon, Modal, SelectInput, TextInput, TextArea, useStore,
+  DoctorAvatar, Field, Icon, Modal, SelectInput, TextInput, useStore,
 } from '../shared/components.jsx';
 import {
   createAdminDoctor, updateAdminDoctor, grantDoctorAccess,
@@ -12,17 +12,14 @@ import {
 import { apiOptional } from '../shared/api.js';
 import { focusFirstError } from './helpers.js';
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 function DoctorFormModal({ open, onClose, initial, onSaved }) {
   const store = useStore();
   const isEdit = !!initial;
   const [form, setForm] = useState({
     name: '', specialty_id: '', status: 'available', room: '',
-    exp: '', fee: '', gender: '', bio: '',
+    exp: '', fee: '',
   });
   const [specialties, setSpecialties] = useState([]);
-  const [avail, setAvail] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   // Portal access
@@ -32,9 +29,6 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
   const [portalBusy, setPortalBusy] = useState(false);
   const [portalInfo, setPortalInfo] = useState(null);
   const [showRevoke, setShowRevoke] = useState(false);
-  const [photo, setPhoto] = useState('');
-  const [photoError, setPhotoError] = useState('');
-  const photoInputRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
@@ -49,49 +43,25 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
         room: initial.room || '',
         exp: initial.years_of_experience ?? '',
         fee: initial.consultation_fee ?? '',
-        gender: initial.gender || '',
-        bio: initial.bio || '',
       });
       setPortalInfo(initial.doctor_accounts?.email || initial.portal_email
         ? { email: initial.doctor_accounts?.email || initial.portal_email }
         : null);
     } else {
-      setForm({ name: '', specialty_id: '', status: 'available', room: '', exp: '', fee: '', gender: '', bio: '' });
+      setForm({ name: '', specialty_id: '', status: 'available', room: '', exp: '', fee: '' });
       setPortalInfo(null);
     }
-    setAvail(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
     setErrors({});
     setPortalEmail('');
     setPortalPw('');
     setPortalErrors({});
     setShowRevoke(false);
-    setPhoto(initial?.photo_url || '');
-    setPhotoError('');
   }, [open, initial]);
-
-  const onPhotoChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('Please choose an image file (JPG or PNG).');
-      return;
-    }
-    if (file.size > 1024 * 1024) {
-      setPhotoError('Image is too large. Please choose one under 1 MB.');
-      return;
-    }
-    setPhotoError('');
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result);
-    reader.readAsDataURL(file);
-  };
 
   const set = (k) => (e) => {
     setForm(f => ({ ...f, [k]: e.target.value }));
     if (errors[k]) setErrors(x => ({ ...x, [k]: null }));
   };
-  const toggleDay = (day) => setAvail(av => av.includes(day) ? av.filter(d => d !== day) : [...av, day]);
 
   const generatePw = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
@@ -110,8 +80,20 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
     if (!form.room.trim()) e.room = 'Room / clinic is required';
     if (form.exp === '' || form.exp == null) e.exp = 'Years of experience required';
     if (form.fee === '' || form.fee == null) e.fee = 'Consultation fee required';
+    // Portal access validation (Add mode only — Edit mode grants via its own
+    // button). Optional: blank fields mean "no account yet"; if either is
+    // filled, both become required.
+    const pe = {};
+    const wantsPortal = !isEdit && (portalEmail.trim() || portalPw);
+    if (wantsPortal) {
+      if (!portalEmail.trim()) pe.email = 'Portal email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(portalEmail.trim())) pe.email = 'Enter a valid email address';
+      if (!portalPw) pe.password = 'Password is required';
+      else if (portalPw.length < 8) pe.password = 'Use at least 8 characters';
+    }
     setErrors(e);
-    if (Object.keys(e).length) { focusFirstError(); return; }
+    setPortalErrors(pe);
+    if (Object.keys(e).length || Object.keys(pe).length) { focusFirstError(); return; }
 
     setSaving(true);
     try {
@@ -122,10 +104,6 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
         room: form.room.trim(),
         years_of_experience: Number(form.exp),
         consultation_fee: Number(form.fee),
-        gender: form.gender || null,
-        bio: form.bio.trim() || null,
-        // photo_url only accepts URLs (max 500 chars); base64 uploads stay local-only
-        ...(photo && !photo.startsWith('data:') ? { photo_url: photo } : {}),
       };
       const saved = isEdit
         ? await updateAdminDoctor(initial.id, body)
@@ -133,8 +111,29 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
       store.pushToast({
         kind: 'success',
         title: isEdit ? 'Doctor updated' : 'Doctor added',
-        message: `${saved.full_name} has been ${isEdit ? 'updated' : 'added to the directory'}.`,
+        msg: `${saved.full_name} has been ${isEdit ? 'updated' : 'added to the directory'}.`,
       });
+      // Add mode: the doctor id only exists after creation — grant the portal
+      // account now so the email/password fields are functional.
+      if (wantsPortal) {
+        try {
+          await grantDoctorAccess(saved.id, {
+            email: portalEmail.trim().toLowerCase(),
+            password: portalPw,
+          });
+          store.pushToast({
+            kind: 'success',
+            title: 'Portal access granted',
+            msg: `${saved.full_name} can now sign in at the Doctor portal as ${portalEmail.trim().toLowerCase()}.`,
+          });
+        } catch (grantErr) {
+          store.pushToast({
+            kind: 'error',
+            title: 'Portal access not granted',
+            msg: grantErr instanceof ApiError ? grantErr.message : 'Could not grant portal access. You can grant it later from Edit.',
+          });
+        }
+      }
       onSaved && onSaved(saved);
       onClose();
     } catch (err) {
@@ -144,6 +143,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
     }
   };
 
+  // Edit mode only — grants portal access to an existing doctor.
   const doGrantPortal = async () => {
     const pe = {};
     if (!portalEmail.trim()) pe.email = 'Portal email is required';
@@ -155,19 +155,11 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
 
     setPortalBusy(true);
     try {
-      const targetId = isEdit ? initial.id : null;
-      // For add mode, we need the doctor ID first — save the doctor, then grant
-      let doctorId = targetId;
-      if (!doctorId) {
-        // Save doctor first (without closing), then grant portal
-        await doSave();
-        return; // doSave closes the modal; portal must be granted from Edit
-      }
-      await grantDoctorAccess(doctorId, { email: portalEmail.trim().toLowerCase(), password: portalPw });
+      await grantDoctorAccess(initial.id, { email: portalEmail.trim().toLowerCase(), password: portalPw });
       setPortalInfo({ email: portalEmail.trim().toLowerCase() });
       setPortalEmail('');
       setPortalPw('');
-      store.pushToast({ kind: 'success', title: 'Portal access granted', message: 'The doctor can now sign in at the Doctor portal.' });
+      store.pushToast({ kind: 'success', title: 'Portal access granted', msg: 'The doctor can now sign in at the Doctor portal.' });
     } catch (err) {
       setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not grant portal access.' });
     } finally {
@@ -180,7 +172,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
     try {
       const result = await resetDoctorPassword(initial.id);
       setPortalPw(result.password || '');
-      store.pushToast({ kind: 'success', title: 'Password reset', message: 'A new temporary password was generated — share it with the doctor.' });
+      store.pushToast({ kind: 'success', title: 'Password reset', msg: 'A new temporary password was generated — share it with the doctor.' });
     } catch (err) {
       setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not reset password.' });
     } finally {
@@ -194,7 +186,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
       await revokeDoctorAccess(initial.id);
       setPortalInfo(null);
       setShowRevoke(false);
-      store.pushToast({ kind: 'success', title: 'Portal access revoked', message: 'The doctor can no longer sign in at the Doctor portal.' });
+      store.pushToast({ kind: 'success', title: 'Portal access revoked', msg: 'The doctor can no longer sign in at the Doctor portal.' });
     } catch (err) {
       setPortalErrors({ form: err instanceof ApiError ? err.message : 'Could not revoke portal access.' });
     } finally {
@@ -215,21 +207,9 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
       <div className="stack md">
         {errors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {errors.form}</div>}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {photo
-            ? <img src={photo} alt="Doctor" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
-            : <DoctorAvatar doctor={{ name: form.name }} size={64} />}
-          <div>
-            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
-                <Icon name="upload" size={14} /> Upload photo
-              </button>
-              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
-            </div>
-            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
-              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
-            </div>
-            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
+          <DoctorAvatar doctor={{ name: form.name, photo: isEdit ? (initial.photo_url || '') : '' }} size={64} />
+          <div className="t-muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+            Profile photo defaults to a generated portrait.
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -258,27 +238,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
           <Field label="Consultation fee (₱)" required error={errors.fee}>
             <TextInput type="number" value={form.fee} onChange={set('fee')} error={errors.fee} placeholder="1500" />
           </Field>
-          <Field label="Gender">
-            <SelectInput value={form.gender} onChange={set('gender')}>
-              <option value="">—</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </SelectInput>
-          </Field>
-          <Field label="Bio">
-            <TextArea value={form.bio} onChange={set('bio')} rows={2} placeholder="Short professional bio…" />
-          </Field>
         </div>
-        <Field label="Weekly availability" help="Days the doctor is available for consultations">
-          <div className="chip-group">
-            {DAYS.map(day => (
-              <button key={day} type="button" className={'chip' + (avail.includes(day) ? ' on' : '')} onClick={() => toggleDay(day)}>
-                {day}
-              </button>
-            ))}
-          </div>
-        </Field>
 
         {/* Portal access — admin-issued credentials for the Doctor portal. */}
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>

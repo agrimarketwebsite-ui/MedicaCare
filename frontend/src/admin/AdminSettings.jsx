@@ -2,8 +2,8 @@
 // Prototype UI restored: "Clinic information" and "Appointment preferences"
 // cards with card-header/h-section headings and card-footer save buttons.
 // Real API: getClinicInfo/updateClinicInfo, getAppSettings/updateAppSettings.
-// The two email-notification checkboxes have no backend fields yet — they
-// render disabled with a "Coming soon" note.
+// The backend has no fields for the prototype's two email-notification
+// checkboxes, so they are omitted entirely rather than rendered as dead UI.
 import { useEffect, useState } from 'react';
 import {
   AppShell, ErrorState, Field, PageHeader, PageSpinner,
@@ -17,7 +17,7 @@ function AdminSettings() {
   const store = useStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [clinic, setClinic] = useState({ name: '', phone: '', email: '', address: '', hours: '' });
+  const [clinic, setClinic] = useState({ name: '', phone: '', email: '', address: '' });
   const [prefs, setPrefs] = useState({ autoConfirm: false, slotInterval: 30 });
   const [savingClinic, setSavingClinic] = useState(false);
   const [savingPrefs, setSavingPrefs] = useState(false);
@@ -40,7 +40,6 @@ function AdminSettings() {
         phone: c.phone || '',
         email: c.email || '',
         address: c.address || '',
-        hours: typeof c.hours === 'string' ? c.hours : '',
       });
       setPrefs({
         autoConfirm: Boolean(a.auto_confirm_appointments),
@@ -68,12 +67,11 @@ function AdminSettings() {
       if (clinic.phone.trim()) body.phone = clinic.phone.trim();
       if (clinic.email.trim()) body.email = clinic.email.trim();
       if (clinic.address.trim()) body.address = clinic.address.trim();
-      if (clinic.hours.trim()) body.hours = clinic.hours.trim();
       const saved = await updateClinicInfo(body);
-      store.pushToast({ kind: 'success', title: 'Clinic info saved', message: 'The public website now shows the updated details.' });
+      store.pushToast({ kind: 'success', title: 'Clinic info saved', msg: 'The public website now shows the updated details.' });
       setClinic((prev) => ({ ...prev, ...saved }));
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+      store.pushToast({ kind: 'error', title: 'Save failed', msg: err instanceof ApiError ? err.message : 'Please try again.' });
     } finally {
       setSavingClinic(false);
     }
@@ -90,7 +88,7 @@ function AdminSettings() {
       store.pushToast({
         kind: 'success',
         title: 'Preferences saved',
-        message: prefs.autoConfirm
+        msg: prefs.autoConfirm
           ? 'New patient bookings will be confirmed instantly.'
           : 'New patient bookings will wait for staff review.',
       });
@@ -100,7 +98,7 @@ function AdminSettings() {
         slotInterval: Number(saved.slot_interval_minutes ?? prev.slotInterval),
       }));
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Save failed', message: err instanceof ApiError ? err.message : 'Please try again.' });
+      store.pushToast({ kind: 'error', title: 'Save failed', msg: err instanceof ApiError ? err.message : 'Please try again.' });
     } finally {
       setSavingPrefs(false);
     }
@@ -144,14 +142,6 @@ function AdminSettings() {
                     <Field label="Address">
                       <TextInput value={clinic.address} onChange={(ev) => updateClinic('address', ev.target.value)} maxLength={500} />
                     </Field>
-                    <Field label="Hours" help="Optional.">
-                      <TextInput
-                        value={clinic.hours}
-                        onChange={(ev) => updateClinic('hours', ev.target.value)}
-                        placeholder="e.g. Mon–Sat, 8:00 AM – 6:00 PM"
-                        maxLength={160}
-                      />
-                    </Field>
                   </div>
                 </div>
                 <div className="card-footer">
@@ -166,14 +156,6 @@ function AdminSettings() {
               <div className="card-header"><h2 className="h-section">Appointment preferences</h2></div>
               <form onSubmit={savePrefs}>
                 <div className="card-body stack lg">
-                  <label className="checkbox" style={{ opacity: 0.55 }}>
-                    <input type="checkbox" disabled />
-                    <span>Email admins when a new appointment is booked <span className="t-muted">· Coming soon</span></span>
-                  </label>
-                  <label className="checkbox" style={{ opacity: 0.55 }}>
-                    <input type="checkbox" disabled />
-                    <span>Send patients a reminder email the day before their visit <span className="t-muted">· Coming soon</span></span>
-                  </label>
                   <label className="checkbox">
                     <input type="checkbox" checked={prefs.autoConfirm} onChange={(ev) => updatePref('autoConfirm', ev.target.checked)} />
                     <span>Auto-confirm pending appointments (skip manual review)</span>

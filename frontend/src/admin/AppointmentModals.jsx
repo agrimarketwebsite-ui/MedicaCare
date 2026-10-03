@@ -5,12 +5,12 @@
 // AppointmentEditModal(props: appointment, onClose, onSaved) — edit existing.
 import { useEffect, useState } from 'react';
 import {
-  Field, Modal, SelectInput, StatusBadge, TextArea, TextInput, useStore,
+  Field, Modal, SelectInput, StatusBadge, TextArea, useStore,
 } from '../shared/components.jsx';
 import { formatDate, statusMeta } from '../shared/data.js';
 import {
-  createAdminAppointment, getAdminDoctors, getAdminPatients,
-  updateAdminAppointment, ApiError,
+  createAdminAppointment, getAdminAppointments, getAdminDoctorAvailability,
+  getAdminDoctors, getAdminPatients, updateAdminAppointment, ApiError,
 } from '../shared/api.js';
 import { focusFirstError } from './helpers.js';
 
@@ -25,6 +25,85 @@ function useDirectory(open) {
     return () => { cancelled = true; };
   }, [open]);
   return { patients, doctors };
+}
+
+// ---------- Slot-aware date/time pickers (live availability + bookings) ----------
+// Rolling 30-day date list. The selected doctor's weekly availability comes
+// from getAdminDoctorAvailability ({ day_of_week: 0=Sun..6=Sat, start_time,
+// end_time }); already-booked slots for the doctor+date come from
+// getAdminAppointments({ date, doctor_id }) and are excluded/disabled.
+// Time slots are 30-min windows inside each availability entry.
+const SLOT_WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const ROLL_DAYS = 30;
+
+const toYMD = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+function nextDates() {
+  const out = [];
+  const today = new Date();
+  for (let i = 0; i < ROLL_DAYS; i++) {
+    out.push(toYMD(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)));
+  }
+  return out;
+}
+
+const weekdayOf = (ymd) => new Date(ymd + 'T00:00:00').getDay();
+const weekdayName = (ymd) => SLOT_WEEKDAYS[weekdayOf(ymd)];
+
+function slotsInWindows(windows) {
+  const out = [];
+  for (const w of windows) {
+    const s = (w.start_time || '').slice(0, 5);
+    const e = (w.end_time || '').slice(0, 5);
+    if (!/^\d{2}:\d{2}$/.test(s) || !/^\d{2}:\d{2}$/.test(e) || s >= e) continue;
+    let [h, m] = s.split(':').map(Number);
+    const endMin = Number(e.slice(0, 2)) * 60 + Number(e.slice(3, 5));
+    while (h * 60 + m < endMin) {
+      out.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+      m += 30;
+      if (m >= 60) { m -= 60; h += 1; }
+    }
+  }
+  return [...new Set(out)].sort();
+}
+
+// Returns clinic-day checker + slot lists for the selected doctor/date.
+// excludeId: appointment id whose own slot stays selectable (edit modal).
+function useDoctorSlots(doctorId, date, excludeId) {
+  const [availability, setAvailability] = useState([]);
+  const [booked, setBooked] = useState([]);
+  const [availLoading, setAvailLoading] = useState(false);
+
+  useEffect(() => {
+    if (!doctorId) { setAvailability([]); return; }
+    let cancelled = false;
+    setAvailLoading(true);
+    getAdminDoctorAvailability(doctorId)
+      .then((a) => { if (!cancelled) setAvailability(Array.isArray(a) ? a : []); })
+      .catch(() => { if (!cancelled) setAvailability([]); })
+      .finally(() => { if (!cancelled) setAvailLoading(false); });
+    return () => { cancelled = true; };
+  }, [doctorId]);
+
+  useEffect(() => {
+    if (!doctorId || !date) { setBooked([]); return; }
+    let cancelled = false;
+    getAdminAppointments({ date, doctor_id: doctorId, limit: 100 })
+      .then((r) => {
+        if (cancelled) return;
+        setBooked((r.appointments || [])
+          .filter((a) => a.id !== excludeId && !['cancelled', 'no-show'].includes(a.status))
+          .map((a) => (a.start_time || '').slice(0, 5)));
+      })
+      .catch(() => { if (!cancelled) setBooked([]); });
+    return () => { cancelled = true; };
+  }, [doctorId, date, excludeId]);
+
+  const windowsFor = (ymd) => availability.filter((e) => Number(e.day_of_week) === weekdayOf(ymd));
+  const isClinicDay = (ymd) => windowsFor(ymd).length > 0;
+  const allSlots = date ? slotsInWindows(windowsFor(date)) : [];
+  const openSlots = allSlots.filter((t) => !booked.includes(t));
+  return { isClinicDay, allSlots, openSlots, booked, availLoading };
 }
 
 function AppointmentDetailsModal({ appointment, onClose }) {
@@ -85,6 +164,12 @@ function AppointmentDetailsModal({ appointment, onClose }) {
           <div className="t-help">Reason for visit</div>
           <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.reason || '—'}</div>
         </div>
+        {appt.additional_notes && (
+          <div>
+            <div className="t-help">Patient's additional notes</div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.additional_notes}</div>
+          </div>
+        )}
         {appt.notes && (
           <div>
             <div className="t-help">Doctor's notes</div>
@@ -111,6 +196,9 @@ function AppointmentFormModal({ open, onClose, onSaved }) {
     }
   }, [open ]);
 
+  const dates = nextDates();
+  const { isClinicDay, openSlots, availLoading } = useDoctorSlots(form.doctor_id, form.date, null);
+
   const set = (k, v) => {
     setForm(f => ({ ...f, [k]: v }));
     if (errors[k]) setErrors(e => ({ ...e, [k]: null }));
@@ -136,7 +224,7 @@ function AppointmentFormModal({ open, onClose, onSaved }) {
         start_time: form.start_time,
         reason: form.reason.trim(),
       });
-      store.pushToast({ kind: 'success', title: 'Appointment created', message: 'The appointment has been added to the queue.' });
+      store.pushToast({ kind: 'success', title: 'Appointment created', msg: 'The appointment has been added to the queue.' });
       onClose();
       onSaved && onSaved();
     } catch (err) {
@@ -167,17 +255,32 @@ function AppointmentFormModal({ open, onClose, onSaved }) {
           </SelectInput>
         </Field>
         <Field label="Doctor" required error={errors.doctor_id}>
-          <SelectInput value={form.doctor_id} onChange={e => set('doctor_id', e.target.value)} error={errors.doctor_id}>
+          <SelectInput value={form.doctor_id} onChange={e => {
+            const prev = form.doctor_id;
+            set('doctor_id', e.target.value);
+            // Switching doctors invalidates the previously chosen slot
+            if (e.target.value !== prev) setForm(f => ({ ...f, date: '', start_time: '' }));
+          }} error={errors.doctor_id}>
             <option value="">Select a doctor…</option>
             {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name} ({d.specialties?.name || d.specialty_name})</option>)}
           </SelectInput>
         </Field>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <Field label="Date" required error={errors.date}>
-            <TextInput type="date" value={form.date} onChange={e => set('date', e.target.value)} error={errors.date} />
+            <SelectInput value={form.date} onChange={e => { set('date', e.target.value); set('start_time', ''); }} error={errors.date}>
+              <option value="">Select a date…</option>
+              {dates.map(d => (
+                <option key={d} value={d}>
+                  {formatDate(d)} ({weekdayName(d)}){form.doctor_id && !availLoading && !isClinicDay(d) ? ' — not a clinic day' : ''}
+                </option>
+              ))}
+            </SelectInput>
           </Field>
-          <Field label="Time slot" required error={errors.start_time}>
-            <TextInput type="time" value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} />
+          <Field label="Time slot" required error={errors.start_time} help={!errors.start_time && 'Only available slots are listed.'}>
+            <SelectInput value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} disabled={!form.date}>
+              <option value="">{form.date ? 'Select a time…' : 'Pick a date first'}</option>
+              {openSlots.map(t => <option key={t} value={t}>{t}</option>)}
+            </SelectInput>
           </Field>
         </div>
         <Field label="Reason for visit" required error={errors.reason}>
@@ -214,6 +317,18 @@ function AppointmentEditModal({ appointment, onClose, onSaved }) {
     }
   }, [appointment]);
 
+  // An appointment may sit on a date outside the rolling list — keep it
+  // selectable so staff can keep or move it
+  const apptDate = (appointment?.appointment_date || '').slice(0, 10);
+  const dates = nextDates();
+  if (apptDate && !dates.includes(apptDate)) dates.unshift(apptDate);
+  const { isClinicDay, allSlots, booked, availLoading } = useDoctorSlots(form.doctor_id, form.date, appointment?.id);
+  // The appointment's own slot stays selectable even if it no longer falls
+  // inside the doctor's current availability windows
+  const slotOptions = form.start_time && !allSlots.includes(form.start_time)
+    ? [form.start_time, ...allSlots]
+    : allSlots;
+
   if (!appointment) return null;
   const ref = appointment.reference_code || appointment.appointment_ref || '';
 
@@ -239,7 +354,7 @@ function AppointmentEditModal({ appointment, onClose, onSaved }) {
         start_time: form.start_time,
         reason: form.reason.trim(),
       });
-      store.pushToast({ kind: 'success', title: 'Appointment updated', message: `Ref ${ref} has been updated.` });
+      store.pushToast({ kind: 'success', title: 'Appointment updated', msg: `Ref ${ref} has been updated.` });
       onClose();
       onSaved && onSaved();
     } catch (err) {
@@ -265,17 +380,36 @@ function AppointmentEditModal({ appointment, onClose, onSaved }) {
       <div className="stack md">
         {errors.form && <div className="form-error">{errors.form}</div>}
         <Field label="Doctor" required error={errors.doctor_id}>
-          <SelectInput value={form.doctor_id} onChange={e => set('doctor_id', e.target.value)} error={errors.doctor_id}>
+          <SelectInput value={form.doctor_id} onChange={e => {
+            const prev = form.doctor_id;
+            set('doctor_id', e.target.value);
+            // Switching doctors invalidates the previously chosen slot
+            if (e.target.value !== prev) setForm(f => ({ ...f, date: '', start_time: '' }));
+          }} error={errors.doctor_id}>
             <option value="">Select a doctor…</option>
             {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name} ({d.specialties?.name || d.specialty_name})</option>)}
           </SelectInput>
         </Field>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <Field label="Date" required error={errors.date}>
-            <TextInput type="date" value={form.date} onChange={e => set('date', e.target.value)} error={errors.date} />
+            <SelectInput value={form.date} onChange={e => { set('date', e.target.value); set('start_time', ''); }} error={errors.date}>
+              <option value="">Select a date…</option>
+              {dates.map(d => (
+                <option key={d} value={d}>
+                  {formatDate(d)} ({weekdayName(d)}){form.doctor_id && !availLoading && !isClinicDay(d) ? ' — not a clinic day' : ''}
+                </option>
+              ))}
+            </SelectInput>
           </Field>
-          <Field label="Time slot" required error={errors.start_time}>
-            <TextInput type="time" value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} />
+          <Field label="Time slot" required error={errors.start_time} help={!errors.start_time && 'Already-booked slots are disabled.'}>
+            <SelectInput value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} disabled={!form.date}>
+              <option value="">{form.date ? 'Select a time…' : 'Pick a date first'}</option>
+              {slotOptions.map(t => (
+                <option key={t} value={t} disabled={booked.includes(t)}>
+                  {t}{booked.includes(t) ? ' — booked' : ''}
+                </option>
+              ))}
+            </SelectInput>
           </Field>
         </div>
         <Field label="Reason for visit" required error={errors.reason}>

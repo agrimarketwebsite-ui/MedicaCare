@@ -1,8 +1,11 @@
 // PatientFormModal — add patient (restored prototype UI, real API).
 // Props: open, onClose, onSaved(). Add-only; personal info is owned by the
-// patient via their Profile page.
-import { useEffect, useRef, useState } from 'react';
-import { Field, Icon, Modal, PatientAvatar, SelectInput, TextInput, useStore } from '../shared/components.jsx';
+// patient via their Profile page. The prototype's photo upload is omitted:
+// the backend's photo_url field accepts only a short URL (storage upload
+// endpoint TBD) and base64 data-URLs fail validation — the registry lists
+// render PatientAvatar instead.
+import { useEffect, useState } from 'react';
+import { Field, Icon, Modal, SelectInput, TextInput, useStore } from '../shared/components.jsx';
 import { createAdminPatient, ApiError } from '../shared/api.js';
 import { focusFirstError } from './helpers.js';
 
@@ -11,41 +14,18 @@ function PatientFormModal({ open, onClose, onSaved }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', gender: 'male', dob: '', password: '' });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [photo, setPhoto] = useState('');
-  const [photoError, setPhotoError] = useState('');
-  const photoInputRef = useRef(null);
 
   useEffect(() => {
     if (open) {
       setForm({ name: '', email: '', phone: '', gender: 'male', dob: '', password: '' });
       setErrors({});
       setSaving(false);
-      setPhoto('');
-      setPhotoError('');
     }
   }, [open]);
 
   const set = (k, v) => {
     setForm(f => ({ ...f, [k]: v }));
     if (errors[k]) setErrors(e => ({ ...e, [k]: null }));
-  };
-
-  const onPhotoChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('Please choose an image file (JPG or PNG).');
-      return;
-    }
-    if (file.size > 1024 * 1024) {
-      setPhotoError('Image is too large. Please choose one under 1 MB.');
-      return;
-    }
-    setPhotoError('');
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result);
-    reader.readAsDataURL(file);
   };
 
   const submit = async () => {
@@ -68,7 +48,7 @@ function PatientFormModal({ open, onClose, onSaved }) {
         gender: form.gender || undefined,
         date_of_birth: form.dob || undefined,
       });
-      store.pushToast({ kind: 'success', title: 'Patient added', message: `${form.name.trim()} has been added to the registry.` });
+      store.pushToast({ kind: 'success', title: 'Patient added', msg: `${form.name.trim()} has been added to the registry.` });
       onClose();
       onSaved && onSaved();
     } catch (err) {
@@ -93,24 +73,6 @@ function PatientFormModal({ open, onClose, onSaved }) {
     >
       <div className="stack md">
         {errors.form && <div className="form-error"><Icon name="alert-circle" size={14} /> {errors.form}</div>}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {photo
-            ? <img src={photo} alt="Patient" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border)' }} />
-            : <PatientAvatar person={{ name: form.name }} size={64} />}
-          <div>
-            <input ref={photoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onPhotoChange} />
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="btn btn-secondary sm" onClick={() => photoInputRef.current && photoInputRef.current.click()}>
-                <Icon name="upload" size={14} /> Upload photo
-              </button>
-              {photo && <button type="button" className="btn btn-ghost sm" onClick={() => setPhoto('')}>Remove</button>}
-            </div>
-            <div className="t-muted" style={{ fontSize: 11.5, marginTop: 6 }}>
-              Optional. Defaults to a portrait photo. JPG/PNG up to 1 MB.
-            </div>
-            {photoError && <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>{photoError}</div>}
-          </div>
-        </div>
         <Field label="Full name" required error={errors.name}>
           <TextInput value={form.name} onChange={e => set('name', e.target.value)} error={errors.name} placeholder="e.g., Juan dela Cruz" />
         </Field>
