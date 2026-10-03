@@ -136,7 +136,7 @@ function AppointmentDetailsModal({ appointment, onClose }) {
           <div>
             <div className="t-help">Patient</div>
             <div style={{ fontWeight: 600 }}>{patient?.full_name || appt.booked_for || 'Unknown'}</div>
-            <div className="t-muted" style={{ fontSize: 12.5 }}>{patient?.email || '—'}</div>
+            <div className="t-muted" style={{ fontSize: 12.5 }}>{patient?.phone || '—'}</div>
           </div>
           <div>
             <div className="t-help">Doctor</div>

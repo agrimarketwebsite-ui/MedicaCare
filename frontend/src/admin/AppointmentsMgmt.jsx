@@ -116,10 +116,10 @@ function AppointmentsMgmt() {
     try {
       await setAdminAppointmentStatus(appt.id, { status: newStatus });
       const meta = (statusMeta(newStatus) || {}).label || newStatus;
-      store.pushToast({ kind: 'success', title: 'Status updated', message: `Appointment marked as ${meta}.` });
+      store.pushToast({ kind: 'success', title: 'Status updated', msg: `Appointment marked as ${meta}.` });
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Status update failed', message: err instanceof ApiError ? err.message : 'Could not update status.' });
+      store.pushToast({ kind: 'error', title: 'Status update failed', msg: err instanceof ApiError ? err.message : 'Could not update status.' });
     }
   };
 
@@ -133,7 +133,7 @@ function AppointmentsMgmt() {
     try {
       await completeAdminAppointment(completeAppt.id, { notes });
       setCompleteAppt(null);
-      store.pushToast({ kind: 'success', title: 'Visit completed', message: "Doctor's notes saved and added to the patient's medical records." });
+      store.pushToast({ kind: 'success', title: 'Visit completed', msg: "Doctor's notes saved and added to the patient's medical records." });
       load();
     } catch (err) {
       setNotesError(err instanceof ApiError ? err.message : 'Could not complete visit.');
@@ -148,10 +148,10 @@ function AppointmentsMgmt() {
     try {
       await deleteAdminAppointment(confirmDel.id);
       setConfirmDel(null);
-      store.pushToast({ kind: 'success', title: 'Appointment deleted', message: 'The appointment has been removed.' });
+      store.pushToast({ kind: 'success', title: 'Appointment deleted', msg: 'The appointment has been removed.' });
       load();
     } catch (err) {
-      store.pushToast({ kind: 'error', title: 'Delete failed', message: err instanceof ApiError ? err.message : 'Could not delete appointment.' });
+      store.pushToast({ kind: 'error', title: 'Delete failed', msg: err instanceof ApiError ? err.message : 'Could not delete appointment.' });
     } finally {
       setDelLoading(false);
     }
@@ -166,7 +166,7 @@ function AppointmentsMgmt() {
         (statusMeta(a.status) || {}).label || a.status,
       ]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', message: `${sorted.length} appointment(s) exported to CSV.` });
+    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${sorted.length} appointment(s) exported to CSV.` });
   };
 
   const pendingCount = appointments.filter(a => a.status === 'pending').length;
@@ -275,7 +275,7 @@ function AppointmentsMgmt() {
                           <PatientAvatar person={{ name: patientName(a) }} size={28} />
                           <div>
                             <div className="cell-primary cell-primary-truncate" style={{ maxWidth: 150 }}>{patientName(a)}</div>
-                            <div className="cell-secondary">{a.patient?.email || '—'}</div>
+                            <div className="cell-secondary">{a.patient?.phone || '—'}</div>
                             {a.booked_for && a.patient?.full_name && a.booked_for !== a.patient.full_name && (
                               <div className="cell-secondary">Booking for: {a.booked_for}</div>
                             )}
