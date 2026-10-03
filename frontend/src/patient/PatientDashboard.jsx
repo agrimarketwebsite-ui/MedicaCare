@@ -60,7 +60,7 @@ function PatientDashboard() {
     ? `You have ${upcoming.length} upcoming appointment${upcoming.length === 1 ? '' : 's'}. Your next visit is on ${window.formatDate(next.date)} at ${next.timeDisplay}.`
     : 'No upcoming appointments. Your schedule is clear.';
 
-  const recent = appts.slice().sort((a, b) => b.date.localeCompare(a.date) || time24Value(b.time) - time24Value(a.time)).slice(0, 4);
+  const recent = appts.slice(0, 4);
 
   return (
     <AppShell current="dashboard">
@@ -240,12 +240,6 @@ function PatientDashboard() {
                   <span className="skel" style={{ width: 70, height: 18 }} />
                 </div>
               ))
-            ) : recent.length === 0 ? (
-              <EmptyState
-                icon="activity"
-                title="No activity yet"
-                message="Your bookings, visits, and updates will appear here."
-              />
             ) : recent.map(a => {
               const d = dirDoctor(a.doctorId) || { name: a.doctorName, specialty: a.specialty };
               return (
