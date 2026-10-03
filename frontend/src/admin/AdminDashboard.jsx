@@ -57,7 +57,12 @@ function AdminDashboard() {
   const apptDate = (a) => (a.appointment_date || '').slice(0, 10);
   const apptTime = (a) => (a.start_time || '').slice(0, 5);
   const patientName = (a) => a.patient?.full_name || a.booked_for || 'Unknown';
-  const patientSub = (a) => a.patient?.email || '';
+  // The appointments endpoint nests only id/full_name/email, so the phone
+  // shown under the patient name (and in the CSV export) comes from the
+  // already-fetched patients list — same source the prototype read per row.
+  const phoneByPatientId = {};
+  for (const p of patients) { if (p && p.id != null) phoneByPatientId[p.id] = p.phone || ''; }
+  const patientPhone = (a) => phoneByPatientId[a.patient_id] || '';
   const doctorName = (a) => a.doctor?.full_name || 'Unknown';
   const doctorSpecialty = (a) => a.doctor?.specialties?.name || '';
 
@@ -165,14 +170,14 @@ function AdminDashboard() {
 
   const doExport = () => {
     downloadCSV('medicacare-today-appointments.csv', [
-      ['Time', 'Patient', 'Email', 'Doctor', 'Specialty', 'Reason', 'Status'],
-      ...todaySorted.map(a => [
-        apptTime(a), patientName(a), patientSub(a),
-        doctorName(a), doctorSpecialty(a), a.reason || '',
+      ['Time', 'Patient', 'Phone', 'Doctor', 'Specialty', 'Reason', 'Status'],
+      ...todayAppts.map(a => [
+        apptTime(a), patientName(a), patientPhone(a),
+        doctorName(a), doctorSpecialty(a), a.reason,
         (statusMeta(a.status) || {}).label || a.status,
       ]),
     ]);
-    store.pushToast({ kind: 'success', title: 'Export ready', msg: `${todaySorted.length} appointment(s) exported to CSV.` });
+    store.pushToast({ title: 'Export ready', msg: `${todayAppts.length} appointment(s) exported to CSV.` });
   };
 
   return (
@@ -293,12 +298,6 @@ function AdminDashboard() {
                         </div>
                       </div>
                     ))
-                  ) : pending.length === 0 ? (
-                    <EmptyState
-                      icon="clipboard-check"
-                      title="Nothing to review"
-                      message="No appointments are waiting for confirmation. New patient bookings will appear here."
-                    />
                   ) : pending.slice(0, 4).map(a => (
                     <div key={a.id} className="list-item">
                       <PatientAvatar person={{ name: patientName(a) }} size={28} />
@@ -357,10 +356,10 @@ function AdminDashboard() {
                     ) : pagedToday.map(a => (
                       <tr key={a.id}>
                         <td data-label="Time" className="td-nowrap" style={{ fontWeight: 500 }}>{apptTime(a)}</td>
-                        <td data-label="Patient"><div className="cell-with-avatar"><PatientAvatar person={{ name: patientName(a) }} size={28} /><div><div className="cell-primary cell-primary-truncate" style={{ maxWidth: 150 }}>{patientName(a)}</div><div className="cell-secondary">{patientSub(a)}</div></div></div></td>
+                        <td data-label="Patient"><div className="cell-with-avatar"><PatientAvatar person={{ name: patientName(a) }} size={28} /><div><div className="cell-primary cell-primary-truncate" style={{ maxWidth: 150 }}>{patientName(a)}</div><div className="cell-secondary">{patientPhone(a)}</div></div></div></td>
                         <td data-label="Doctor" className="cell-primary-truncate" style={{ maxWidth: 140 }}>{doctorName(a)}</td>
                         <td data-label="Specialty" className="td-nowrap">{doctorSpecialty(a)}</td>
-                        <td data-label="Reason" className="cell-primary-truncate" style={{ maxWidth: 170 }}>{a.reason || '—'}</td>
+                        <td data-label="Reason" className="cell-primary-truncate" style={{ maxWidth: 170 }}>{a.reason}</td>
                         <td data-label="Status"><StatusBadge status={a.status} /></td>
                         <td className="col-actions"><button className="btn btn-ghost sm" onClick={() => navigate('/admin/appointments')}>Manage</button></td>
                       </tr>
