@@ -12,8 +12,8 @@ function must(result, context) {
   return result.data;
 }
 
-/** Head-count para sa isang table, may optional na filters. */
-export async function countRows(table, filters = {}) {
+/** Head-count para sa isang table, may optional na filters (array ng [col, op, value]). */
+export async function countRows(table, filters = []) {
   let query = supabase.from(table).select('id', { count: 'exact', head: true });
   for (const [col, op, value] of filters) {
     query = query[op](col, value);

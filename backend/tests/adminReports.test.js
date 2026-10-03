@@ -87,6 +87,7 @@ describe('admin integration — Phase 6 reports + activity', { skip: !H }, () =>
     const jsDay = new Date(Date.UTC(...manilaToday().split('-').map(Number))).getUTCDay();
     const isoDow = jsDay === 0 ? 7 : jsDay;
     const weekday = (isoDow % 7) + 1;
+    state.weekday = weekday;
     const av = await H.supabase
       .from('doctor_weekly_availability')
       .insert({ doctor_id: state.doctorId, weekday, start_time: '09:00', end_time: '12:00' });
@@ -158,24 +159,26 @@ describe('admin integration — Phase 6 reports + activity', { skip: !H }, () =>
     assert.ok(csv.text.length > 0, 'hindi empty ang CSV');
   });
 
-  it('formula-guard: title na nagsisimula sa = ay naka-quote bilang text', async () => {
-    const evilTitle = `=HYPERLINK("https://evil.example","click") ${Date.now()}`;
-    const n = await apiAdmin('POST', '/admin/notifications', {
+  it('formula-guard: reason na nagsisimula sa = ay naka-quote bilang text', async () => {
+    const evilReason = `=HYPERLINK("https://evil.example","click") ${Date.now()}`;
+    // Ang CSV export ay appointments — kaya ang evil value ay nasa reason.
+    const appt = await apiAdmin('POST', '/admin/appointments', {
       body: {
         patient_id: state.patientId,
-        type: 'confirmed',
-        title: evilTitle,
-        message: 'Formula guard test.',
+        doctor_id: state.doctorId,
+        appointment_date: targetDate(state.weekday),
+        start_time: '10:00',
+        duration_minutes: 30,
+        reason: evilReason,
+        contact_number: '+63 917 830 0001',
       },
     });
-    assert.equal(n.status, 201);
-    const created = n.json.data.notification ?? n.json.data;
-    state.notificationIds.push(created.id);
+    assert.equal(appt.status, 201, `evil appointment: ${JSON.stringify(appt.json)}`);
     const csv = await fetchCsv();
     assert.equal(csv.status, 200);
     // Ang export ay dapat mag-prefix ng ' (single quote) para hindi
     // ma-interpret bilang formula ng spreadsheet.
-    assert.ok(csv.text.includes("'=HYPERLINK"), 'may formula guard (\'=) sa CSV');
+    assert.ok(csv.text.includes("'=HYPERLINK"), "may formula guard ('=) sa CSV");
     assert.ok(!csv.text.includes(',=HYPERLINK'), 'walang raw = simula ng cell');
   });
 
