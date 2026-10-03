@@ -77,4 +77,11 @@ export const resetPassword = asyncHandler(async (req, res) => {
   return ok(res, result);
 });
 
-export default { register, login, refresh, logout, forgotPassword, resetPassword };
+export const changePassword = asyncHandler(async (req, res) => {
+  // requireAuth ang naglagay ng req.user = { id, role, kind }.
+  const { currentPassword, newPassword } = req.validated.body;
+  const result = await service.changePassword(req.user, currentPassword, newPassword);
+  return ok(res, result);
+});
+
+export default { register, login, refresh, logout, forgotPassword, resetPassword, changePassword };
