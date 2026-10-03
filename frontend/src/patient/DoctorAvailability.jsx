@@ -1,13 +1,13 @@
 // DoctorAvailability — patient (Phase 4: wired to the backend API)
-// Date picker (next 30 days) + duration selector (30/60) →
-// GET /api/appointments/slots. Selected slot → BookAppointment via
-// store.pendingBooking.
+// Date picker (next 30 days) → GET /api/appointments/slots (duration from
+// the user's stored slotInterval preference). Selected slot →
+// BookAppointment via store.pendingBooking.
 import { useEffect, useState } from 'react';
-import { AppShell, DoctorAvatar, DoctorRatingPill, DoctorStatusBadge, EmptyState, ErrorState, Icon, navigate, PageHeader, PageSpinner, useStore } from '../shared/components.jsx';
+import { AppShell, DoctorAvatar, DoctorRatingPill, DoctorStatusBadge, ErrorState, Icon, navigate, PageHeader, PageSpinner, useStore } from '../shared/components.jsx';
 import { getSlots } from '../shared/api.js';
 import { fmtTime12, isPastSlot, nextDays, time24 } from './helpers.js';
 
-const DURATIONS = [30, 60];
+const DEFAULT_DURATION = 30;
 
 function DoctorAvailability({ doctorId }) {
   const store = useStore();
@@ -23,10 +23,11 @@ function DoctorAvailability({ doctorId }) {
   }, [doctorsReady]);
   const dates = nextDays(30);
   const [date, setDate] = useState(dates[0]);
-  const [duration, setDuration] = useState(() => {
-    const pref = Number((store.prefs || {}).slotInterval);
-    return DURATIONS.includes(pref) ? pref : 30;
-  });
+  // Slot duration comes from the user's stored preference (same source the
+  // prototype read via store.prefs.slotInterval) — the API needs a duration
+  // to size its slots, but there is no duration picker in the prototype UI
+  const prefDuration = Number((store.prefs || {}).slotInterval);
+  const duration = [30, 60].includes(prefDuration) ? prefDuration : DEFAULT_DURATION;
   const [slot, setSlot] = useState(null); // selected start_time "HH:MM:SS"
   const [slots, setSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(true);
@@ -43,7 +44,7 @@ function DoctorAvailability({ doctorId }) {
       .then((s) => { if (!cancelled) { setSlots(s); setSlotsLoading(false); } })
       .catch((err) => {
         if (!cancelled) {
-          setSlotsError(err.message || 'Hindi ma-load ang mga slot. Pakisubukang muli.');
+          setSlotsError(err.message || 'Could not load the slots. Please try again.');
           setSlotsLoading(false);
         }
       });
@@ -86,7 +87,6 @@ function DoctorAvailability({ doctorId }) {
   // kung naka-display pa pero ire-reject lang sa booking) — ang "Booked"
   // slots ay nananatiling naka-display bilang disabled.
   const visibleSlots = slots.filter(s => !isPastSlot(date, s.start_time));
-  const available = visibleSlots.filter(s => s.is_available);
   const selectedSlot = visibleSlots.find(s => s.start_time === slot);
 
   const cont = () => {
@@ -149,19 +149,6 @@ function DoctorAvailability({ doctorId }) {
                 <span className="t-muted" style={{ fontSize: 12 }}>{window.formatDateLong(date)}</span>
               </div>
               <div style={{ padding: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <span className="t-help" style={{ fontWeight: 600 }}>Duration:</span>
-                  <div className="chip-group" style={{ margin: 0 }}>
-                    {DURATIONS.map(m => (
-                      <button key={m} type="button" className={'chip' + (duration === m ? ' on' : '')}
-                        aria-pressed={duration === m}
-                        onClick={() => setDuration(m)}>
-                        {m} min
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {slotsLoading ? (
                   <div className="chip-group" aria-hidden="true">
                     {Array.from({ length: 8 }).map((_, i) => (
@@ -169,11 +156,12 @@ function DoctorAvailability({ doctorId }) {
                     ))}
                   </div>
                 ) : slotsError ? (
-                  <ErrorState title="Hindi ma-load ang mga slot" message={slotsError}
+                  <ErrorState title="Could not load the slots" message={slotsError}
                     onRetry={() => setRetryKey(k => k + 1)} />
                 ) : visibleSlots.length === 0 ? (
-                  <EmptyState icon="calendar-x" title="No slots on this date"
-                    message="The doctor has no clinic hours on this date. Please pick another date." />
+                  <p className="t-muted" style={{ margin: 0 }}>
+                    No bookable slots on this date. It falls outside the doctor's clinic days, so please pick another date.
+                  </p>
                 ) : (
                   <>
                     <div className="chip-group">
@@ -181,7 +169,7 @@ function DoctorAvailability({ doctorId }) {
                         <button key={s.start_time} className={'chip' + (slot === s.start_time ? ' on' : '')}
                           aria-pressed={slot === s.start_time}
                           disabled={!s.is_available}
-                          title={s.is_available ? `${fmtTime12(s.start_time)} – ${fmtTime12(s.end_time)}` : 'Booked'}
+                          title={s.is_available ? undefined : 'Booked'}
                           onClick={() => setSlot(s.start_time)}>
                           {fmtTime12(s.start_time)}
                         </button>
@@ -192,11 +180,6 @@ function DoctorAvailability({ doctorId }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, borderRadius: 999, background: 'var(--surface-muted)' }} /> Booked</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, borderRadius: 999, background: 'var(--primary)' }} /> Selected</div>
                     </div>
-                    {available.length === 0 && (
-                      <p className="t-muted" style={{ fontSize: 13, marginTop: 12 }}>
-                        All slots on this date are booked. Please pick another date.
-                      </p>
-                    )}
                   </>
                 )}
               </div>
@@ -232,7 +215,7 @@ function DoctorAvailability({ doctorId }) {
                   <div className="detail-row compact"><div className="label">Experience</div><div className="value">{doctor.exp} years</div></div>
                   <div className="detail-row compact"><div className="label">Rating</div><div className="value"><DoctorRatingPill avg={doctor.rating} count={doctor.ratingCount} /></div></div>
                   <div className="detail-row compact"><div className="label">Room</div><div className="value">{doctor.room}</div></div>
-                  <div className="detail-row compact"><div className="label">Consultation length</div><div className="value">{duration} minutes</div></div>
+                  <div className="detail-row compact"><div className="label">Consultation length</div><div className="value">30 minutes</div></div>
                 </div>
               </div>
             </div>
@@ -249,7 +232,7 @@ function DoctorAvailability({ doctorId }) {
                   <div className="t-help" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--primary)' }}>Your selection</div>
                   <div style={{ marginTop: 8, fontSize: 14, color: 'var(--text)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}><Icon name="calendar" size={14} /> {window.formatDateLong(date)}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}><Icon name="clock" size={14} /> {fmtTime12(selectedSlot.start_time)} – {fmtTime12(selectedSlot.end_time)} ({duration} min)</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}><Icon name="clock" size={14} /> {fmtTime12(selectedSlot.start_time)}</div>
                   </div>
                 </div>
               </div>
