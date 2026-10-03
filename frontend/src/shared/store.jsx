@@ -270,7 +270,7 @@ function StoreProvider({ children }) {
       setAdminSession(null);
       setDoctorSession(null);
       setCurrentPatient(window.CURRENT_PATIENT);
-      pushToast({ kind: 'error', title: 'Nag-expire ang session', message: 'Pakilog-in muli.' });
+      pushToast({ kind: 'error', title: 'Session expired', msg: 'Please log in again.' });
     });
     let cancelled = false;
     bootstrapSession().then((data) => {
