@@ -100,8 +100,13 @@ function Sidebar({ role, current }) {
   const doctorRec = role === 'doctor'
     ? window.findDoctor(store.doctorSession && store.doctorSession.doctorId)
     : null;
+  // Admin: use the real session from the store (Phase 6 API), not the legacy
+  // window.CURRENT_ADMIN seed which has empty name/role
+  const adminMe = store.adminSession
+    ? { name: store.adminSession.name || store.adminSession.email || 'Admin', role: 'Administrator' }
+    : { name: 'Admin', role: 'Administrator' };
   const me = role === 'admin'
-    ? window.CURRENT_ADMIN
+    ? adminMe
     : role === 'doctor'
       ? (doctorRec || { name: 'Doctor', specialty: '—' })
       : (store.currentPatient || window.CURRENT_PATIENT);
