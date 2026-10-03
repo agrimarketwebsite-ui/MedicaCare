@@ -244,6 +244,17 @@ export const updateFamily = (id, body) =>
 export const deleteFamily = (id) =>
   api(`/patients/me/family/${encodeURIComponent(id)}`, { method: 'DELETE' });
 
+/** POST /api/auth/change-password { current_password, new_password } → 200.
+ *  NOTE: the backend has no such route yet (auth.routes.js only mounts
+ *  register/login/refresh/logout/forgot-password/reset-password) — the
+ *  Profile "Change password" card needs POST /api/auth/change-password
+ *  implemented server-side before this can succeed. */
+export const changePassword = ({ currentPassword, newPassword }) =>
+  api('/auth/change-password', {
+    method: 'POST',
+    body: { current_password: currentPassword, new_password: newPassword },
+  });
+
 /** GET /api/appointments/slots?doctor_id&date&duration → slot grid. */
 export const getSlots = (doctorId, date, duration = 30) =>
   api(
@@ -669,7 +680,7 @@ export default {
   api, apiOptional, apiWithMeta, silentRefresh, bootstrapSession,
   setAccessToken, getAccessToken, clearAccessToken,
   onUnauthorized, setNotify, ApiError, API_BASE_URL,
-  getProfile, updateProfile, listFamily, createFamily, updateFamily, deleteFamily,
+  getProfile, updateProfile, listFamily, createFamily, updateFamily, deleteFamily, changePassword,
   getSlots, bookAppointment, getAppointments, getAppointment,
   rescheduleAppointment, cancelAppointment, submitRating,
   getDoctorProfile, getDoctorAvailability, createDoctorAvailability,
