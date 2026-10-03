@@ -6,8 +6,8 @@ import {
   DoctorAvatar, Field, Icon, Modal, SelectInput, TextInput, TextArea, useStore,
 } from '../shared/components.jsx';
 import {
-  createAdminDoctor, updateAdminDoctor, grantPortalAccess,
-  resetPortalAccess, revokePortalAccess, ApiError,
+  createAdminDoctor, updateAdminDoctor, grantDoctorAccess,
+  resetDoctorPassword, revokeDoctorAccess, ApiError,
 } from '../shared/api.js';
 import { apiOptional } from '../shared/api.js';
 import { focusFirstError } from './helpers.js';
@@ -163,7 +163,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
         await doSave();
         return; // doSave closes the modal; portal must be granted from Edit
       }
-      await grantPortalAccess(doctorId, { email: portalEmail.trim().toLowerCase(), password: portalPw });
+      await grantDoctorAccess(doctorId, { email: portalEmail.trim().toLowerCase(), password: portalPw });
       setPortalInfo({ email: portalEmail.trim().toLowerCase() });
       setPortalEmail('');
       setPortalPw('');
@@ -178,7 +178,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
   const doResetPortal = async () => {
     setPortalBusy(true);
     try {
-      const result = await resetPortalAccess(initial.id);
+      const result = await resetDoctorPassword(initial.id);
       setPortalPw(result.password || '');
       store.pushToast({ kind: 'success', title: 'Password reset', message: 'A new temporary password was generated — share it with the doctor.' });
     } catch (err) {
@@ -191,7 +191,7 @@ function DoctorFormModal({ open, onClose, initial, onSaved }) {
   const doRevokePortal = async () => {
     setPortalBusy(true);
     try {
-      await revokePortalAccess(initial.id);
+      await revokeDoctorAccess(initial.id);
       setPortalInfo(null);
       setShowRevoke(false);
       store.pushToast({ kind: 'success', title: 'Portal access revoked', message: 'The doctor can no longer sign in at the Doctor portal.' });
