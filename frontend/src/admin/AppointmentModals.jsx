@@ -1,1 +1,289 @@
-Ly8gQXBwb2ludG1lbnRNb2RhbHMg4oCUIGFkbWluIGFwcG9pbnRtZW50IHZpZXcvY3JlYXRlL2VkaXQgKHJlc3RvcmVkIHByb3RvdHlwZQovLyBVSSwgcmVhbCBBUEkpLgovLyBBcHBvaW50bWVudERldGFpbHNNb2RhbChwcm9wczogYXBwb2ludG1lbnQsIG9uQ2xvc2UpIOKAlCByZWFkLW9ubHkgZGV0YWlscy4KLy8gQXBwb2ludG1lbnRGb3JtTW9kYWwocHJvcHM6IG9wZW4sIG9uQ2xvc2UsIG9uU2F2ZWQpIOKAlCBjcmVhdGUgbmV3LgovLyBBcHBvaW50bWVudEVkaXRNb2RhbChwcm9wczogYXBwb2ludG1lbnQsIG9uQ2xvc2UsIG9uU2F2ZWQpIOKAlCBlZGl0IGV4aXN0aW5nLgppbXBvcnQgeyB1c2VFZmZlY3QsIHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgewogIEZpZWxkLCBNb2RhbCwgU2VsZWN0SW5wdXQsIFN0YXR1c0JhZGdlLCBUZXh0QXJlYSwgVGV4dElucHV0LCB1c2VTdG9yZSwKfSBmcm9tICcuLi9zaGFyZWQvY29tcG9uZW50cy5qc3gnOwppbXBvcnQgeyBmb3JtYXREYXRlLCBzdGF0dXNNZXRhIH0gZnJvbSAnLi4vc2hhcmVkL2RhdGEuanMnOwppbXBvcnQgewogIGNyZWF0ZUFkbWluQXBwb2ludG1lbnQsIGdldEFkbWluRG9jdG9ycywgZ2V0QWRtaW5QYXRpZW50cywKICB1cGRhdGVBZG1pbkFwcG9pbnRtZW50LCBBcGlFcnJvciwKfSBmcm9tICcuLi9zaGFyZWQvYXBpLmpzJzsKaW1wb3J0IHsgZm9jdXNGaXJzdEVycm9yIH0gZnJvbSAnLi9oZWxwZXJzLmpzJzsKCmZ1bmN0aW9uIHVzZURpcmVjdG9yeShvcGVuKSB7CiAgY29uc3QgW3BhdGllbnRzLCBzZXRQYXRpZW50c10gPSB1c2VTdGF0ZShbXSk7CiAgY29uc3QgW2RvY3RvcnMsIHNldERvY3RvcnNdID0gdXNlU3RhdGUoW10pOwogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoIW9wZW4pIHJldHVybjsKICAgIGxldCBjYW5jZWxsZWQgPSBmYWxzZTsKICAgIGdldEFkbWluUGF0aWVudHMoJycsIDEsIDEwMCkudGhlbigocikgPT4geyBpZiAoIWNhbmNlbGxlZCkgc2V0UGF0aWVudHMoci5wYXRpZW50cyk7IH0pLmNhdGNoKCgpID0+IHt9KTsKICAgIGdldEFkbWluRG9jdG9ycygnJywgMSwgMTAwKS50aGVuKChyKSA9PiB7IGlmICghY2FuY2VsbGVkKSBzZXREb2N0b3JzKHIuZG9jdG9ycyk7IH0pLmNhdGNoKCgpID0+IHt9KTsKICAgIHJldHVybiAoKSA9PiB7IGNhbmNlbGxlZCA9IHRydWU7IH07CiAgfSwgW29wZW5dKTsKICByZXR1cm4geyBwYXRpZW50cywgZG9jdG9ycyB9Owp9CgpmdW5jdGlvbiBBcHBvaW50bWVudERldGFpbHNNb2RhbCh7IGFwcG9pbnRtZW50LCBvbkNsb3NlIH0pIHsKICBjb25zdCBhcHB0ID0gYXBwb2ludG1lbnQ7CiAgaWYgKCFhcHB0KSByZXR1cm4gbnVsbDsKICBjb25zdCBkb2N0b3IgPSBhcHB0LmRvY3RvcjsKICBjb25zdCBwYXRpZW50ID0gYXBwdC5wYXRpZW50OwogIGNvbnN0IHJlZiA9IGFwcHQucmVmZXJlbmNlX2NvZGUgfHwgYXBwdC5hcHBvaW50bWVudF9yZWYgfHwgJyc7CiAgY29uc3QgZGF0ZSA9IChhcHB0LmFwcG9pbnRtZW50X2RhdGUgfHwgJycpLnNsaWNlKDAsIDEwKTsKICBjb25zdCB0aW1lID0gKGFwcHQuc3RhcnRfdGltZSB8fCAnJykuc2xpY2UoMCwgNSk7CgogIHJldHVybiAoCiAgICA8TW9kYWwKICAgICAgb3Blbj17ISFhcHB0fQogICAgICBvbkNsb3NlPXtvbkNsb3NlfQogICAgICB0aXRsZT17cmVmID8gYEFwcG9pbnRtZW50ICR7cmVmfWAgOiAnQXBwb2ludG1lbnQnfQogICAgICBzdWJ0aXRsZT0iRnVsbCBhcHBvaW50bWVudCBkZXRhaWxzLiIKICAgICAgaWNvbj0iY2FsZW5kYXItZGF5cyIKICAgICAgc2l6ZT0ibWQiCiAgICAgIGZvb3Rlcj17PGJ1dHRvbiBjbGFzc05hbWU9ImJ0biBidG4tc2Vjb25kYXJ5IiBvbkNsaWNrPXtvbkNsb3NlfT5DbG9zZTwvYnV0dG9uPn0KICAgID4KICAgICAgPGRpdiBjbGFzc05hbWU9InN0YWNrIG1kIj4KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdmbGV4JywgYWxpZ25JdGVtczogJ2NlbnRlcicsIGdhcDogMTAgfX0+CiAgICAgICAgICA8U3RhdHVzQmFkZ2Ugc3RhdHVzPXthcHB0LnN0YXR1c30gLz4KICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idC1tdXRlZCIgc3R5bGU9e3sgZm9udFNpemU6IDEyIH19PgogICAgICAgICAgICBDcmVhdGVkIHthcHB0LmNyZWF0ZWRfYXQgPyBmb3JtYXREYXRlKFN0cmluZyhhcHB0LmNyZWF0ZWRfYXQpLnNsaWNlKDAsIDEwKSkgOiAn4oCUJ30KICAgICAgICAgIDwvc3Bhbj4KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzFmciAxZnInLCBnYXA6IDE0IH19PgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtaGVscCI+UGF0aWVudDwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRXZWlnaHQ6IDYwMCB9fT57cGF0aWVudD8uZnVsbF9uYW1lIHx8IGFwcHQuYm9va2VkX2ZvciB8fCAnVW5rbm93bid9PC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0LW11dGVkIiBzdHlsZT17eyBmb250U2l6ZTogMTIuNSB9fT57cGF0aWVudD8uZW1haWwgfHwgJ+KAlCd9PC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0LWhlbHAiPkRvY3RvcjwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRXZWlnaHQ6IDYwMCB9fT57ZG9jdG9yPy5mdWxsX25hbWUgfHwgJ1Vua25vd24nfTwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idC1tdXRlZCIgc3R5bGU9e3sgZm9udFNpemU6IDEyLjUgfX0+CiAgICAgICAgICAgICAge2RvY3RvciA/IGAke2RvY3Rvci5zcGVjaWFsdGllcz8ubmFtZSB8fCAnJ30ke2RvY3Rvci5yb29tID8gYCDCtyAke2RvY3Rvci5yb29tfWAgOiAnJ31gIDogJ+KAlCd9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idC1oZWxwIj5EYXRlICYgdGltZTwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRXZWlnaHQ6IDYwMCB9fT57ZGF0ZSA/IGZvcm1hdERhdGUoZGF0ZSkgOiAn4oCUJ30gwrcge3RpbWUgfHwgJ+KAlCd9PC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0LWhlbHAiPlN0YXR1czwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRXZWlnaHQ6IDYwMCB9fT57KHN0YXR1c01ldGEoYXBwdC5zdGF0dXMpIHx8IHt9KS5sYWJlbCB8fCBhcHB0LnN0YXR1c308L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAge2FwcHQuYm9va2VkX2ZvciAmJiBwYXRpZW50Py5mdWxsX25hbWUgJiYgYXBwdC5ib29rZWRfZm9yICE9PSBwYXRpZW50LmZ1bGxfbmFtZSAmJiAoCiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtaGVscCI+Qm9va2VkIGZvcjwvZGl2PgogICAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZm9udFdlaWdodDogNjAwIH19PnthcHB0LmJvb2tlZF9mb3J9PC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgKX0KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InQtaGVscCI+UmVhc29uIGZvciB2aXNpdDwvZGl2PgogICAgICAgICAgPGRpdiBzdHlsZT17eyBmb250U2l6ZTogMTMuNSwgbGluZUhlaWdodDogMS41IH19PnthcHB0LnJlYXNvbiB8fCAn4oCUJ308L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgICB7YXBwdC5ub3RlcyAmJiAoCiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idC1oZWxwIj5Eb2N0b3IncyBub3RlczwvZGl2PgogICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGZvbnRTaXplOiAxMy41LCBsaW5lSGVpZ2h0OiAxLjUgfX0+e2FwcHQubm90ZXN9PC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQogICAgICA8L2Rpdj4KICAgIDwvTW9kYWw+CiAgKTsKfQoKZnVuY3Rpb24gQXBwb2ludG1lbnRGb3JtTW9kYWwoeyBvcGVuLCBvbkNsb3NlLCBvblNhdmVkIH0pIHsKICBjb25zdCBzdG9yZSA9IHVzZVN0b3JlKCk7CiAgY29uc3QgeyBwYXRpZW50cywgZG9jdG9ycyB9ID0gdXNlRGlyZWN0b3J5KG9wZW4pOwogIGNvbnN0IFtmb3JtLCBzZXRGb3JtXSA9IHVzZVN0YXRlKHsgcGF0aWVudF9pZDogJycsIGRvY3Rvcl9pZDogJycsIGRhdGU6ICcnLCBzdGFydF90aW1lOiAnJywgcmVhc29uOiAnJyB9KTsKICBjb25zdCBbZXJyb3JzLCBzZXRFcnJvcnNdID0gdXNlU3RhdGUoe30pOwogIGNvbnN0IFtzYXZpbmcsIHNldFNhdmluZ10gPSB1c2VTdGF0ZShmYWxzZSk7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAob3BlbikgewogICAgICBzZXRGb3JtKHsgcGF0aWVudF9pZDogJycsIGRvY3Rvcl9pZDogJycsIGRhdGU6ICcnLCBzdGFydF90aW1lOiAnJywgcmVhc29uOiAnJyB9KTsKICAgICAgc2V0RXJyb3JzKHt9KTsKICAgICAgc2V0U2F2aW5nKGZhbHNlKTsKICAgIH0KICB9LCBbb3BlbiBdKTsKCiAgY29uc3Qgc2V0ID0gKGssIHYpID0+IHsKICAgIHNldEZvcm0oZiA9PiAoeyAuLi5mLCBba106IHYgfSkpOwogICAgaWYgKGVycm9yc1trXSkgc2V0RXJyb3JzKGUgPT4gKHsgLi4uZSwgW2tdOiBudWxsIH0pKTsKICB9OwoKICBjb25zdCBzdWJtaXQgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBlID0ge307CiAgICBpZiAoIWZvcm0ucGF0aWVudF9pZCkgZS5wYXRpZW50X2lkID0gJ1BsZWFzZSBzZWxlY3QgYSBwYXRpZW50JzsKICAgIGlmICghZm9ybS5kb2N0b3JfaWQpIGUuZG9jdG9yX2lkID0gJ1BsZWFzZSBzZWxlY3QgYSBkb2N0b3InOwogICAgaWYgKCFmb3JtLmRhdGUpIGUuZGF0ZSA9ICdQbGVhc2UgcGljayBhIGRhdGUnOwogICAgaWYgKCFmb3JtLnN0YXJ0X3RpbWUpIGUuc3RhcnRfdGltZSA9ICdQbGVhc2UgcGljayBhIHRpbWUgc2xvdCc7CiAgICBpZiAoIWZvcm0ucmVhc29uLnRyaW0oKSkgZS5yZWFzb24gPSAnUmVhc29uIGZvciB2aXNpdCBpcyByZXF1aXJlZCc7CiAgICBlbHNlIGlmIChmb3JtLnJlYXNvbi50cmltKCkubGVuZ3RoIDwgMTApIGUucmVhc29uID0gJ1BsZWFzZSBwcm92aWRlIGEgYml0IG1vcmUgZGV0YWlsICgxMCsgY2hhcmFjdGVycyknOwogICAgc2V0RXJyb3JzKGUpOwogICAgaWYgKE9iamVjdC5rZXlzKGUpLmxlbmd0aCkgeyBmb2N1c0ZpcnN0RXJyb3IoKTsgcmV0dXJuOyB9CgogICAgc2V0U2F2aW5nKHRydWUpOwogICAgdHJ5IHsKICAgICAgYXdhaXQgY3JlYXRlQWRtaW5BcHBvaW50bWVudCh7CiAgICAgICAgcGF0aWVudF9pZDogZm9ybS5wYXRpZW50X2lkLAogICAgICAgIGRvY3Rvcl9pZDogZm9ybS5kb2N0b3JfaWQsCiAgICAgICAgYXBwb2ludG1lbnRfZGF0ZTogZm9ybS5kYXRlLAogICAgICAgIHN0YXJ0X3RpbWU6IGZvcm0uc3RhcnRfdGltZSwKICAgICAgICByZWFzb246IGZvcm0ucmVhc29uLnRyaW0oKSwKICAgICAgfSk7CiAgICAgIHN0b3JlLnB1c2hUb2FzdCh7IGtpbmQ6ICdzdWNjZXNzJywgdGl0bGU6ICdBcHBvaW50bWVudCBjcmVhdGVkJywgbWVzc2FnZTogJ1RoZSBhcHBvaW50bWVudCBoYXMgYmVlbiBhZGRlZCB0byB0aGUgcXVldWUuJyB9KTsKICAgICAgb25DbG9zZSgpOwogICAgICBvblNhdmVkICYmIG9uU2F2ZWQoKTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzZXRFcnJvcnMoeyBmb3JtOiBlcnIgaW5zdGFuY2VvZiBBcGlFcnJvciA/IGVyci5tZXNzYWdlIDogJ0NvdWxkIG5vdCBjcmVhdGUgYXBwb2ludG1lbnQuJyB9KTsKICAgIH0gZmluYWxseSB7CiAgICAgIHNldFNhdmluZyhmYWxzZSk7CiAgICB9CiAgfTsKCiAgcmV0dXJuICgKICAgIDxNb2RhbAogICAgICBvcGVuPXtvcGVufQogICAgICBvbkNsb3NlPXtvbkNsb3NlfQogICAgICB0aXRsZT0iTmV3IGFwcG9pbnRtZW50IgogICAgICBzdWJ0aXRsZT0iQm9vayBhIGNvbnN1bHRhdGlvbiBvbiBiZWhhbGYgb2YgYSBwYXRpZW50LiIKICAgICAgc2l6ZT0ibWQiCiAgICAgIGZvb3Rlcj17PD4KICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1zZWNvbmRhcnkiIG9uQ2xpY2s9e29uQ2xvc2V9IGRpc2FibGVkPXtzYXZpbmd9PkNhbmNlbDwvYnV0dG9uPgogICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e3N1Ym1pdH0gZGlzYWJsZWQ9e3NhdmluZ30+e3NhdmluZyA/ICdTYXZpbmfigKYnIDogJ0NyZWF0ZSBhcHBvaW50bWVudCd9PC9idXR0b24+CiAgICAgIDwvPn0KICAgID4KICAgICAgPGRpdiBjbGFzc05hbWU9InN0YWNrIG1kIj4KICAgICAgICB7ZXJyb3JzLmZvcm0gJiYgPGRpdiBjbGFzc05hbWU9ImZvcm0tZXJyb3IiPntlcnJvcnMuZm9ybX08L2Rpdj59CiAgICAgICAgPEZpZWxkIGxhYmVsPSJQYXRpZW50IiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLnBhdGllbnRfaWR9PgogICAgICAgICAgPFNlbGVjdElucHV0IHZhbHVlPXtmb3JtLnBhdGllbnRfaWR9IG9uQ2hhbmdlPXtlID0+IHNldCgncGF0aWVudF9pZCcsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5wYXRpZW50X2lkfT4KICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT0iIj5TZWxlY3QgYSBwYXRpZW504oCmPC9vcHRpb24+CiAgICAgICAgICAgIHtwYXRpZW50cy5tYXAocCA9PiA8b3B0aW9uIGtleT17cC5pZH0gdmFsdWU9e3AuaWR9PntwLmZ1bGxfbmFtZX08L29wdGlvbj4pfQogICAgICAgICAgPC9TZWxlY3RJbnB1dD4KICAgICAgICA8L0ZpZWxkPgogICAgICAgIDxGaWVsZCBsYWJlbD0iRG9jdG9yIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLmRvY3Rvcl9pZH0+CiAgICAgICAgICA8U2VsZWN0SW5wdXQgdmFsdWU9e2Zvcm0uZG9jdG9yX2lkfSBvbkNoYW5nZT17ZSA9PiBzZXQoJ2RvY3Rvcl9pZCcsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5kb2N0b3JfaWR9PgogICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPlNlbGVjdCBhIGRvY3RvcuKApjwvb3B0aW9uPgogICAgICAgICAgICB7ZG9jdG9ycy5tYXAoZCA9PiA8b3B0aW9uIGtleT17ZC5pZH0gdmFsdWU9e2QuaWR9PntkLmZ1bGxfbmFtZX0gKHtkLnNwZWNpYWx0aWVzPy5uYW1lIHx8IGQuc3BlY2lhbHR5X25hbWV9KTwvb3B0aW9uPil9CiAgICAgICAgICA8L1NlbGVjdElucHV0PgogICAgICAgIDwvRmllbGQ+CiAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAxMiB9fT4KICAgICAgICAgIDxGaWVsZCBsYWJlbD0iRGF0ZSIgcmVxdWlyZWQgZXJyb3I9e2Vycm9ycy5kYXRlfT4KICAgICAgICAgICAgPFRleHRJbnB1dCB0eXBlPSJkYXRlIiB2YWx1ZT17Zm9ybS5kYXRlfSBvbkNoYW5nZT17ZSA9PiBzZXQoJ2RhdGUnLCBlLnRhcmdldC52YWx1ZSl9IGVycm9yPXtlcnJvcnMuZGF0ZX0gLz4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgICA8RmllbGQgbGFiZWw9IlRpbWUgc2xvdCIgcmVxdWlyZWQgZXJyb3I9e2Vycm9ycy5zdGFydF90aW1lfT4KICAgICAgICAgICAgPFRleHRJbnB1dCB0eXBlPSJ0aW1lIiB2YWx1ZT17Zm9ybS5zdGFydF90aW1lfSBvbkNoYW5nZT17ZSA9PiBzZXQoJ3N0YXJ0X3RpbWUnLCBlLnRhcmdldC52YWx1ZSl9IGVycm9yPXtlcnJvcnMuc3RhcnRfdGltZX0gLz4KICAgICAgICAgIDwvRmllbGQ+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPEZpZWxkIGxhYmVsPSJSZWFzb24gZm9yIHZpc2l0IiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLnJlYXNvbn0+CiAgICAgICAgICA8VGV4dEFyZWEKICAgICAgICAgICAgcGxhY2Vob2xkZXI9ImUuZy4sIEZvbGxvdy11cCBvbiBibG9vZCBwcmVzc3VyZSBtZWRpY2F0aW9uIgogICAgICAgICAgICB2YWx1ZT17Zm9ybS5yZWFzb259CiAgICAgICAgICAgIG9uQ2hhbmdlPXtlID0+IHNldCgncmVhc29uJywgZS50YXJnZXQudmFsdWUpfQogICAgICAgICAgICBlcnJvcj17ZXJyb3JzLnJlYXNvbn0KICAgICAgICAgICAgbWF4TGVuZ3RoPXs1MDB9CiAgICAgICAgICAvPgogICAgICAgIDwvRmllbGQ+CiAgICAgIDwvZGl2PgogICAgPC9Nb2RhbD4KICApOwp9CgpmdW5jdGlvbiBBcHBvaW50bWVudEVkaXRNb2RhbCh7IGFwcG9pbnRtZW50LCBvbkNsb3NlLCBvblNhdmVkIH0pIHsKICBjb25zdCBzdG9yZSA9IHVzZVN0b3JlKCk7CiAgY29uc3QgeyBwYXRpZW50cywgZG9jdG9ycyB9ID0gdXNlRGlyZWN0b3J5KCEhYXBwb2ludG1lbnQpOwogIGNvbnN0IFtmb3JtLCBzZXRGb3JtXSA9IHVzZVN0YXRlKHsgZG9jdG9yX2lkOiAnJywgZGF0ZTogJycsIHN0YXJ0X3RpbWU6ICcnLCByZWFzb246ICcnIH0pOwogIGNvbnN0IFtlcnJvcnMsIHNldEVycm9yc10gPSB1c2VTdGF0ZSh7fSk7CiAgY29uc3QgW3NhdmluZywgc2V0U2F2aW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKCiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGlmIChhcHBvaW50bWVudCkgewogICAgICBzZXRGb3JtKHsKICAgICAgICBkb2N0b3JfaWQ6IGFwcG9pbnRtZW50LmRvY3Rvcj8uaWQgfHwgYXBwb2ludG1lbnQuZG9jdG9yX2lkIHx8ICcnLAogICAgICAgIGRhdGU6IChhcHBvaW50bWVudC5hcHBvaW50bWVudF9kYXRlIHx8ICcnKS5zbGljZSgwLCAxMCksCiAgICAgICAgc3RhcnRfdGltZTogKGFwcG9pbnRtZW50LnN0YXJ0X3RpbWUgfHwgJycpLnNsaWNlKDAsIDUpLAogICAgICAgIHJlYXNvbjogYXBwb2ludG1lbnQucmVhc29uIHx8ICcnLAogICAgICB9KTsKICAgICAgc2V0RXJyb3JzKHt9KTsKICAgICAgc2V0U2F2aW5nKGZhbHNlKTsKICAgIH0KICB9LCBbYXBwb2ludG1lbnRdKTsKCiAgaWYgKCFhcHBvaW50bWVudCkgcmV0dXJuIG51bGw7CiAgY29uc3QgcmVmID0gYXBwb2ludG1lbnQucmVmZXJlbmNlX2NvZGUgfHwgYXBwb2ludG1lbnQuYXBwb2ludG1lbnRfcmVmIHx8ICcnOwoKICBjb25zdCBzZXQgPSAoaywgdikgPT4gewogICAgc2V0Rm9ybShmID0+ICh7IC4uLmYsIFtrXTogdiB9KSk7CiAgICBpZiAoZXJyb3JzW2tdKSBzZXRFcnJvcnMoZSA9PiAoeyAuLi5lLCBba106IG51bGwgfSkpOwogIH07CgogIGNvbnN0IHN1Ym1pdCA9IGFzeW5jICgpID0+IHsKICAgIGNvbnN0IGUgPSB7fTsKICAgIGlmICghZm9ybS5kb2N0b3JfaWQpIGUuZG9jdG9yX2lkID0gJ1BsZWFzZSBzZWxlY3QgYSBkb2N0b3InOwogICAgaWYgKCFmb3JtLmRhdGUpIGUuZGF0ZSA9ICdQbGVhc2UgcGljayBhIGRhdGUnOwogICAgaWYgKCFmb3JtLnN0YXJ0X3RpbWUpIGUuc3RhcnRfdGltZSA9ICdQbGVhc2UgcGljayBhIHRpbWUgc2xvdCc7CiAgICBpZiAoIWZvcm0ucmVhc29uLnRyaW0oKSkgZS5yZWFzb24gPSAnUmVhc29uIGZvciB2aXNpdCBpcyByZXF1aXJlZCc7CiAgICBzZXRFcnJvcnMoZSk7CiAgICBpZiAoT2JqZWN0LmtleXMoZSkubGVuZ3RoKSB7IGZvY3VzRmlyc3RFcnJvcigpOyByZXR1cm47IH0KCiAgICBzZXRTYXZpbmcodHJ1ZSk7CiAgICB0cnkgewogICAgICBhd2FpdCB1cGRhdGVBZG1pbkFwcG9pbnRtZW50KGFwcG9pbnRtZW50LmlkLCB7CiAgICAgICAgZG9jdG9yX2lkOiBmb3JtLmRvY3Rvcl9pZCwKICAgICAgICBhcHBvaW50bWVudF9kYXRlOiBmb3JtLmRhdGUsCiAgICAgICAgc3RhcnRfdGltZTogZm9ybS5zdGFydF90aW1lLAogICAgICAgIHJlYXNvbjogZm9ybS5yZWFzb24udHJpbSgpLAogICAgICB9KTsKICAgICAgc3RvcmUucHVzaFRvYXN0KHsga2luZDogJ3N1Y2Nlc3MnLCB0aXRsZTogJ0FwcG9pbnRtZW50IHVwZGF0ZWQnLCBtZXNzYWdlOiBgUmVmICR7cmVmfSBoYXMgYmVlbiB1cGRhdGVkLmAgfSk7CiAgICAgIG9uQ2xvc2UoKTsKICAgICAgb25TYXZlZCAmJiBvblNhdmVkKCk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgc2V0RXJyb3JzKHsgZm9ybTogZXJyIGluc3RhbmNlb2YgQXBpRXJyb3IgPyBlcnIubWVzc2FnZSA6ICdDb3VsZCBub3QgdXBkYXRlIGFwcG9pbnRtZW50LicgfSk7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRTYXZpbmcoZmFsc2UpOwogICAgfQogIH07CgogIHJldHVybiAoCiAgICA8TW9kYWwKICAgICAgb3BlbgogICAgICBvbkNsb3NlPXtvbkNsb3NlfQogICAgICB0aXRsZT0iRWRpdCBhcHBvaW50bWVudCIKICAgICAgc3VidGl0bGU9e2BSZWYgJHtyZWZ9IMK3ICR7YXBwb2ludG1lbnQucGF0aWVudD8uZnVsbF9uYW1lIHx8IGFwcG9pbnRtZW50LmJvb2tlZF9mb3IgfHwgJ1BhdGllbnQnfWB9CiAgICAgIGljb249InBlbmNpbCIKICAgICAgc2l6ZT0ibWQiCiAgICAgIGZvb3Rlcj17PD4KICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT0iYnRuIGJ0bi1zZWNvbmRhcnkiIG9uQ2xpY2s9e29uQ2xvc2V9IGRpc2FibGVkPXtzYXZpbmd9PkNhbmNlbDwvYnV0dG9uPgogICAgICAgIDxidXR0b24gY2xhc3NOYW1lPSJidG4gYnRuLXByaW1hcnkiIG9uQ2xpY2s9e3N1Ym1pdH0gZGlzYWJsZWQ9e3NhdmluZ30+e3NhdmluZyA/ICdTYXZpbmfigKYnIDogJ1NhdmUgY2hhbmdlcyd9PC9idXR0b24+CiAgICAgIDwvPn0KICAgID4KICAgICAgPGRpdiBjbGFzc05hbWU9InN0YWNrIG1kIj4KICAgICAgICB7ZXJyb3JzLmZvcm0gJiYgPGRpdiBjbGFzc05hbWU9ImZvcm0tZXJyb3IiPntlcnJvcnMuZm9ybX08L2Rpdj59CiAgICAgICAgPEZpZWxkIGxhYmVsPSJEb2N0b3IiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMuZG9jdG9yX2lkfT4KICAgICAgICAgIDxTZWxlY3RJbnB1dCB2YWx1ZT17Zm9ybS5kb2N0b3JfaWR9IG9uQ2hhbmdlPXtlID0+IHNldCgnZG9jdG9yX2lkJywgZS50YXJnZXQudmFsdWUpfSBlcnJvcj17ZXJyb3JzLmRvY3Rvcl9pZH0+CiAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9IiI+U2VsZWN0IGEgZG9jdG9y4oCmPC9vcHRpb24+CiAgICAgICAgICAgIHtkb2N0b3JzLm1hcChkID0+IDxvcHRpb24ga2V5PXtkLmlkfSB2YWx1ZT17ZC5pZH0+e2QuZnVsbF9uYW1lfSAoe2Quc3BlY2lhbHRpZXM/Lm5hbWUgfHwgZC5zcGVjaWFsdHlfbmFtZX0pPC9vcHRpb24+KX0KICAgICAgICAgIDwvU2VsZWN0SW5wdXQ+CiAgICAgICAgPC9GaWVsZD4KICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzFmciAxZnInLCBnYXA6IDEyIH19PgogICAgICAgICAgPEZpZWxkIGxhYmVsPSJEYXRlIiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLmRhdGV9PgogICAgICAgICAgICA8VGV4dElucHV0IHR5cGU9ImRhdGUiIHZhbHVlPXtmb3JtLmRhdGV9IG9uQ2hhbmdlPXtlID0+IHNldCgnZGF0ZScsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5kYXRlfSAvPgogICAgICAgICAgPC9GaWVsZD4KICAgICAgICAgIDxGaWVsZCBsYWJlbD0iVGltZSBzbG90IiByZXF1aXJlZCBlcnJvcj17ZXJyb3JzLnN0YXJ0X3RpbWV9PgogICAgICAgICAgICA8VGV4dElucHV0IHR5cGU9InRpbWUiIHZhbHVlPXtmb3JtLnN0YXJ0X3RpbWV9IG9uQ2hhbmdlPXtlID0+IHNldCgnc3RhcnRfdGltZScsIGUudGFyZ2V0LnZhbHVlKX0gZXJyb3I9e2Vycm9ycy5zdGFydF90aW1lfSAvPgogICAgICAgICAgPC9GaWVsZD4KICAgICAgICA8L2Rpdj4KICAgICAgICA8RmllbGQgbGFiZWw9IlJlYXNvbiBmb3IgdmlzaXQiIHJlcXVpcmVkIGVycm9yPXtlcnJvcnMucmVhc29ufT4KICAgICAgICAgIDxUZXh0QXJlYSB2YWx1ZT17Zm9ybS5yZWFzb259IG9uQ2hhbmdlPXtlID0+IHNldCgncmVhc29uJywgZS50YXJnZXQudmFsdWUpfSBlcnJvcj17ZXJyb3JzLnJlYXNvbn0gbWF4TGVuZ3RoPXs1MDB9IC8+CiAgICAgICAgPC9GaWVsZD4KICAgICAgPC9kaXY+CiAgICA8L01vZGFsPgogICk7Cn0KCmV4cG9ydCB7IEFwcG9pbnRtZW50RWRpdE1vZGFsLCBBcHBvaW50bWVudEZvcm1Nb2RhbCwgQXBwb2ludG1lbnREZXRhaWxzTW9kYWwgfTsK
+// AppointmentModals — admin appointment view/create/edit (restored prototype
+// UI, real API).
+// AppointmentDetailsModal(props: appointment, onClose) — read-only details.
+// AppointmentFormModal(props: open, onClose, onSaved) — create new.
+// AppointmentEditModal(props: appointment, onClose, onSaved) — edit existing.
+import { useEffect, useState } from 'react';
+import {
+  Field, Modal, SelectInput, StatusBadge, TextArea, TextInput, useStore,
+} from '../shared/components.jsx';
+import { formatDate, statusMeta } from '../shared/data.js';
+import {
+  createAdminAppointment, getAdminDoctors, getAdminPatients,
+  updateAdminAppointment, ApiError,
+} from '../shared/api.js';
+import { focusFirstError } from './helpers.js';
+
+function useDirectory(open) {
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    getAdminPatients('', 1, 100).then((r) => { if (!cancelled) setPatients(r.patients); }).catch(() => {});
+    getAdminDoctors('', 1, 100).then((r) => { if (!cancelled) setDoctors(r.doctors); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [open]);
+  return { patients, doctors };
+}
+
+function AppointmentDetailsModal({ appointment, onClose }) {
+  const appt = appointment;
+  if (!appt) return null;
+  const doctor = appt.doctor;
+  const patient = appt.patient;
+  const ref = appt.reference_code || appt.appointment_ref || '';
+  const date = (appt.appointment_date || '').slice(0, 10);
+  const time = (appt.start_time || '').slice(0, 5);
+
+  return (
+    <Modal
+      open={!!appt}
+      onClose={onClose}
+      title={ref ? `Appointment ${ref}` : 'Appointment'}
+      subtitle="Full appointment details."
+      icon="calendar-days"
+      size="md"
+      footer={<button className="btn btn-secondary" onClick={onClose}>Close</button>}
+    >
+      <div className="stack md">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <StatusBadge status={appt.status} />
+          <span className="t-muted" style={{ fontSize: 12 }}>
+            Created {appt.created_at ? formatDate(String(appt.created_at).slice(0, 10)) : '—'}
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div>
+            <div className="t-help">Patient</div>
+            <div style={{ fontWeight: 600 }}>{patient?.full_name || appt.booked_for || 'Unknown'}</div>
+            <div className="t-muted" style={{ fontSize: 12.5 }}>{patient?.email || '—'}</div>
+          </div>
+          <div>
+            <div className="t-help">Doctor</div>
+            <div style={{ fontWeight: 600 }}>{doctor?.full_name || 'Unknown'}</div>
+            <div className="t-muted" style={{ fontSize: 12.5 }}>
+              {doctor ? `${doctor.specialties?.name || ''}${doctor.room ? ` · ${doctor.room}` : ''}` : '—'}
+            </div>
+          </div>
+          <div>
+            <div className="t-help">Date & time</div>
+            <div style={{ fontWeight: 600 }}>{date ? formatDate(date) : '—'} · {time || '—'}</div>
+          </div>
+          <div>
+            <div className="t-help">Status</div>
+            <div style={{ fontWeight: 600 }}>{(statusMeta(appt.status) || {}).label || appt.status}</div>
+          </div>
+          {appt.booked_for && patient?.full_name && appt.booked_for !== patient.full_name && (
+            <div>
+              <div className="t-help">Booked for</div>
+              <div style={{ fontWeight: 600 }}>{appt.booked_for}</div>
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="t-help">Reason for visit</div>
+          <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.reason || '—'}</div>
+        </div>
+        {appt.notes && (
+          <div>
+            <div className="t-help">Doctor's notes</div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{appt.notes}</div>
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function AppointmentFormModal({ open, onClose, onSaved }) {
+  const store = useStore();
+  const { patients, doctors } = useDirectory(open);
+  const [form, setForm] = useState({ patient_id: '', doctor_id: '', date: '', start_time: '', reason: '' });
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setForm({ patient_id: '', doctor_id: '', date: '', start_time: '', reason: '' });
+      setErrors({});
+      setSaving(false);
+    }
+  }, [open ]);
+
+  const set = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }));
+    if (errors[k]) setErrors(e => ({ ...e, [k]: null }));
+  };
+
+  const submit = async () => {
+    const e = {};
+    if (!form.patient_id) e.patient_id = 'Please select a patient';
+    if (!form.doctor_id) e.doctor_id = 'Please select a doctor';
+    if (!form.date) e.date = 'Please pick a date';
+    if (!form.start_time) e.start_time = 'Please pick a time slot';
+    if (!form.reason.trim()) e.reason = 'Reason for visit is required';
+    else if (form.reason.trim().length < 10) e.reason = 'Please provide a bit more detail (10+ characters)';
+    setErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      await createAdminAppointment({
+        patient_id: form.patient_id,
+        doctor_id: form.doctor_id,
+        appointment_date: form.date,
+        start_time: form.start_time,
+        reason: form.reason.trim(),
+      });
+      store.pushToast({ kind: 'success', title: 'Appointment created', message: 'The appointment has been added to the queue.' });
+      onClose();
+      onSaved && onSaved();
+    } catch (err) {
+      setErrors({ form: err instanceof ApiError ? err.message : 'Could not create appointment.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="New appointment"
+      subtitle="Book a consultation on behalf of a patient."
+      size="md"
+      footer={<>
+        <button className="btn btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
+        <button className="btn btn-primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : 'Create appointment'}</button>
+      </>}
+    >
+      <div className="stack md">
+        {errors.form && <div className="form-error">{errors.form}</div>}
+        <Field label="Patient" required error={errors.patient_id}>
+          <SelectInput value={form.patient_id} onChange={e => set('patient_id', e.target.value)} error={errors.patient_id}>
+            <option value="">Select a patient…</option>
+            {patients.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+          </SelectInput>
+        </Field>
+        <Field label="Doctor" required error={errors.doctor_id}>
+          <SelectInput value={form.doctor_id} onChange={e => set('doctor_id', e.target.value)} error={errors.doctor_id}>
+            <option value="">Select a doctor…</option>
+            {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name} ({d.specialties?.name || d.specialty_name})</option>)}
+          </SelectInput>
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <Field label="Date" required error={errors.date}>
+            <TextInput type="date" value={form.date} onChange={e => set('date', e.target.value)} error={errors.date} />
+          </Field>
+          <Field label="Time slot" required error={errors.start_time}>
+            <TextInput type="time" value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} />
+          </Field>
+        </div>
+        <Field label="Reason for visit" required error={errors.reason}>
+          <TextArea
+            placeholder="e.g., Follow-up on blood pressure medication"
+            value={form.reason}
+            onChange={e => set('reason', e.target.value)}
+            error={errors.reason}
+            maxLength={500}
+          />
+        </Field>
+      </div>
+    </Modal>
+  );
+}
+
+function AppointmentEditModal({ appointment, onClose, onSaved }) {
+  const store = useStore();
+  const { patients, doctors } = useDirectory(!!appointment);
+  const [form, setForm] = useState({ doctor_id: '', date: '', start_time: '', reason: '' });
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (appointment) {
+      setForm({
+        doctor_id: appointment.doctor?.id || appointment.doctor_id || '',
+        date: (appointment.appointment_date || '').slice(0, 10),
+        start_time: (appointment.start_time || '').slice(0, 5),
+        reason: appointment.reason || '',
+      });
+      setErrors({});
+      setSaving(false);
+    }
+  }, [appointment]);
+
+  if (!appointment) return null;
+  const ref = appointment.reference_code || appointment.appointment_ref || '';
+
+  const set = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }));
+    if (errors[k]) setErrors(e => ({ ...e, [k]: null }));
+  };
+
+  const submit = async () => {
+    const e = {};
+    if (!form.doctor_id) e.doctor_id = 'Please select a doctor';
+    if (!form.date) e.date = 'Please pick a date';
+    if (!form.start_time) e.start_time = 'Please pick a time slot';
+    if (!form.reason.trim()) e.reason = 'Reason for visit is required';
+    setErrors(e);
+    if (Object.keys(e).length) { focusFirstError(); return; }
+
+    setSaving(true);
+    try {
+      await updateAdminAppointment(appointment.id, {
+        doctor_id: form.doctor_id,
+        appointment_date: form.date,
+        start_time: form.start_time,
+        reason: form.reason.trim(),
+      });
+      store.pushToast({ kind: 'success', title: 'Appointment updated', message: `Ref ${ref} has been updated.` });
+      onClose();
+      onSaved && onSaved();
+    } catch (err) {
+      setErrors({ form: err instanceof ApiError ? err.message : 'Could not update appointment.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title="Edit appointment"
+      subtitle={`Ref ${ref} · ${appointment.patient?.full_name || appointment.booked_for || 'Patient'}`}
+      icon="pencil"
+      size="md"
+      footer={<>
+        <button className="btn btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
+        <button className="btn btn-primary" onClick={submit} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button>
+      </>}
+    >
+      <div className="stack md">
+        {errors.form && <div className="form-error">{errors.form}</div>}
+        <Field label="Doctor" required error={errors.doctor_id}>
+          <SelectInput value={form.doctor_id} onChange={e => set('doctor_id', e.target.value)} error={errors.doctor_id}>
+            <option value="">Select a doctor…</option>
+            {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name} ({d.specialties?.name || d.specialty_name})</option>)}
+          </SelectInput>
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <Field label="Date" required error={errors.date}>
+            <TextInput type="date" value={form.date} onChange={e => set('date', e.target.value)} error={errors.date} />
+          </Field>
+          <Field label="Time slot" required error={errors.start_time}>
+            <TextInput type="time" value={form.start_time} onChange={e => set('start_time', e.target.value)} error={errors.start_time} />
+          </Field>
+        </div>
+        <Field label="Reason for visit" required error={errors.reason}>
+          <TextArea value={form.reason} onChange={e => set('reason', e.target.value)} error={errors.reason} maxLength={500} />
+        </Field>
+      </div>
+    </Modal>
+  );
+}
+
+export { AppointmentEditModal, AppointmentFormModal, AppointmentDetailsModal };
